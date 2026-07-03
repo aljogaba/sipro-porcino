@@ -27,6 +27,13 @@ export function calculateInventory(parameters) {
   const inventoryPerSow = totalInventory / breedingSows;
   const efficiencyFactor = flow.pigsSoldPerMonth / breedingSows;
 
+  // Inventario de hembras reproductivas. Se separa del inventario de cerdos en producción
+  // para evitar mezclar lechones/engorda con pie de cría. La lógica es equivalente al
+  // ciclo reproductivo: lactando + abierta + gestante = vientres del sistema.
+  const lactatingFemales = flow.farrowingsPerWeek * flow.lactationWeeks;
+  const openFemales = flow.farrowingsPerWeek * (flow.assumptions.openDays / 7);
+  const gestatingFemales = Math.max(breedingSows - lactatingFemales - openFemales, 0);
+
   return {
     flow,
     groups: {
@@ -35,7 +42,13 @@ export function calculateInventory(parameters) {
       engorda,
       totalInventory,
       inventoryPerSow,
-      efficiencyFactor
+      efficiencyFactor,
+      breedingFemales: {
+        lactating: lactatingFemales,
+        open: openFemales,
+        gestating: gestatingFemales,
+        total: breedingSows
+      }
     }
   };
 }

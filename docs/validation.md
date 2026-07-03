@@ -114,3 +114,23 @@ Validación pendiente:
 - El bloque principal de indicadores se reorganizó para mostrar únicamente resultados productivos y técnicos.
 - Se agregó el indicador `Lechones destetados/hembra/año`, derivado de `Lechones destetados/camada × Partos/hembra/año`.
 - Los indicadores económicos principales se trasladaron a un panel lateral persistente de balance mensual, mientras que el resumen económico detallado permanece en su sección específica.
+
+
+## Ajuste v0.4.2-dev: inventario de hembras y balance lateral
+
+Se separó la lectura visual del inventario en dos componentes:
+
+- **Cerdos en producción:** lactantes, destete y engorda.
+- **Hembras reproductivas:** hembras lactando, hembras abiertas y hembras gestantes.
+
+La lógica usada para hembras reproductivas es:
+
+```text
+Hembras lactando = partos/semana × semanas de lactancia
+Hembras abiertas = partos/semana × días abiertos / 7
+Hembras gestantes = vientres - hembras lactando - hembras abiertas
+```
+
+Este inventario se muestra como lectura operativa del sistema reproductivo y no se suma al inventario total de cerdos en producción del tablero principal.
+
+También se ajustó el layout responsivo del balance económico lateral para evitar superposición con los paneles principales.

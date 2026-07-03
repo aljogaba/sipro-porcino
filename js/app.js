@@ -35,7 +35,7 @@ async function init() {
   baseParameters = await response.json();
   currentParameters = structuredClone(baseParameters);
 
-  document.querySelector("#app-version").textContent = baseParameters.metadata?.version ?? "0.4.1-dev";
+  document.querySelector("#app-version").textContent = baseParameters.metadata?.version ?? "0.4.2-dev";
 
   renderInputs();
   recalculate();
@@ -135,7 +135,7 @@ function renderKpis({ flow, groups }, feedResult) {
     { label: "Lechones dest./hembra/año", value: formatNumber(flow.weanedPerSowPerYear, 2), unit: "lechones", type: "positive" },
     { label: "Cerdos vend./hembra/año", value: formatNumber(flow.pigsSoldPerSowPerYear, 2), unit: "cerdos", type: "positive" },
     { label: "Cerdos vendidos/mes", value: formatNumber(flow.pigsSoldPerMonth, 2), unit: "cerdos", type: "positive" },
-    { label: "Días a mercado", value: formatInteger(flow.daysToMarket), unit: "días", type: "warning" },
+    { label: "Días a mercado", value: formatInteger(flow.daysToMarket), unit: "días", type: "positive" },
     { label: "Mortalidad global", value: formatPercent(flow.totalMortalityPercent, 1), unit: "suma de mortalidades", type: "warning" },
     { label: "Factor de eficiencia", value: formatNumber(groups.efficiencyFactor, 2), unit: "cerdos/hembra/mes", type: "positive" },
     { label: "Inventario total", value: formatNumber(groups.totalInventory, 1), unit: "animales", type: "positive" },
@@ -180,15 +180,21 @@ function renderFlowTable(flow) {
 }
 
 function renderInventory(groups) {
-  const rows = [
+  const pigRows = [
     ["Lactantes", groups.lactantes],
     ["Destete", groups.destete],
     ["Engorda", groups.engorda],
-    ["Total", groups.totalInventory]
+    ["Total cerdos", groups.totalInventory]
   ];
-  const max = Math.max(groups.lactantes, groups.destete, groups.engorda);
 
-  inventoryBars.innerHTML = rows.slice(0, 3).map(([label, value]) => {
+  const femaleRows = [
+    ["Hembras lactando", groups.breedingFemales?.lactating ?? 0],
+    ["Hembras abiertas", groups.breedingFemales?.open ?? 0],
+    ["Hembras gestantes", groups.breedingFemales?.gestating ?? 0],
+    ["Total vientres", groups.breedingFemales?.total ?? 0]
+  ];
+
+  const renderBars = (rows, max) => rows.slice(0, 3).map(([label, value]) => {
     const width = max > 0 ? (value / max) * 100 : 0;
     return `
       <div class="bar-item">
@@ -198,13 +204,34 @@ function renderInventory(groups) {
     `;
   }).join("");
 
+  const maxPigs = Math.max(groups.lactantes, groups.destete, groups.engorda);
+  const maxFemales = Math.max(
+    groups.breedingFemales?.lactating ?? 0,
+    groups.breedingFemales?.open ?? 0,
+    groups.breedingFemales?.gestating ?? 0
+  );
+
+  inventoryBars.innerHTML = `
+    <div class="inventory-subsection">
+      <h3>Cerdos en producción</h3>
+      ${renderBars(pigRows, maxPigs)}
+    </div>
+    <div class="inventory-subsection">
+      <h3>Hembras reproductivas</h3>
+      ${renderBars(femaleRows, maxFemales)}
+    </div>
+  `;
+
   inventoryTable.innerHTML = `
     <table>
       <thead>
         <tr><th>Grupo</th><th>Inventario</th></tr>
       </thead>
       <tbody>
-        ${rows.map(([label, value]) => `<tr><td>${label}</td><td>${formatNumber(value, 1)}</td></tr>`).join("")}
+        <tr class="group-row"><td colspan="2">Cerdos en producción</td></tr>
+        ${pigRows.map(([label, value]) => `<tr><td>${label}</td><td>${formatNumber(value, 1)}</td></tr>`).join("")}
+        <tr class="group-row"><td colspan="2">Hembras reproductivas</td></tr>
+        ${femaleRows.map(([label, value]) => `<tr><td>${label}</td><td>${formatNumber(value, 1)}</td></tr>`).join("")}
       </tbody>
     </table>
   `;

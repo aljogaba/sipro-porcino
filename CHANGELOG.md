@@ -2,6 +2,18 @@
 
 Todos los cambios importantes de SIPRO-Porcino serán documentados en este archivo.
 
+## [0.4.2-dev] - En desarrollo
+
+### Corregido
+
+- Ajuste de distribución para evitar que el balance lateral se encime sobre los paneles principales.
+- Reducción responsiva del tamaño de cifras monetarias en tarjetas para evitar desbordamientos.
+- Reasignación visual de `Días a mercado` como indicador productivo no preventivo.
+
+### Agregado
+
+- Inventario de hembras reproductivas separado del inventario de cerdos en producción: lactando, abiertas y gestantes.
+
 ## [0.4.1-dev] - En desarrollo
 
 ### Agregado
