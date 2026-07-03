@@ -17,14 +17,14 @@
       </div>
       <div class="version-card">
         <span>Versión</span>
-        <strong id="app-version">0.1.0-dev</strong>
+        <strong id="app-version">0.2.1-dev</strong>
       </div>
     </div>
   </header>
 
   <main class="container main-layout">
     <section class="notice">
-      <strong>Módulo inicial:</strong> inventarios y flujo productivo. Esta versión reproduce la lógica base del Excel fuente para el tablero productivo visible. Los módulos de alimento, medicación y costos se integrarán por fases.
+      <strong>Módulo inicial:</strong> inventarios y flujo productivo. Esta versión reproduce la lógica base del Excel fuente para el tablero productivo visible. El módulo de alimento se integra de forma inicial; medicación, gastos generales y costos completos se integrarán por fases.
     </section>
 
     <section class="panel">
@@ -46,6 +46,33 @@
         </div>
       </div>
       <div id="duration-inputs" class="input-grid compact"></div>
+    </section>
+
+
+
+    <section class="panel">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">Parámetros de alimento</p>
+          <h2>Consumo de alimento por día</h2>
+        </div>
+      </div>
+      <div id="feed-consumption-inputs" class="input-grid compact"></div>
+    </section>
+
+    <section class="panel">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">Costos de alimento</p>
+          <h2 id="feed-cost-panel-title">Costo por kg de alimento</h2>
+        </div>
+        <div class="mode-switch" role="group" aria-label="Modo de costo de alimento">
+          <button type="button" data-feed-mode="purchased" aria-pressed="true">Dietas compradas</button>
+          <button type="button" data-feed-mode="formulated" aria-pressed="false">Formulación propia</button>
+        </div>
+      </div>
+      <p id="feed-cost-mode-note" class="panel-note">Seleccione si el costo del alimento se capturará como dieta comprada o se tomará del módulo de formulación.</p>
+      <div id="feed-cost-inputs" class="input-grid compact"></div>
     </section>
 
     <section class="kpi-grid" id="kpi-grid"></section>
@@ -73,6 +100,20 @@
       </article>
     </section>
 
+
+
+    <section class="panel">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">Alimento</p>
+          <h2>Consumo y costo estimado</h2>
+        </div>
+      </div>
+      <div class="kpi-grid compact-kpis" id="feed-kpis"></div>
+      <div id="feed-table" class="table-wrap"></div>
+    </section>
+
+
     <section class="panel">
       <div class="section-heading">
         <div>
@@ -83,8 +124,9 @@
       <ul class="model-notes">
         <li>El cálculo de partos/hembra/año sigue la fórmula base: partos semanales × 52 / vientres.</li>
         <li>El ciclo reproductivo usa 115 días de gestación + días de lactancia + días abiertos, expresado en semanas.</li>
-        <li>El porcentaje de fertilidad se conserva como entrada visible para revisión, pero en la auditoría inicial no se detectó dependencia directa en las fórmulas productivas visibles del Excel fuente.</li>
-        <li>Los resultados económicos mostrados en esta versión se limitan a ingreso bruto mensual; los egresos y costos se agregarán en módulos posteriores.</li>
+        <li>El alimento semanal replica la estructura del Excel: inventario alimentado × consumo diario × 7 × costo/kg.</li>
+        <li>El pie de cría incluye hembras gestantes, hembras lactantes y una relación macho:hembra de 1:20 para consumo de alimento.</li>
+        <li>El costo del alimento puede trabajarse en dos modos: dietas compradas capturadas por el usuario o formulación propia preparada para calcularse desde ingredientes y fórmulas.</li>
       </ul>
     </section>
   </main>

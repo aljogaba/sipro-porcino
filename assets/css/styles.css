@@ -298,3 +298,57 @@ th {
   .kpi-grid { grid-template-columns: 1fr; }
   .section-heading { align-items: flex-start; flex-direction: column; }
 }
+
+.panel-note {
+  margin: -8px 0 18px;
+  color: var(--muted);
+  font-size: 0.92rem;
+  line-height: 1.5;
+}
+
+.compact-kpis {
+  margin-bottom: 18px;
+}
+
+table .total-row td {
+  font-weight: 900;
+  background: var(--brand-soft);
+}
+
+
+.mode-switch {
+  display: flex;
+  gap: 6px;
+  padding: 4px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: var(--surface-soft);
+}
+
+.mode-switch button {
+  border: 0;
+  border-radius: 999px;
+  padding: 9px 13px;
+  background: transparent;
+  color: var(--muted);
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.mode-switch button.active,
+.mode-switch button[aria-pressed="true"] {
+  background: var(--brand);
+  color: #fff;
+}
+
+.input-card.is-disabled input {
+  color: var(--muted);
+  background: var(--surface-soft);
+  cursor: not-allowed;
+}
+
+.input-card.is-disabled label::after {
+  content: " · calculado";
+  color: #7a9b8f;
+  font-weight: 700;
+}

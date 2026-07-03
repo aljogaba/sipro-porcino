@@ -1,7 +1,7 @@
 {
   "metadata": {
     "project": "SIPRO-Porcino",
-    "version": "0.1.2-dev",
+    "version": "0.2.1-dev",
     "country_context": "México",
     "production_system": "Granja ciclo completo",
     "source": "Mapa técnico inicial derivado del modelo Excel privado",
@@ -253,6 +253,165 @@
       "unit": "días",
       "type": "parámetro técnico",
       "note": "Valor técnico base actualizado para reflejar sistemas actuales; se usa en el cálculo del ciclo reproductivo."
+    }
+  },
+  "feed_cost_mode": {
+    "active": "purchased",
+    "options": {
+      "purchased": {
+        "label": "Dietas compradas",
+        "title": "Costo por kg de dietas compradas",
+        "note": "Use este modo cuando la granja compra dietas terminadas o recibe alimento maquilado. El usuario captura el costo real por kg de cada dieta."
+      },
+      "formulated": {
+        "label": "Formulación propia",
+        "title": "Costos por kg calculados desde formulación",
+        "note": "Modo preparado para el módulo de formulación alimenticia. En esta versión usa costos formulados de referencia del Excel y los muestra bloqueados hasta migrar la hoja de fórmulas."
+      }
+    }
+  },
+  "feed_costs_purchased_per_kg": {
+    "gestation": {
+      "label": "Gestación",
+      "value": 7.32547,
+      "unit": "$/kg",
+      "excel_source": "Tablero!G10",
+      "note": "Costo editable para dietas compradas o maquiladas. El productor puede capturar el costo real por kg de cada dieta."
+    },
+    "lactation_sow": {
+      "label": "Lactancia",
+      "value": 9.22379,
+      "unit": "$/kg",
+      "excel_source": "Tablero!G11",
+      "note": "Costo editable para dietas compradas o maquiladas. El productor puede capturar el costo real por kg de cada dieta."
+    },
+    "phase_0": {
+      "label": "Fase 0",
+      "value": 25.22,
+      "unit": "$/kg",
+      "excel_source": "Tablero!G12",
+      "note": "Costo editable para dietas compradas o maquiladas. El productor puede capturar el costo real por kg de cada dieta."
+    },
+    "phase_1": {
+      "label": "Fase 1",
+      "value": 20.6,
+      "unit": "$/kg",
+      "excel_source": "Tablero!G13",
+      "note": "Costo editable para dietas compradas o maquiladas. El productor puede capturar el costo real por kg de cada dieta."
+    },
+    "phase_2": {
+      "label": "Fase 2",
+      "value": 13.11071,
+      "unit": "$/kg",
+      "excel_source": "Tablero!G14",
+      "note": "Costo editable para dietas compradas o maquiladas. El productor puede capturar el costo real por kg de cada dieta."
+    },
+    "phase_3": {
+      "label": "Fase 3",
+      "value": 11.79021,
+      "unit": "$/kg",
+      "excel_source": "Tablero!G15",
+      "note": "Costo editable para dietas compradas o maquiladas. El productor puede capturar el costo real por kg de cada dieta."
+    },
+    "starter": {
+      "label": "Iniciación",
+      "value": 10.37641,
+      "unit": "$/kg",
+      "excel_source": "Tablero!G16",
+      "note": "Costo editable para dietas compradas o maquiladas. El productor puede capturar el costo real por kg de cada dieta."
+    },
+    "growth": {
+      "label": "Crecimiento",
+      "value": 9.25681,
+      "unit": "$/kg",
+      "excel_source": "Tablero!G17",
+      "note": "Costo editable para dietas compradas o maquiladas. El productor puede capturar el costo real por kg de cada dieta."
+    },
+    "development": {
+      "label": "Desarrollo",
+      "value": 9.00306,
+      "unit": "$/kg",
+      "excel_source": "Tablero!G18",
+      "note": "Costo editable para dietas compradas o maquiladas. El productor puede capturar el costo real por kg de cada dieta."
+    },
+    "finishing": {
+      "label": "Engorda",
+      "value": 9.37666,
+      "unit": "$/kg",
+      "excel_source": "Tablero!G19",
+      "note": "Costo editable para dietas compradas o maquiladas. El productor puede capturar el costo real por kg de cada dieta."
+    }
+  },
+  "feed_costs_formulated_per_kg": {
+    "gestation": {
+      "label": "Gestación",
+      "value": 7.32547,
+      "unit": "$/kg",
+      "excel_source": "Tablero!G10",
+      "note": "Costo formulado de referencia importado del modelo Excel. En una fase posterior se calculará automáticamente desde ingredientes y fórmulas."
+    },
+    "lactation_sow": {
+      "label": "Lactancia",
+      "value": 9.22379,
+      "unit": "$/kg",
+      "excel_source": "Tablero!G11",
+      "note": "Costo formulado de referencia importado del modelo Excel. En una fase posterior se calculará automáticamente desde ingredientes y fórmulas."
+    },
+    "phase_0": {
+      "label": "Fase 0",
+      "value": 25.22,
+      "unit": "$/kg",
+      "excel_source": "Tablero!G12",
+      "note": "Costo formulado de referencia importado del modelo Excel. En una fase posterior se calculará automáticamente desde ingredientes y fórmulas."
+    },
+    "phase_1": {
+      "label": "Fase 1",
+      "value": 20.6,
+      "unit": "$/kg",
+      "excel_source": "Tablero!G13",
+      "note": "Costo formulado de referencia importado del modelo Excel. En una fase posterior se calculará automáticamente desde ingredientes y fórmulas."
+    },
+    "phase_2": {
+      "label": "Fase 2",
+      "value": 13.11071,
+      "unit": "$/kg",
+      "excel_source": "Tablero!G14",
+      "note": "Costo formulado de referencia importado del modelo Excel. En una fase posterior se calculará automáticamente desde ingredientes y fórmulas."
+    },
+    "phase_3": {
+      "label": "Fase 3",
+      "value": 11.79021,
+      "unit": "$/kg",
+      "excel_source": "Tablero!G15",
+      "note": "Costo formulado de referencia importado del modelo Excel. En una fase posterior se calculará automáticamente desde ingredientes y fórmulas."
+    },
+    "starter": {
+      "label": "Iniciación",
+      "value": 10.37641,
+      "unit": "$/kg",
+      "excel_source": "Tablero!G16",
+      "note": "Costo formulado de referencia importado del modelo Excel. En una fase posterior se calculará automáticamente desde ingredientes y fórmulas."
+    },
+    "growth": {
+      "label": "Crecimiento",
+      "value": 9.25681,
+      "unit": "$/kg",
+      "excel_source": "Tablero!G17",
+      "note": "Costo formulado de referencia importado del modelo Excel. En una fase posterior se calculará automáticamente desde ingredientes y fórmulas."
+    },
+    "development": {
+      "label": "Desarrollo",
+      "value": 9.00306,
+      "unit": "$/kg",
+      "excel_source": "Tablero!G18",
+      "note": "Costo formulado de referencia importado del modelo Excel. En una fase posterior se calculará automáticamente desde ingredientes y fórmulas."
+    },
+    "finishing": {
+      "label": "Engorda",
+      "value": 9.37666,
+      "unit": "$/kg",
+      "excel_source": "Tablero!G19",
+      "note": "Costo formulado de referencia importado del modelo Excel. En una fase posterior se calculará automáticamente desde ingredientes y fórmulas."
     }
   }
 }
