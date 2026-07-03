@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>SIPRO-Porcino | Simulador Integral de Producción Porcina</title>
+  <meta name="description" content="Herramienta técnico-económica para modelar inventarios y flujo productivo en sistemas porcícolas." />
+  <link rel="stylesheet" href="assets/css/styles.css" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-grid">
+      <div>
+        <p class="eyebrow">Laboratorio de Sistemas Porcícolas</p>
+        <h1>SIPRO-Porcino</h1>
+        <p class="subtitle">Simulador Integral de Producción Porcina</p>
+      </div>
+      <div class="version-card">
+        <span>Versión</span>
+        <strong id="app-version">0.1.0-dev</strong>
+      </div>
+    </div>
+  </header>
+
+  <main class="container main-layout">
+    <section class="notice">
+      <strong>Módulo inicial:</strong> inventarios y flujo productivo. Esta versión reproduce la lógica base del Excel fuente para el tablero productivo visible. Los módulos de alimento, medicación y costos se integrarán por fases.
+    </section>
+
+    <section class="panel">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">Entradas editables</p>
+          <h2>Parámetros productivos</h2>
+        </div>
+        <button id="reset-btn" class="secondary-button" type="button">Restaurar valores base</button>
+      </div>
+      <div id="productive-inputs" class="input-grid"></div>
+    </section>
+
+    <section class="panel">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">Configuración técnica</p>
+          <h2>Duración de etapas</h2>
+        </div>
+      </div>
+      <div id="duration-inputs" class="input-grid compact"></div>
+    </section>
+
+    <section class="kpi-grid" id="kpi-grid"></section>
+
+    <section class="two-column">
+      <article class="panel">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Flujo productivo</p>
+            <h2>Animales por semana</h2>
+          </div>
+        </div>
+        <div id="flow-table" class="table-wrap"></div>
+      </article>
+
+      <article class="panel">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Inventarios</p>
+            <h2>Distribución estimada</h2>
+          </div>
+        </div>
+        <div id="inventory-bars" class="bar-list"></div>
+        <div id="inventory-table" class="table-wrap"></div>
+      </article>
+    </section>
+
+    <section class="panel">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">Validación operativa</p>
+          <h2>Notas del modelo</h2>
+        </div>
+      </div>
+      <ul class="model-notes">
+        <li>El cálculo de partos/hembra/año sigue la fórmula base: partos semanales × 52 / vientres.</li>
+        <li>El ciclo reproductivo usa 114 días de gestación + días de lactancia + 7 días posdestete, expresado en semanas.</li>
+        <li>El porcentaje de fertilidad se conserva como entrada visible para revisión, pero en la auditoría inicial no se detectó dependencia directa en las fórmulas productivas visibles del Excel fuente.</li>
+        <li>Los resultados económicos mostrados en esta versión se limitan a ingreso bruto mensual; los egresos y costos se agregarán en módulos posteriores.</li>
+      </ul>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <p><strong>SIPRO-Porcino</strong> forma parte del Laboratorio de Sistemas Porcícolas.</p>
+    </div>
+  </footer>
+
+  <script type="module" src="js/app.js"></script>
+</body>
+</html>
