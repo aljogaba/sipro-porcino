@@ -99,7 +99,7 @@ export function calculateFeed(parameters) {
       kgDay: getValue(parameters, "feed_consumption_kg_day", "growth"),
       costKg: getValue(parameters, costSection, "growth"),
       weeks: 1,
-      group: "crecimiento_engorda"
+      group: "crecimiento_finalizacion"
     },
     {
       key: "development",
@@ -108,16 +108,16 @@ export function calculateFeed(parameters) {
       kgDay: getValue(parameters, "feed_consumption_kg_day", "development"),
       costKg: getValue(parameters, costSection, "development"),
       weeks: 1,
-      group: "crecimiento_engorda"
+      group: "crecimiento_finalizacion"
     },
     {
       key: "finishing",
-      label: "Engorda",
+      label: "Finalización",
       animals: flow.pigsToFinishingPerWeek * getValue(parameters, "stage_duration_weeks", "finishing", 5),
       kgDay: getValue(parameters, "feed_consumption_kg_day", "finishing"),
       costKg: getValue(parameters, costSection, "finishing"),
       weeks: 1,
-      group: "crecimiento_engorda"
+      group: "crecimiento_finalizacion"
     }
   ].map((row) => {
     const kgWeek = row.animals * row.kgDay * 7;

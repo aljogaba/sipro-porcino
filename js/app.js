@@ -1,4 +1,5 @@
 import { calculateFeed } from "./modules/feed-consumption.js";
+import { calculateFeedFormulation } from "./modules/feed-formulation.js";
 import { calculateEconomicSummary } from "./modules/economic-summary.js";
 import { analyzeScenarios } from "./modules/scenario-analysis.js";
 import { formatCurrency, formatInteger, formatNumber, formatPercent } from "./utils/formatters.js";
@@ -16,6 +17,11 @@ const feedCostInputs = document.querySelector("#feed-cost-inputs");
 const feedCostPanelTitle = document.querySelector("#feed-cost-panel-title");
 const feedCostModeNote = document.querySelector("#feed-cost-mode-note");
 const feedCostModeButtons = document.querySelectorAll("[data-feed-mode]");
+const formulationKpis = document.querySelector("#formulation-kpis");
+const formulationIngredientTable = document.querySelector("#formulation-ingredient-table");
+const formulationNucleiTable = document.querySelector("#formulation-nuclei-table");
+const formulationDietTable = document.querySelector("#formulation-diet-table");
+const formulationBalanceTable = document.querySelector("#formulation-balance-table");
 const kpiGrid = document.querySelector("#kpi-grid");
 const flowTable = document.querySelector("#flow-table");
 const inventoryTable = document.querySelector("#inventory-table");
@@ -35,7 +41,7 @@ async function init() {
   baseParameters = await response.json();
   currentParameters = structuredClone(baseParameters);
 
-  document.querySelector("#app-version").textContent = baseParameters.metadata?.version ?? "0.4.2-dev";
+  document.querySelector("#app-version").textContent = baseParameters.metadata?.version ?? "0.5.0-dev";
 
   renderInputs();
   recalculate();
@@ -114,8 +120,56 @@ function handleInputChange(event) {
   recalculate();
 }
 
+
+function syncFormulatedFeedCosts(formulationResult) {
+  Object.entries(formulationResult.dietCostMap ?? {}).forEach(([dietKey, costPerKg]) => {
+    if (currentParameters.feed_costs_formulated_per_kg?.[dietKey]) {
+      currentParameters.feed_costs_formulated_per_kg[dietKey].value = costPerKg;
+    }
+  });
+}
+
+function handleFormulationInput(event) {
+  const { formulationType, key, field, dietKey, ingredientKey } = event.target.dataset;
+  const formulation = currentParameters.feed_formulation;
+
+  if (!formulation) return;
+
+  if (formulationType === "ingredient") {
+    if (field === "label") {
+      formulation.ingredients[key].label = event.target.value;
+    } else if (field === "price") {
+      formulation.ingredients[key].price = toNumber(event.target.value, formulation.ingredients[key].price);
+    }
+  }
+
+  if (formulationType === "nucleus") {
+    formulation.nuclei[key].price = toNumber(event.target.value, formulation.nuclei[key].price);
+  }
+
+  if (formulationType === "diet-ingredient") {
+    formulation.diets[dietKey].ingredients_kg[ingredientKey] = toNumber(event.target.value, formulation.diets[dietKey].ingredients_kg[ingredientKey]);
+  }
+
+  if (formulationType === "diet-nucleus") {
+    formulation.diets[dietKey].nucleus_kg = toNumber(event.target.value, formulation.diets[dietKey].nucleus_kg);
+  }
+
+  recalculate();
+}
+
 function recalculate() {
+  const formulationPreResult = calculateFeedFormulation(currentParameters);
+  syncFormulatedFeedCosts(formulationPreResult);
+
+  if ((currentParameters.feed_cost_mode?.active ?? "purchased") === "formulated") {
+    renderFeedCostMode();
+  }
+
   const feedResult = calculateFeed(currentParameters);
+  const formulationResult = calculateFeedFormulation(currentParameters, feedResult);
+  syncFormulatedFeedCosts(formulationResult);
+
   const economicResult = calculateEconomicSummary(currentParameters, feedResult);
   const scenarioResult = analyzeScenarios(currentParameters);
   const result = feedResult.inventory;
@@ -123,6 +177,7 @@ function recalculate() {
   renderFlowTable(result.flow);
   renderInventory(result.groups);
   renderFeed(feedResult);
+  renderFeedFormulation(formulationResult);
   renderEconomicSummary(economicResult);
   renderScenarios(scenarioResult);
   renderStickyBalance(feedResult, economicResult);
@@ -163,7 +218,7 @@ function renderFlowTable(flow) {
     ["Lechones a iniciación", flow.pigsToInitiationPerWeek],
     ["Cerdos a crecimiento", flow.pigsToGrowthPerWeek],
     ["Cerdos a desarrollo", flow.pigsToDevelopmentPerWeek],
-    ["Cerdos a engorda", flow.pigsToFinishingPerWeek],
+    ["Cerdos a finalización", flow.pigsToFinishingPerWeek],
     ["Cerdos a rastro", flow.pigsToMarketPerWeek]
   ];
 
@@ -183,7 +238,7 @@ function renderInventory(groups) {
   const pigRows = [
     ["Lactantes", groups.lactantes],
     ["Destete", groups.destete],
-    ["Engorda", groups.engorda],
+    ["Finalización", groups.engorda],
     ["Total cerdos", groups.totalInventory]
   ];
 
@@ -293,6 +348,168 @@ function renderFeed(feedResult) {
   `;
 }
 
+
+
+function renderFeedFormulation(formulationResult) {
+  if (!formulationKpis || !formulationIngredientTable || !formulationDietTable || !formulationBalanceTable) return;
+
+  const formulation = currentParameters.feed_formulation ?? {};
+  const activeMode = currentParameters.feed_cost_mode?.active ?? "purchased";
+  const unbalanced = formulationResult.diets.filter((diet) => !diet.isBalanced);
+
+  formulationKpis.innerHTML = `
+    <article class="kpi-card ${activeMode === "formulated" ? "positive" : "economic"}">
+      <div class="label">Modo activo alimento</div>
+      <div><div class="value">${activeMode === "formulated" ? "Formulación" : "Compra"}</div><div class="unit">${activeMode === "formulated" ? "usa costos calculados" : "usa costos capturados"}</div></div>
+    </article>
+    <article class="kpi-card ${unbalanced.length === 0 ? "positive" : "warning"}">
+      <div class="label">Fórmulas balanceadas</div>
+      <div><div class="value">${formulationResult.diets.length - unbalanced.length}/${formulationResult.diets.length}</div><div class="unit">base ${formatNumber(formulationResult.batchKg, 0)} kg</div></div>
+    </article>
+    <article class="kpi-card economic">
+      <div class="label">Costo formulado promedio</div>
+      <div><div class="value">${formatCurrency(mean(formulationResult.diets.map((d) => d.costPerKg)), 2)}</div><div class="unit">MXN/kg dieta</div></div>
+    </article>
+  `;
+
+  formulationIngredientTable.innerHTML = renderIngredientTable(formulation.ingredients ?? {});
+  formulationNucleiTable.innerHTML = renderNucleiTable(formulation.nuclei ?? {});
+  formulationDietTable.innerHTML = renderDietFormulaTable(formulation, formulationResult);
+  formulationBalanceTable.innerHTML = renderIngredientBalanceTable(formulationResult.balance);
+
+  document.querySelectorAll("[data-formulation-type]").forEach((input) => {
+    input.addEventListener("input", handleFormulationInput);
+  });
+}
+
+function mean(values) {
+  const clean = values.filter((value) => Number.isFinite(value));
+  return clean.length ? clean.reduce((sum, value) => sum + value, 0) / clean.length : 0;
+}
+
+function renderIngredientTable(ingredients) {
+  return `
+    <table class="compact-table">
+      <thead>
+        <tr><th>Ingrediente</th><th>Precio/kg</th><th>Tipo</th></tr>
+      </thead>
+      <tbody>
+        ${Object.entries(ingredients).map(([key, ingredient]) => `
+          <tr>
+            <td>
+              ${ingredient.editable_label ? `
+                <input class="inline-input text-input" type="text" value="${ingredient.label}" data-formulation-type="ingredient" data-key="${key}" data-field="label" />
+              ` : `<strong>${ingredient.label}</strong>`}
+            </td>
+            <td>
+              <input class="inline-input" type="number" step="any" value="${ingredient.price}" data-formulation-type="ingredient" data-key="${key}" data-field="price" />
+            </td>
+            <td>${ingredient.type ?? "ingrediente"}</td>
+          </tr>
+        `).join("")}
+      </tbody>
+    </table>
+  `;
+}
+
+function renderNucleiTable(nuclei) {
+  return `
+    <table class="compact-table">
+      <thead>
+        <tr><th>Núcleo / dieta</th><th>Precio/kg</th></tr>
+      </thead>
+      <tbody>
+        ${Object.entries(nuclei).map(([key, nucleus]) => `
+          <tr>
+            <td><strong>${nucleus.label}</strong></td>
+            <td>
+              <input class="inline-input" type="number" step="any" value="${nucleus.price}" data-formulation-type="nucleus" data-key="${key}" />
+            </td>
+          </tr>
+        `).join("")}
+      </tbody>
+    </table>
+  `;
+}
+
+function renderDietFormulaTable(formulation, formulationResult) {
+  const ingredients = formulation.ingredients ?? {};
+  const ingredientKeys = Object.keys(ingredients);
+  const dietResultMap = Object.fromEntries(formulationResult.diets.map((diet) => [diet.key, diet]));
+
+  return `
+    <table class="formula-table">
+      <thead>
+        <tr>
+          <th>Dieta</th>
+          ${ingredientKeys.map((key) => `<th>${ingredients[key].label}<br><span>kg/ton</span></th>`).join("")}
+          <th>Núcleo<br><span>kg/ton</span></th>
+          <th>Total kg</th>
+          <th>Costo/ton</th>
+          <th>Costo/kg</th>
+          <th>Estado</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${Object.entries(formulation.diets ?? {}).map(([dietKey, diet]) => {
+          const result = dietResultMap[dietKey];
+          return `
+            <tr>
+              <td><strong>${diet.label}</strong></td>
+              ${ingredientKeys.map((ingredientKey) => `
+                <td>
+                  <input class="inline-input small-input" type="number" step="any" value="${diet.ingredients_kg?.[ingredientKey] ?? 0}" data-formulation-type="diet-ingredient" data-diet-key="${dietKey}" data-ingredient-key="${ingredientKey}" />
+                </td>
+              `).join("")}
+              <td>
+                <input class="inline-input small-input" type="number" step="any" value="${diet.nucleus_kg}" data-formulation-type="diet-nucleus" data-diet-key="${dietKey}" />
+              </td>
+              <td>${formatNumber(result.totalKg, 1)}</td>
+              <td>${formatCurrency(result.costPerTon, 2)}</td>
+              <td>${formatCurrency(result.costPerKg, 2)}</td>
+              <td><span class="status-chip ${result.isBalanced ? "ok" : "warn"}">${result.isBalanced ? "1000 kg" : `Δ ${formatNumber(result.balanceDelta, 1)} kg`}</span></td>
+            </tr>
+          `;
+        }).join("")}
+      </tbody>
+    </table>
+  `;
+}
+
+function renderIngredientBalanceTable(balance) {
+  const rows = balance?.rows ?? [];
+  const totals = balance?.totals ?? {};
+
+  if (rows.length === 0) {
+    return `<p class="panel-note">El balance mensual se calculará cuando exista consumo de alimento asociado a las dietas formuladas.</p>`;
+  }
+
+  return `
+    <table>
+      <thead>
+        <tr><th>Insumo</th><th>Tipo</th><th>Kg/mes</th><th>Ton/mes</th><th>Costo mensual</th></tr>
+      </thead>
+      <tbody>
+        ${rows.map((row) => `
+          <tr>
+            <td>${row.label}</td>
+            <td>${row.type}</td>
+            <td>${formatNumber(row.kgMonth, 1)}</td>
+            <td>${formatNumber(row.kgMonth / 1000, 2)}</td>
+            <td>${formatCurrency(row.costMonth, 2)}</td>
+          </tr>
+        `).join("")}
+        <tr class="total-row">
+          <td>Total</td>
+          <td>—</td>
+          <td>${formatNumber(totals.totalKgMonth ?? 0, 1)}</td>
+          <td>${formatNumber((totals.totalKgMonth ?? 0) / 1000, 2)}</td>
+          <td>${formatCurrency(totals.totalCostMonth ?? 0, 2)}</td>
+        </tr>
+      </tbody>
+    </table>
+  `;
+}
 
 function renderEconomicSummary(economicResult) {
   economicKpis.innerHTML = `

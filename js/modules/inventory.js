@@ -17,7 +17,7 @@ export function calculateInventory(parameters) {
     (flow.weanedPerWeek * duration(parameters, "phase_3")) +
     (flow.pigsToInitiationPerWeek * duration(parameters, "initiation"));
 
-  // Estructura equivalente al tablero: Crecimiento + Desarrollo + Engorda.
+  // Estructura equivalente al tablero: Crecimiento + Desarrollo + Finalización.
   const engorda =
     (flow.pigsToGrowthPerWeek * duration(parameters, "growth")) +
     (flow.pigsToDevelopmentPerWeek * duration(parameters, "development")) +
@@ -28,7 +28,7 @@ export function calculateInventory(parameters) {
   const efficiencyFactor = flow.pigsSoldPerMonth / breedingSows;
 
   // Inventario de hembras reproductivas. Se separa del inventario de cerdos en producción
-  // para evitar mezclar lechones/engorda con pie de cría. La lógica es equivalente al
+  // para evitar mezclar lechones/finalización con pie de cría. La lógica es equivalente al
   // ciclo reproductivo: lactando + abierta + gestante = vientres del sistema.
   const lactatingFemales = flow.farrowingsPerWeek * flow.lactationWeeks;
   const openFemales = flow.farrowingsPerWeek * (flow.assumptions.openDays / 7);

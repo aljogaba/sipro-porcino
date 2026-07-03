@@ -1,7 +1,7 @@
 {
   "metadata": {
     "project": "SIPRO-Porcino",
-    "version": "0.4.2-dev",
+    "version": "0.5.0-dev",
     "country_context": "México",
     "production_system": "Granja ciclo completo",
     "source": "Mapa técnico inicial derivado del modelo Excel privado",
@@ -76,7 +76,7 @@
       "excel_source": "Tablero!D28"
     },
     "mortality_finishing": {
-      "label": "% Mortalidad engorda",
+      "label": "% Mortalidad finalización",
       "value": 3,
       "unit": "%",
       "excel_source": "Tablero!D30"
@@ -150,7 +150,7 @@
       "excel_source": "Tablero!J24"
     },
     "finishing": {
-      "label": "Engorda",
+      "label": "Finalización",
       "value": 3,
       "unit": "kg/día",
       "excel_source": "Tablero!J26"
@@ -194,7 +194,7 @@
       "excel_source": "Tablero!J37"
     },
     "finishing": {
-      "label": "Engorda",
+      "label": "Finalización",
       "value": 5,
       "unit": "semanas",
       "excel_source": "Tablero!J38"
@@ -266,7 +266,7 @@
       "formulated": {
         "label": "Formulación propia",
         "title": "Costos por kg calculados desde formulación",
-        "note": "Modo preparado para el módulo de formulación alimenticia. En esta versión usa costos formulados de referencia del Excel y los muestra bloqueados hasta migrar la hoja de fórmulas."
+        "note": "Usa costos calculados automáticamente desde el módulo de formulación económica. La medicación/suplementación no ponderal queda preparada para integrarse desde un módulo posterior."
       }
     }
   },
@@ -335,7 +335,7 @@
       "note": "Costo editable para dietas compradas o maquiladas. El productor puede capturar el costo real por kg de cada dieta."
     },
     "finishing": {
-      "label": "Engorda",
+      "label": "Finalización",
       "value": 9.37666,
       "unit": "$/kg",
       "excel_source": "Tablero!G19",
@@ -407,7 +407,7 @@
       "note": "Costo formulado de referencia importado del modelo Excel. En una fase posterior se calculará automáticamente desde ingredientes y fórmulas."
     },
     "finishing": {
-      "label": "Engorda",
+      "label": "Finalización",
       "value": 9.37666,
       "unit": "$/kg",
       "excel_source": "Tablero!G19",
@@ -442,6 +442,316 @@
       "unit": "$/mes",
       "excel_source": "Tablero!J49",
       "note": "Costo mensual editable para egresos asociados a pie de cría."
+    }
+  },
+  "feed_formulation": {
+    "batch_size_kg": 1000,
+    "note": "Formulación económica por tonelada. No incluye balance nutricional. La medicación/suplementación no ponderal se integrará desde un módulo posterior y por ahora no suma al costo calculado.",
+    "ingredients": {
+      "sorghum": {
+        "label": "Sorgo",
+        "price": 6.75,
+        "unit": "$/kg",
+        "editable_label": false,
+        "type": "macro"
+      },
+      "corn": {
+        "label": "Maíz",
+        "price": 7.0,
+        "unit": "$/kg",
+        "editable_label": false,
+        "type": "macro"
+      },
+      "soybean": {
+        "label": "Soya",
+        "price": 12.8,
+        "unit": "$/kg",
+        "editable_label": false,
+        "type": "macro"
+      },
+      "wheat_bran": {
+        "label": "Salvado",
+        "price": 3.45,
+        "unit": "$/kg",
+        "editable_label": false,
+        "type": "macro"
+      },
+      "tallow": {
+        "label": "Sebo",
+        "price": 9.0,
+        "unit": "$/kg",
+        "editable_label": false,
+        "type": "macro"
+      },
+      "optional_1": {
+        "label": "Opcional 1",
+        "price": 1.0,
+        "unit": "$/kg",
+        "editable_label": true,
+        "type": "opcional"
+      },
+      "optional_2": {
+        "label": "Opcional 2",
+        "price": 0.0,
+        "unit": "$/kg",
+        "editable_label": true,
+        "type": "opcional"
+      },
+      "optional_3": {
+        "label": "Opcional 3",
+        "price": 0.0,
+        "unit": "$/kg",
+        "editable_label": true,
+        "type": "opcional"
+      },
+      "optional_4": {
+        "label": "Opcional 4",
+        "price": 0.0,
+        "unit": "$/kg",
+        "editable_label": true,
+        "type": "opcional"
+      },
+      "optional_5": {
+        "label": "Opcional 5",
+        "price": 0.0,
+        "unit": "$/kg",
+        "editable_label": true,
+        "type": "opcional"
+      }
+    },
+    "nuclei": {
+      "gestation": {
+        "label": "Núcleo Gestación",
+        "price": 20.63,
+        "unit": "$/kg"
+      },
+      "lactation_sow": {
+        "label": "Núcleo Lactancia",
+        "price": 25.22,
+        "unit": "$/kg"
+      },
+      "phase_0": {
+        "label": "Fase 0 / dieta completa",
+        "price": 25.22,
+        "unit": "$/kg"
+      },
+      "phase_1": {
+        "label": "Fase 1 / dieta completa",
+        "price": 20.6,
+        "unit": "$/kg"
+      },
+      "phase_2": {
+        "label": "Núcleo Fase 2",
+        "price": 29.64,
+        "unit": "$/kg"
+      },
+      "phase_3": {
+        "label": "Núcleo Fase 3",
+        "price": 31.86,
+        "unit": "$/kg"
+      },
+      "starter": {
+        "label": "Núcleo Iniciación",
+        "price": 36.24,
+        "unit": "$/kg"
+      },
+      "growth": {
+        "label": "Núcleo Crecimiento",
+        "price": 26.65,
+        "unit": "$/kg"
+      },
+      "development": {
+        "label": "Núcleo Desarrollo",
+        "price": 19.4,
+        "unit": "$/kg"
+      },
+      "finishing": {
+        "label": "Núcleo Finalización",
+        "price": 37.7,
+        "unit": "$/kg"
+      }
+    },
+    "diets": {
+      "gestation": {
+        "label": "Gestación",
+        "ingredients_kg": {
+          "sorghum": 550,
+          "corn": 0,
+          "soybean": 90,
+          "wheat_bran": 282,
+          "tallow": 48,
+          "optional_1": 0,
+          "optional_2": 0,
+          "optional_3": 0,
+          "optional_4": 0,
+          "optional_5": 0
+        },
+        "nucleus_key": "gestation",
+        "nucleus_kg": 30,
+        "non_weight_cost_per_ton": 0
+      },
+      "lactation_sow": {
+        "label": "Lactancia",
+        "ingredients_kg": {
+          "sorghum": 585,
+          "corn": 0,
+          "soybean": 245,
+          "wheat_bran": 80,
+          "tallow": 55,
+          "optional_1": 0,
+          "optional_2": 0,
+          "optional_3": 0,
+          "optional_4": 0,
+          "optional_5": 0
+        },
+        "nucleus_key": "lactation_sow",
+        "nucleus_kg": 35,
+        "non_weight_cost_per_ton": 0
+      },
+      "phase_0": {
+        "label": "Fase 0",
+        "ingredients_kg": {
+          "sorghum": 0,
+          "corn": 0,
+          "soybean": 0,
+          "wheat_bran": 0,
+          "tallow": 0,
+          "optional_1": 0,
+          "optional_2": 0,
+          "optional_3": 0,
+          "optional_4": 0,
+          "optional_5": 0
+        },
+        "nucleus_key": "phase_0",
+        "nucleus_kg": 1000,
+        "non_weight_cost_per_ton": 0
+      },
+      "phase_1": {
+        "label": "Fase 1",
+        "ingredients_kg": {
+          "sorghum": 0,
+          "corn": 0,
+          "soybean": 0,
+          "wheat_bran": 0,
+          "tallow": 0,
+          "optional_1": 0,
+          "optional_2": 0,
+          "optional_3": 0,
+          "optional_4": 0,
+          "optional_5": 0
+        },
+        "nucleus_key": "phase_1",
+        "nucleus_kg": 1000,
+        "non_weight_cost_per_ton": 0
+      },
+      "phase_2": {
+        "label": "Fase 2",
+        "ingredients_kg": {
+          "sorghum": 537,
+          "corn": 0,
+          "soybean": 240,
+          "wheat_bran": 0,
+          "tallow": 23,
+          "optional_1": 0,
+          "optional_2": 0,
+          "optional_3": 0,
+          "optional_4": 0,
+          "optional_5": 0
+        },
+        "nucleus_key": "phase_2",
+        "nucleus_kg": 200,
+        "non_weight_cost_per_ton": 0
+      },
+      "phase_3": {
+        "label": "Fase 3",
+        "ingredients_kg": {
+          "sorghum": 593,
+          "corn": 0,
+          "soybean": 260,
+          "wheat_bran": 0,
+          "tallow": 22,
+          "optional_1": 0,
+          "optional_2": 0,
+          "optional_3": 0,
+          "optional_4": 0,
+          "optional_5": 0
+        },
+        "nucleus_key": "phase_3",
+        "nucleus_kg": 125,
+        "non_weight_cost_per_ton": 0
+      },
+      "starter": {
+        "label": "Iniciación",
+        "ingredients_kg": {
+          "sorghum": 663,
+          "corn": 0,
+          "soybean": 235,
+          "wheat_bran": 0,
+          "tallow": 42,
+          "optional_1": 0,
+          "optional_2": 0,
+          "optional_3": 0,
+          "optional_4": 0,
+          "optional_5": 0
+        },
+        "nucleus_key": "starter",
+        "nucleus_kg": 60,
+        "non_weight_cost_per_ton": 0
+      },
+      "growth": {
+        "label": "Crecimiento",
+        "ingredients_kg": {
+          "sorghum": 690,
+          "corn": 0,
+          "soybean": 225,
+          "wheat_bran": 0,
+          "tallow": 50,
+          "optional_1": 0,
+          "optional_2": 0,
+          "optional_3": 0,
+          "optional_4": 0,
+          "optional_5": 0
+        },
+        "nucleus_key": "growth",
+        "nucleus_kg": 35,
+        "non_weight_cost_per_ton": 0
+      },
+      "development": {
+        "label": "Desarrollo",
+        "ingredients_kg": {
+          "sorghum": 690,
+          "corn": 0,
+          "soybean": 225,
+          "wheat_bran": 0,
+          "tallow": 50,
+          "optional_1": 0,
+          "optional_2": 0,
+          "optional_3": 0,
+          "optional_4": 0,
+          "optional_5": 0
+        },
+        "nucleus_key": "development",
+        "nucleus_kg": 35,
+        "non_weight_cost_per_ton": 0
+      },
+      "finishing": {
+        "label": "Finalización",
+        "ingredients_kg": {
+          "sorghum": 740,
+          "corn": 0,
+          "soybean": 195,
+          "wheat_bran": 0,
+          "tallow": 30,
+          "optional_1": 0,
+          "optional_2": 0,
+          "optional_3": 0,
+          "optional_4": 0,
+          "optional_5": 0
+        },
+        "nucleus_key": "finishing",
+        "nucleus_kg": 35,
+        "non_weight_cost_per_ton": 0
+      }
     }
   }
 }

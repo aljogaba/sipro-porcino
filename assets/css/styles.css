@@ -558,3 +558,64 @@ table .total-row td {
 @media (max-width: 640px) {
   .balance-mini-grid { grid-template-columns: 1fr; }
 }
+
+
+.mini-title {
+  margin: 18px 0 10px;
+  font-size: 1rem;
+  color: var(--ink);
+}
+
+.compact-table td,
+.compact-table th,
+.formula-table td,
+.formula-table th {
+  white-space: nowrap;
+}
+
+.formula-table th span {
+  color: var(--muted);
+  font-size: 0.68rem;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+.inline-input {
+  width: 94px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 8px 9px;
+  font: inherit;
+  font-size: 0.86rem;
+  font-weight: 800;
+  color: var(--ink);
+  background: #fff;
+}
+
+.inline-input.small-input { width: 76px; }
+.inline-input.text-input { width: 140px; }
+
+.status-chip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 74px;
+  border-radius: 999px;
+  padding: 5px 8px;
+  font-size: 0.74rem;
+  font-weight: 900;
+}
+
+.status-chip.ok {
+  background: var(--ok);
+  color: #0f3d36;
+}
+
+.status-chip.warn {
+  background: var(--warn);
+  color: #6c5100;
+}
+
+.wide-table {
+  margin-bottom: 18px;
+}

@@ -17,14 +17,14 @@
       </div>
       <div class="version-card">
         <span>Versión</span>
-        <strong id="app-version">0.4.2-dev</strong>
+        <strong id="app-version">0.5.0-dev</strong>
       </div>
     </div>
   </header>
 
   <main class="container main-layout">
     <section class="notice">
-      <strong>Módulo inicial:</strong> inventarios y flujo productivo. Esta versión reproduce la lógica base del Excel fuente para el tablero productivo visible. El módulo de alimento y el resumen económico mensual se integran de forma inicial; medicación detallada y formulación alimenticia completa se integrarán por fases. Esta versión ya incluye una primera capa de análisis de escenarios, balance económico lateral y separación del inventario productivo de cerdos e inventario de hembras reproductivas.
+      <strong>Módulo inicial:</strong> inventarios y flujo productivo. Esta versión reproduce la lógica base del Excel fuente para el tablero productivo visible. El módulo de alimento y el resumen económico mensual se integran de forma inicial; medicación detallada y formulación alimenticia completa se integrarán por fases. Esta versión ya incluye una primera capa de análisis de escenarios, balance económico lateral y separación del inventario productivo de cerdos e inventario de hembras reproductivas. Integra además el primer módulo de formulación económica de dietas por tonelada.
     </section>
 
     <section class="panel">
@@ -73,6 +73,31 @@
       </div>
       <p id="feed-cost-mode-note" class="panel-note">Seleccione si el costo del alimento se capturará como dieta comprada o se tomará del módulo de formulación.</p>
       <div id="feed-cost-inputs" class="input-grid compact"></div>
+    </section>
+
+    <section class="panel" id="feed-formulation-panel">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">Formulación alimenticia</p>
+          <h2>Formulación económica de dietas</h2>
+        </div>
+      </div>
+      <p class="panel-note">Módulo económico por tonelada: calcula costo/ton y costo/kg a partir de ingredientes, núcleos y kg incluidos por dieta. No sustituye una formulación nutricional. La medicación/suplementación no ponderal queda preparada para integrarse desde un módulo posterior.</p>
+      <div class="kpi-grid compact-kpis" id="formulation-kpis"></div>
+      <div class="two-column nested">
+        <div>
+          <h3 class="mini-title">Ingredientes</h3>
+          <div id="formulation-ingredient-table" class="table-wrap"></div>
+        </div>
+        <div>
+          <h3 class="mini-title">Núcleos y dietas completas</h3>
+          <div id="formulation-nuclei-table" class="table-wrap"></div>
+        </div>
+      </div>
+      <h3 class="mini-title">Fórmulas por tonelada</h3>
+      <div id="formulation-diet-table" class="table-wrap wide-table"></div>
+      <h3 class="mini-title">Balance mensual de insumos</h3>
+      <div id="formulation-balance-table" class="table-wrap"></div>
     </section>
 
 

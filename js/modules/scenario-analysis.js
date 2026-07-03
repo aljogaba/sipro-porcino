@@ -122,13 +122,13 @@ export function analyzeScenarios(parameters) {
       id: "optimized",
       name: "Mejora técnica",
       shortName: "Mejora",
-      description: "+0.5 LNV/hembra, menor mortalidad en maternidad, destete y engorda, y -3% en costo de alimento."
+      description: "+0.5 LNV/hembra, menor mortalidad en maternidad, destete y finalización, y -3% en costo de alimento."
     },
     {
       id: "sanitary_pressure",
       name: "Presión sanitaria",
       shortName: "Sanitario",
-      description: "Aumento moderado de mortalidad en maternidad, destete, iniciación y engorda."
+      description: "Aumento moderado de mortalidad en maternidad, destete, iniciación y finalización."
     },
     {
       id: "feed_shock",

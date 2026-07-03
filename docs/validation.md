@@ -1,35 +1,3 @@
-# Validación técnica
-
-## Estado de validación
-
-La versión `v0.4.2-dev` fue revisada localmente contra el modelo Excel fuente para los módulos iniciales de flujo productivo, inventarios, consumo de alimento, resumen económico y visualización de escenarios.
-
-### Módulos revisados
-
-- Flujo reproductivo.
-- Días de gestación base: 115 días.
-- Días abiertos editables.
-- Inventarios de cerdos en producción.
-- Inventario de hembras reproductivas.
-- Consumo de alimento por etapa.
-- Costos de alimento por kg de dieta.
-- Resumen económico mensual.
-- Balance lateral.
-- Escenarios iniciales de sensibilidad.
-
-### Estado
-
-Validado visual y funcionalmente en entorno local con Live Server.
-
-### Pendientes de validación fina
-
-- Formulación alimenticia detallada.
-- Medicación y premezclas.
-- Gastos médicos, impuestos y varios.
-- Reporte técnico exportable.
-- Escenarios editables por el usuario.
-
-
 # Validación inicial
 
 ## Caso base auditado desde Excel fuente
@@ -129,8 +97,8 @@ Se agregó una capa inicial de análisis de escenarios. Los escenarios son proye
 Escenarios incluidos:
 
 - **Escenario actual:** resultados con los valores capturados por el usuario.
-- **Mejora técnica:** incremento de 0.5 LNV/hembra, reducción de mortalidad en maternidad, destete y engorda, y reducción de 3% en costo de alimento.
-- **Presión sanitaria:** incremento moderado de mortalidad en maternidad, destete, iniciación y engorda.
+- **Mejora técnica:** incremento de 0.5 LNV/hembra, reducción de mortalidad en maternidad, destete y finalización, y reducción de 3% en costo de alimento.
+- **Presión sanitaria:** incremento moderado de mortalidad en maternidad, destete, iniciación y finalización.
 - **Alimento +10%:** incremento de 10% en el costo de todas las dietas activas.
 - **Mercado adverso:** reducción de 5% en precio de venta y aumento de 5% en costo de alimento.
 
@@ -152,7 +120,7 @@ Validación pendiente:
 
 Se separó la lectura visual del inventario en dos componentes:
 
-- **Cerdos en producción:** lactantes, destete y engorda.
+- **Cerdos en producción:** lactantes, destete y finalización.
 - **Hembras reproductivas:** hembras lactando, hembras abiertas y hembras gestantes.
 
 La lógica usada para hembras reproductivas es:
@@ -166,3 +134,24 @@ Hembras gestantes = vientres - hembras lactando - hembras abiertas
 Este inventario se muestra como lectura operativa del sistema reproductivo y no se suma al inventario total de cerdos en producción del tablero principal.
 
 También se ajustó el layout responsivo del balance económico lateral para evitar superposición con los paneles principales.
+
+
+## v0.5.0-dev — Formulación económica de dietas
+
+Se integra el primer módulo de formulación alimenticia con enfoque económico, no nutricional.
+
+### Alcance
+
+- Ingredientes editables: sorgo, maíz, soya, salvado, sebo y cinco ingredientes opcionales.
+- Núcleos/dietas completas editables por etapa.
+- Fórmulas por tonelada con kg de inclusión por ingrediente y núcleo.
+- Cálculo automático de total kg, costo/ton y costo/kg por dieta.
+- Advertencia visual cuando una dieta no suma 1000 kg.
+- Balance mensual de insumos ligado al consumo mensual estimado por dieta.
+- Transferencia automática de costos formulados al modo “Formulación propia”.
+
+### Exclusiones técnicas de esta versión
+
+- No calcula proteína, energía, lisina, minerales ni restricciones nutricionales.
+- La medicación/suplementación no ponderal no se suma todavía al costo formulado; queda reservada para el módulo posterior de medicación/premezclas.
+- Fase 0 y Fase 1 se tratan como dietas completas compradas dentro del bloque de núcleos.

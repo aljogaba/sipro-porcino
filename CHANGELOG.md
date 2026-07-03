@@ -2,6 +2,28 @@
 
 Todos los cambios importantes de SIPRO-Porcino serán documentados en este archivo.
 
+## [0.5.0-dev] - En desarrollo
+
+### Agregado
+
+- Módulo de formulación económica de dietas por tonelada.
+- Tabla editable de ingredientes y precios.
+- Tabla editable de núcleos/dietas completas por etapa.
+- Fórmulas por tonelada con validación de suma a 1000 kg.
+- Cálculo automático de costo/ton y costo/kg por dieta formulada.
+- Balance mensual de insumos ligado al consumo estimado de alimento.
+- Transferencia automática al modo “Formulación propia”.
+
+### Cambiado
+
+- Homologación del término “Engorda” a “Finalización” en la interfaz.
+- El modo “Formulación propia” deja de usar costos bloqueados de referencia y ahora usa costos calculados desde ingredientes y fórmulas.
+
+### Pendiente
+
+- Integrar medicación/suplementación no ponderal desde el módulo de medicación/premezclas.
+- Validación fina de costos formulados contra el Excel fuente, considerando que esta versión excluye temporalmente el costo de medicación.
+
 ## [0.4.2-dev] - En desarrollo
 
 ### Corregido
