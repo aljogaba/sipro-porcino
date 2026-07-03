@@ -1,0 +1,20 @@
+# Archivos fuente privados
+*.xlsx
+*.xlsm
+*.xls
+
+# Archivos temporales de Office
+~$*
+
+# Carpetas privadas
+excel-fuente-privado/
+dev-private/
+notas-privadas/
+documentos-maestros/
+
+# Sistema operativo
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
