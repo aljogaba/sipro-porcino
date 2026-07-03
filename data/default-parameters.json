@@ -1,0 +1,242 @@
+{
+  "metadata": {
+    "project": "SIPRO-Porcino",
+    "version": "0.1.0-dev",
+    "country_context": "México",
+    "production_system": "Granja ciclo completo",
+    "source": "Mapa técnico inicial derivado del modelo Excel privado",
+    "language": "es"
+  },
+  "productive_parameters": {
+    "breeding_sows": {
+      "label": "No. de vientres",
+      "value": 300,
+      "unit": "vientres",
+      "excel_source": "Tablero!D10"
+    },
+    "parity_rate": {
+      "label": "% Paridad",
+      "value": 85,
+      "unit": "%",
+      "excel_source": "Tablero!D12"
+    },
+    "fertility_rate": {
+      "label": "% Fertilidad",
+      "value": 85,
+      "unit": "%",
+      "excel_source": "Tablero!D14"
+    },
+    "lactation_days": {
+      "label": "Días lactancia",
+      "value": 23,
+      "unit": "días",
+      "excel_source": "Tablero!D17"
+    },
+    "liveborn_per_sow": {
+      "label": "LNV/hembra",
+      "value": 11,
+      "unit": "lechones",
+      "excel_source": "Tablero!D20"
+    },
+    "mortality_maternity": {
+      "label": "% Mortalidad maternidad",
+      "value": 6,
+      "unit": "%",
+      "excel_source": "Tablero!D22"
+    },
+    "mortality_weaning": {
+      "label": "% Mortalidad destete",
+      "value": 5,
+      "unit": "%",
+      "excel_source": "Tablero!D24"
+    },
+    "mortality_initiation": {
+      "label": "% Mortalidad iniciación",
+      "value": 1,
+      "unit": "%",
+      "excel_source": "Tablero!D26"
+    },
+    "mortality_growth": {
+      "label": "% Mortalidad crecimiento",
+      "value": 1,
+      "unit": "%",
+      "excel_source": "Tablero!D27"
+    },
+    "mortality_development": {
+      "label": "% Mortalidad desarrollo",
+      "value": 1,
+      "unit": "%",
+      "excel_source": "Tablero!D28"
+    },
+    "mortality_finishing": {
+      "label": "% Mortalidad engorda",
+      "value": 3,
+      "unit": "%",
+      "excel_source": "Tablero!D30"
+    },
+    "market_weight": {
+      "label": "Peso prom. cerdo a rastro",
+      "value": 105,
+      "unit": "kg",
+      "excel_source": "Tablero!D33"
+    },
+    "sale_price_per_kg": {
+      "label": "Precio venta kg de cerdo",
+      "value": 46.5,
+      "unit": "$/kg",
+      "excel_source": "Tablero!D34"
+    }
+  },
+  "feed_consumption_kg_day": {
+    "gestation": {
+      "label": "Gestación",
+      "value": 2.5,
+      "unit": "kg/día",
+      "excel_source": "Tablero!J10"
+    },
+    "lactation_sow": {
+      "label": "Lactancia",
+      "value": 5,
+      "unit": "kg/día",
+      "excel_source": "Tablero!J12"
+    },
+    "phase_0": {
+      "label": "Fase 0",
+      "value": 0.007,
+      "unit": "kg/día",
+      "excel_source": "Tablero!J13"
+    },
+    "phase_1": {
+      "label": "Fase 1",
+      "value": 0.32,
+      "unit": "kg/día",
+      "excel_source": "Tablero!J14"
+    },
+    "phase_2": {
+      "label": "Fase 2",
+      "value": 0.65,
+      "unit": "kg/día",
+      "excel_source": "Tablero!J16"
+    },
+    "phase_3": {
+      "label": "Fase 3",
+      "value": 0.65,
+      "unit": "kg/día",
+      "excel_source": "Tablero!J18"
+    },
+    "starter": {
+      "label": "Iniciador",
+      "value": 1.1,
+      "unit": "kg/día",
+      "excel_source": "Tablero!J20"
+    },
+    "growth": {
+      "label": "Crecimiento",
+      "value": 1.75,
+      "unit": "kg/día",
+      "excel_source": "Tablero!J22"
+    },
+    "development": {
+      "label": "Desarrollo",
+      "value": 2.45,
+      "unit": "kg/día",
+      "excel_source": "Tablero!J24"
+    },
+    "finishing": {
+      "label": "Engorda",
+      "value": 3,
+      "unit": "kg/día",
+      "excel_source": "Tablero!J26"
+    }
+  },
+  "stage_duration_weeks": {
+    "phase_1": {
+      "label": "Fase 1",
+      "value": 1,
+      "unit": "semanas",
+      "excel_source": "Tablero!J32"
+    },
+    "phase_2": {
+      "label": "Fase 2",
+      "value": 1,
+      "unit": "semanas",
+      "excel_source": "Tablero!J33"
+    },
+    "phase_3": {
+      "label": "Fase 3",
+      "value": 1,
+      "unit": "semanas",
+      "excel_source": "Tablero!J34"
+    },
+    "initiation": {
+      "label": "Iniciación",
+      "value": 4,
+      "unit": "semanas",
+      "excel_source": "Tablero!J35"
+    },
+    "growth": {
+      "label": "Crecimiento",
+      "value": 4,
+      "unit": "semanas",
+      "excel_source": "Tablero!J36"
+    },
+    "development": {
+      "label": "Desarrollo",
+      "value": 4,
+      "unit": "semanas",
+      "excel_source": "Tablero!J37"
+    },
+    "finishing": {
+      "label": "Engorda",
+      "value": 5,
+      "unit": "semanas",
+      "excel_source": "Tablero!J38"
+    }
+  },
+  "raw_material_costs": {
+    "sorghum": {
+      "label": "Sorgo",
+      "value": 6.75,
+      "unit": "$/kg",
+      "excel_source": "Tablero!G29"
+    },
+    "corn": {
+      "label": "Maíz",
+      "value": 7,
+      "unit": "$/kg",
+      "excel_source": "Tablero!G30"
+    },
+    "soybean": {
+      "label": "Soya",
+      "value": 12.8,
+      "unit": "$/kg",
+      "excel_source": "Tablero!G31"
+    }
+  },
+  "labor": {
+    "workers": {
+      "label": "No. trabajadores",
+      "value": 6,
+      "unit": "trabajadores",
+      "excel_source": "Tablero!G37"
+    },
+    "weekly_salary": {
+      "label": "$/semana",
+      "value": 2400,
+      "unit": "$/semana",
+      "excel_source": "Tablero!G38"
+    }
+  },
+  "ui_reference_labels": {
+    "note": "Estos valores pueden mostrarse como referencia visual, pero no deben usarse como variables de cálculo si no forman parte del modelo.",
+    "weight_ranges": {
+      "phase_1": "6-10 kg",
+      "phase_2": "10-12 kg",
+      "phase_3": "12-15 kg",
+      "starter": "15-30 kg",
+      "growth": "30-50 kg",
+      "development": "50-80 kg",
+      "finishing": "80-Mercado"
+    }
+  }
+}
