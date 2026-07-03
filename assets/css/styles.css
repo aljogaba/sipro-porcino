@@ -352,3 +352,17 @@ table .total-row td {
   color: #7a9b8f;
   font-weight: 700;
 }
+
+.kpi-card.bad { background: linear-gradient(180deg, #ffffff, var(--bad)); }
+
+.input-grid.two-items {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.two-column.nested {
+  margin-top: 18px;
+}
+
+@media (max-width: 960px) {
+  .input-grid.two-items { grid-template-columns: 1fr; }
+}

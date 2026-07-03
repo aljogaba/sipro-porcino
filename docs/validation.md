@@ -70,3 +70,21 @@ Se agregó un selector de modo para distinguir dos escenarios técnicos:
 2. **Formulación propia:** la plataforma usará costos calculados desde formulaciones. En esta versión queda preparada la arquitectura y se utilizan costos de referencia derivados del Excel fuente.
 
 El modo activo afecta directamente el costo semanal, mensual, costo alimento/kg y conversión económica asociada al alimento.
+
+## Versión 0.3.0-dev — Resumen económico mensual
+
+Se agregó un módulo inicial de resumen económico. Esta versión integra:
+
+- ingresos mensuales calculados a partir de cerdos vendidos, peso de venta y precio por kg;
+- costo mensual de alimento calculado desde el módulo de alimento;
+- mano de obra calculada como trabajadores × salario semanal × 4.3 semanas/mes;
+- costos mensuales editables para medicina/impuestos/varios, gastos extras y egresos de pie de cría;
+- egresos totales, utilidad mensual, utilidad semanal y porcentajes sobre ingreso.
+
+Los valores de medicina, impuestos, gastos extras y pie de cría quedan como entradas provisionales hasta migrar los módulos detallados del Excel fuente.
+
+Validación pendiente:
+
+- comparar ingresos mensuales contra el Excel, considerando el ajuste de gestación de 115 días;
+- validar si el Excel usa 4.3 semanas/mes en todos los bloques económicos;
+- confirmar la lógica detallada de pie de cría y gastos médicos desde las hojas auxiliares.

@@ -17,14 +17,14 @@
       </div>
       <div class="version-card">
         <span>Versión</span>
-        <strong id="app-version">0.2.1-dev</strong>
+        <strong id="app-version">0.3.0-dev</strong>
       </div>
     </div>
   </header>
 
   <main class="container main-layout">
     <section class="notice">
-      <strong>Módulo inicial:</strong> inventarios y flujo productivo. Esta versión reproduce la lógica base del Excel fuente para el tablero productivo visible. El módulo de alimento se integra de forma inicial; medicación, gastos generales y costos completos se integrarán por fases.
+      <strong>Módulo inicial:</strong> inventarios y flujo productivo. Esta versión reproduce la lógica base del Excel fuente para el tablero productivo visible. El módulo de alimento y el resumen económico mensual se integran de forma inicial; medicación detallada, formulación alimenticia completa y escenarios se integrarán por fases.
     </section>
 
     <section class="panel">
@@ -75,6 +75,29 @@
       <div id="feed-cost-inputs" class="input-grid compact"></div>
     </section>
 
+
+    <section class="two-column">
+      <article class="panel">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Costos operativos</p>
+            <h2>Mano de obra</h2>
+          </div>
+        </div>
+        <div id="labor-inputs" class="input-grid two-items"></div>
+      </article>
+
+      <article class="panel">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Costos operativos</p>
+            <h2>Otros costos mensuales</h2>
+          </div>
+        </div>
+        <div id="other-cost-inputs" class="input-grid two-items"></div>
+      </article>
+    </section>
+
     <section class="kpi-grid" id="kpi-grid"></section>
 
     <section class="two-column">
@@ -114,6 +137,21 @@
     </section>
 
 
+
+    <section class="panel">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">Resumen económico</p>
+          <h2>Resultados mensuales</h2>
+        </div>
+      </div>
+      <div class="kpi-grid compact-kpis" id="economic-kpis"></div>
+      <div class="two-column nested">
+        <div id="economic-results-table" class="table-wrap"></div>
+        <div id="expenses-table" class="table-wrap"></div>
+      </div>
+    </section>
+
     <section class="panel">
       <div class="section-heading">
         <div>
@@ -127,6 +165,7 @@
         <li>El alimento semanal replica la estructura del Excel: inventario alimentado × consumo diario × 7 × costo/kg.</li>
         <li>El pie de cría incluye hembras gestantes, hembras lactantes y una relación macho:hembra de 1:20 para consumo de alimento.</li>
         <li>El costo del alimento puede trabajarse en dos modos: dietas compradas capturadas por el usuario o formulación propia preparada para calcularse desde ingredientes y fórmulas.</li>
+        <li>El resumen económico mensual integra ingresos, costo de alimento, mano de obra y otros costos operativos editables.</li>
       </ul>
     </section>
   </main>

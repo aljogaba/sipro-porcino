@@ -1,7 +1,7 @@
 {
   "metadata": {
     "project": "SIPRO-Porcino",
-    "version": "0.2.1-dev",
+    "version": "0.3.0-dev",
     "country_context": "México",
     "production_system": "Granja ciclo completo",
     "source": "Mapa técnico inicial derivado del modelo Excel privado",
@@ -412,6 +412,36 @@
       "unit": "$/kg",
       "excel_source": "Tablero!G19",
       "note": "Costo formulado de referencia importado del modelo Excel. En una fase posterior se calculará automáticamente desde ingredientes y fórmulas."
+    }
+  },
+  "other_monthly_costs": {
+    "medicine_taxes_misc": {
+      "label": "Medicina, impuestos y varios",
+      "value": 24514.95,
+      "unit": "$/mes",
+      "excel_source": "Tablero!J46",
+      "note": "Costo mensual editable; se integrará con el módulo detallado de medicación e impuestos."
+    },
+    "extra_expenses": {
+      "label": "Gastos extras",
+      "value": 8000,
+      "unit": "$/mes",
+      "excel_source": "Tablero!J47",
+      "note": "Gasto mensual editable para conceptos operativos extraordinarios."
+    },
+    "non_self_replacement_expense": {
+      "label": "Pie de cría no autorreemplazo",
+      "value": 0,
+      "unit": "$/mes",
+      "excel_source": "Tablero!J48",
+      "note": "Costo mensual editable asociado a pie de cría no autorreemplazado."
+    },
+    "breeding_stock_expense": {
+      "label": "Egresos pie de cría",
+      "value": 35630,
+      "unit": "$/mes",
+      "excel_source": "Tablero!J49",
+      "note": "Costo mensual editable para egresos asociados a pie de cría."
     }
   }
 }

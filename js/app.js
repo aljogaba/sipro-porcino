@@ -1,4 +1,5 @@
 import { calculateFeed } from "./modules/feed-consumption.js";
+import { calculateEconomicSummary } from "./modules/economic-summary.js";
 import { formatCurrency, formatInteger, formatNumber, formatPercent } from "./utils/formatters.js";
 import { toNumber } from "./utils/validators.js";
 
@@ -8,6 +9,8 @@ let currentParameters = null;
 const productiveInputs = document.querySelector("#productive-inputs");
 const durationInputs = document.querySelector("#duration-inputs");
 const feedConsumptionInputs = document.querySelector("#feed-consumption-inputs");
+const laborInputs = document.querySelector("#labor-inputs");
+const otherCostInputs = document.querySelector("#other-cost-inputs");
 const feedCostInputs = document.querySelector("#feed-cost-inputs");
 const feedCostPanelTitle = document.querySelector("#feed-cost-panel-title");
 const feedCostModeNote = document.querySelector("#feed-cost-mode-note");
@@ -18,6 +21,9 @@ const inventoryTable = document.querySelector("#inventory-table");
 const inventoryBars = document.querySelector("#inventory-bars");
 const feedKpis = document.querySelector("#feed-kpis");
 const feedTable = document.querySelector("#feed-table");
+const economicKpis = document.querySelector("#economic-kpis");
+const economicResultsTable = document.querySelector("#economic-results-table");
+const expensesTable = document.querySelector("#expenses-table");
 const resetBtn = document.querySelector("#reset-btn");
 
 async function init() {
@@ -25,7 +31,7 @@ async function init() {
   baseParameters = await response.json();
   currentParameters = structuredClone(baseParameters);
 
-  document.querySelector("#app-version").textContent = baseParameters.metadata?.version ?? "0.2.0-dev";
+  document.querySelector("#app-version").textContent = baseParameters.metadata?.version ?? "0.3.0-dev";
 
   renderInputs();
   recalculate();
@@ -35,6 +41,8 @@ function renderInputs() {
   productiveInputs.innerHTML = renderInputCards("productive_parameters", currentParameters.productive_parameters);
   durationInputs.innerHTML = renderInputCards("stage_duration_weeks", currentParameters.stage_duration_weeks);
   feedConsumptionInputs.innerHTML = renderInputCards("feed_consumption_kg_day", currentParameters.feed_consumption_kg_day);
+  laborInputs.innerHTML = renderInputCards("labor", currentParameters.labor);
+  otherCostInputs.innerHTML = renderInputCards("other_monthly_costs", currentParameters.other_monthly_costs);
   renderFeedCostMode();
 
   document.querySelectorAll("[data-section][data-key]").forEach((input) => {
@@ -104,14 +112,16 @@ function handleInputChange(event) {
 
 function recalculate() {
   const feedResult = calculateFeed(currentParameters);
+  const economicResult = calculateEconomicSummary(currentParameters, feedResult);
   const result = feedResult.inventory;
-  renderKpis(result, feedResult);
+  renderKpis(result, feedResult, economicResult);
   renderFlowTable(result.flow);
   renderInventory(result.groups);
   renderFeed(feedResult);
+  renderEconomicSummary(economicResult);
 }
 
-function renderKpis({ flow, groups }, feedResult) {
+function renderKpis({ flow, groups }, feedResult, economicResult) {
   const kpis = [
     { label: "Cerdos vendidos/mes", value: formatNumber(flow.pigsSoldPerMonth, 2), unit: "cerdos", type: "positive" },
     { label: "Días a mercado", value: formatInteger(flow.daysToMarket), unit: "días", type: "warning" },
@@ -124,6 +134,8 @@ function renderKpis({ flow, groups }, feedResult) {
     { label: "Mortalidad global", value: formatPercent(flow.totalMortalityPercent, 1), unit: "suma de mortalidades", type: "warning" },
     { label: "Factor de eficiencia", value: formatNumber(groups.efficiencyFactor, 2), unit: "cerdos/hembra/mes", type: "positive" },
     { label: "Costo alimento/mes", value: formatCurrency(feedResult.totals.totalCostMonth, 2), unit: "MXN", type: "economic" },
+    { label: "Egresos mes", value: formatCurrency(economicResult.totalCostsMonth, 2), unit: "MXN", type: "bad" },
+    { label: "Utilidad mes", value: formatCurrency(economicResult.profitMonth, 2), unit: "MXN", type: economicResult.profitMonth >= 0 ? "positive" : "bad" },
     { label: "Conv. alim. granja", value: formatNumber(feedResult.totals.feedConversionFarm, 2), unit: "kg alimento/kg vendido", type: "positive" }
   ];
 
@@ -244,6 +256,71 @@ function renderFeed(feedResult) {
           <td>${formatNumber(totals.totalKgWeek, 1)}</td>
           <td>${formatCurrency(totals.totalCostWeek, 2)}</td>
           <td>${formatPercent(100, 2)}</td>
+        </tr>
+      </tbody>
+    </table>
+  `;
+}
+
+
+function renderEconomicSummary(economicResult) {
+  economicKpis.innerHTML = `
+    <article class="kpi-card economic">
+      <div class="label">Ingresos mes</div>
+      <div><div class="value">${formatCurrency(economicResult.grossIncomeMonth, 2)}</div><div class="unit">100 %</div></div>
+    </article>
+    <article class="kpi-card bad">
+      <div class="label">Egresos mes</div>
+      <div><div class="value">${formatCurrency(economicResult.totalCostsMonth, 2)}</div><div class="unit">${formatPercent(economicResult.costPercentOfIncome, 1)} del ingreso</div></div>
+    </article>
+    <article class="kpi-card ${economicResult.profitMonth >= 0 ? "positive" : "bad"}">
+      <div class="label">Utilidad mes</div>
+      <div><div class="value">${formatCurrency(economicResult.profitMonth, 2)}</div><div class="unit">${formatPercent(economicResult.profitPercentOfIncome, 1)} del ingreso</div></div>
+    </article>
+    <article class="kpi-card positive">
+      <div class="label">Utilidad semana</div>
+      <div><div class="value">${formatCurrency(economicResult.profitWeek, 2)}</div><div class="unit">MXN/semana</div></div>
+    </article>
+  `;
+
+  economicResultsTable.innerHTML = `
+    <table>
+      <thead>
+        <tr><th>Resultado</th><th>Monto mensual</th><th>% ingreso</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Ingresos mes</td><td>${formatCurrency(economicResult.grossIncomeMonth, 2)}</td><td>${formatPercent(100, 1)}</td></tr>
+        <tr><td>Egresos mes</td><td>${formatCurrency(economicResult.totalCostsMonth, 2)}</td><td>${formatPercent(economicResult.costPercentOfIncome, 1)}</td></tr>
+        <tr class="total-row"><td>Utilidad mes</td><td>${formatCurrency(economicResult.profitMonth, 2)}</td><td>${formatPercent(economicResult.profitPercentOfIncome, 1)}</td></tr>
+        <tr><td>Utilidad semana</td><td>${formatCurrency(economicResult.profitWeek, 2)}</td><td>—</td></tr>
+      </tbody>
+    </table>
+  `;
+
+  expensesTable.innerHTML = `
+    <table>
+      <thead>
+        <tr>
+          <th>Concepto</th>
+          <th>Monto mensual</th>
+          <th>% egresos</th>
+          <th>% ingresos</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${economicResult.expenseRows.map((row) => `
+          <tr>
+            <td>${row.label}</td>
+            <td>${formatCurrency(row.amount, 2)}</td>
+            <td>${formatPercent(row.percentOfTotalCosts, 2)}</td>
+            <td>${formatPercent(row.percentOfIncome, 2)}</td>
+          </tr>
+        `).join("")}
+        <tr class="total-row">
+          <td>Gastos totales</td>
+          <td>${formatCurrency(economicResult.totalCostsMonth, 2)}</td>
+          <td>${formatPercent(100, 2)}</td>
+          <td>${formatPercent(economicResult.costPercentOfIncome, 2)}</td>
         </tr>
       </tbody>
     </table>
