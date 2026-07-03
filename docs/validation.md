@@ -1,3 +1,35 @@
+# Validación técnica
+
+## Estado de validación
+
+La versión `v0.4.2-dev` fue revisada localmente contra el modelo Excel fuente para los módulos iniciales de flujo productivo, inventarios, consumo de alimento, resumen económico y visualización de escenarios.
+
+### Módulos revisados
+
+- Flujo reproductivo.
+- Días de gestación base: 115 días.
+- Días abiertos editables.
+- Inventarios de cerdos en producción.
+- Inventario de hembras reproductivas.
+- Consumo de alimento por etapa.
+- Costos de alimento por kg de dieta.
+- Resumen económico mensual.
+- Balance lateral.
+- Escenarios iniciales de sensibilidad.
+
+### Estado
+
+Validado visual y funcionalmente en entorno local con Live Server.
+
+### Pendientes de validación fina
+
+- Formulación alimenticia detallada.
+- Medicación y premezclas.
+- Gastos médicos, impuestos y varios.
+- Reporte técnico exportable.
+- Escenarios editables por el usuario.
+
+
 # Validación inicial
 
 ## Caso base auditado desde Excel fuente
