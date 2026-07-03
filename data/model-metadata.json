@@ -1,0 +1,22 @@
+{
+  "project_name": "SIPRO-Porcino",
+  "full_name": "Simulador Integral de Producción Porcina",
+  "version": "0.1.0-dev",
+  "ecosystem": "Laboratorio de Sistemas Porcícolas",
+  "language": "es",
+  "country_context": "México",
+  "domain": "Producción porcícola",
+  "scope": [
+    "inventarios",
+    "flujo productivo",
+    "consumo de alimento",
+    "costos de producción",
+    "escenarios productivos"
+  ],
+  "development_status": "desarrollo inicial",
+  "source_model": {
+    "type": "Excel privado",
+    "public_repository_included": false,
+    "validation_strategy": "comparación contra casos de referencia generados desde el modelo fuente"
+  }
+}
