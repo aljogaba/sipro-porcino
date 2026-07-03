@@ -1,7 +1,7 @@
 {
   "metadata": {
     "project": "SIPRO-Porcino",
-    "version": "0.1.0-dev",
+    "version": "0.1.2-dev",
     "country_context": "México",
     "production_system": "Granja ciclo completo",
     "source": "Mapa técnico inicial derivado del modelo Excel privado",
@@ -31,6 +31,13 @@
       "value": 23,
       "unit": "días",
       "excel_source": "Tablero!D17"
+    },
+    "open_days": {
+      "label": "Días abiertos",
+      "value": 7,
+      "unit": "días",
+      "excel_source": "Modelo técnico: 7 días fijos en fórmula original de ciclo productivo",
+      "note": "Días posdestete antes de la siguiente carga. Ajuste fino recomendado: 4 a 8 días."
     },
     "liveborn_per_sow": {
       "label": "LNV/hembra",
@@ -237,6 +244,15 @@
       "growth": "30-50 kg",
       "development": "50-80 kg",
       "finishing": "80-Mercado"
+    }
+  },
+  "technical_parameters": {
+    "gestation_days": {
+      "label": "Días de gestación",
+      "value": 115,
+      "unit": "días",
+      "type": "parámetro técnico",
+      "note": "Valor técnico base actualizado para reflejar sistemas actuales; se usa en el cálculo del ciclo reproductivo."
     }
   }
 }

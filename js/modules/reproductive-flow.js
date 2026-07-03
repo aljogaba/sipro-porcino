@@ -12,6 +12,7 @@ export function calculateReproductiveFlow(parameters) {
   const parityRate = Number(p.parity_rate.value);
   const fertilityRate = Number(p.fertility_rate.value);
   const lactationDays = Number(p.lactation_days.value);
+  const openDays = Number(p.open_days?.value ?? 7);
   const livebornPerSow = Number(p.liveborn_per_sow.value);
 
   const mortalityMaternity = Number(p.mortality_maternity.value);
@@ -25,11 +26,10 @@ export function calculateReproductiveFlow(parameters) {
   const salePricePerKg = Number(p.sale_price_per_kg.value);
 
   const weeksPerMonth = 4.3;
-  const gestationDays = 114;
-  const postWeaningDays = 7;
+  const gestationDays = Number(parameters.technical_parameters?.gestation_days?.value ?? 115);
   const lactationWeeks = lactationDays / 7;
 
-  const cycleWeeks = (gestationDays + lactationDays + postWeaningDays) / 7;
+  const cycleWeeks = (gestationDays + lactationDays + openDays) / 7;
   const servedSowsPerWeek = breedingSows / cycleWeeks;
   const farrowingsPerWeek = servedSowsPerWeek * percentToProportion(parityRate);
   const livebornPerWeek = farrowingsPerWeek * livebornPerSow;
@@ -68,7 +68,7 @@ export function calculateReproductiveFlow(parameters) {
   return {
     assumptions: {
       gestationDays,
-      postWeaningDays,
+      openDays,
       weeksPerMonth,
       fertilityRateStoredForReview: fertilityRate
     },
