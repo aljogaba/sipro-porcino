@@ -437,3 +437,93 @@ table .total-row td {
 @media (max-width: 640px) {
   .scenario-grid { grid-template-columns: 1fr; }
 }
+
+.dashboard-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 320px;
+  gap: 22px;
+  align-items: start;
+}
+
+.dashboard-main {
+  display: grid;
+  gap: 22px;
+  min-width: 0;
+}
+
+.sticky-balance {
+  position: sticky;
+  top: 18px;
+  align-self: start;
+  padding: 18px;
+}
+
+.compact-heading {
+  margin-bottom: 14px;
+}
+
+.balance-stack {
+  display: grid;
+  gap: 12px;
+}
+
+.balance-card {
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  padding: 14px;
+  display: grid;
+  gap: 4px;
+}
+
+.balance-card span,
+.balance-mini-grid span {
+  color: var(--muted);
+  font-size: 0.78rem;
+  font-weight: 800;
+}
+
+.balance-card strong {
+  font-size: 1.45rem;
+  line-height: 1.1;
+  letter-spacing: -0.04em;
+}
+
+.balance-card small {
+  color: var(--muted);
+  font-weight: 700;
+}
+
+.balance-card.positive { background: linear-gradient(180deg, #ffffff, var(--ok)); }
+.balance-card.economic { background: linear-gradient(180deg, #ffffff, var(--blue)); }
+.balance-card.bad { background: linear-gradient(180deg, #ffffff, var(--bad)); }
+
+.balance-mini-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 8px;
+  padding-top: 2px;
+}
+
+.balance-mini-grid div {
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 10px 12px;
+  background: var(--surface-soft);
+  display: grid;
+  gap: 2px;
+}
+
+.balance-mini-grid strong {
+  font-size: 0.98rem;
+  letter-spacing: -0.02em;
+}
+
+@media (max-width: 1180px) {
+  .dashboard-layout { grid-template-columns: 1fr; }
+  .sticky-balance { position: static; order: -1; }
+  .balance-mini-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+@media (max-width: 640px) {
+  .balance-mini-grid { grid-template-columns: 1fr; }
+}

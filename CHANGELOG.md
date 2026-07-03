@@ -2,6 +2,19 @@
 
 Todos los cambios importantes de SIPRO-Porcino serán documentados en este archivo.
 
+## [0.4.1-dev] - En desarrollo
+
+### Agregado
+
+- Se agregó el indicador `Lechones destetados/hembra/año` al bloque de resultados productivos.
+- Se incorporó un panel lateral persistente de balance mensual con ingresos, egresos, utilidad, costo de alimento, conversión alimenticia y margen.
+
+### Cambiado
+
+- Se reorganizó el bloque principal de indicadores para mantener un orden productivo.
+- Se retiraron ingresos, egresos, utilidad y costo de alimento del bloque principal para evitar duplicidad con el resumen económico detallado.
+
+
 ## [0.4.0-dev] - En desarrollo
 
 ### Agregado

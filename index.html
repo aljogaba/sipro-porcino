@@ -17,14 +17,14 @@
       </div>
       <div class="version-card">
         <span>Versión</span>
-        <strong id="app-version">0.4.0-dev</strong>
+        <strong id="app-version">0.4.1-dev</strong>
       </div>
     </div>
   </header>
 
   <main class="container main-layout">
     <section class="notice">
-      <strong>Módulo inicial:</strong> inventarios y flujo productivo. Esta versión reproduce la lógica base del Excel fuente para el tablero productivo visible. El módulo de alimento y el resumen económico mensual se integran de forma inicial; medicación detallada y formulación alimenticia completa se integrarán por fases. Esta versión ya incluye una primera capa de análisis de escenarios.
+      <strong>Módulo inicial:</strong> inventarios y flujo productivo. Esta versión reproduce la lógica base del Excel fuente para el tablero productivo visible. El módulo de alimento y el resumen económico mensual se integran de forma inicial; medicación detallada y formulación alimenticia completa se integrarán por fases. Esta versión ya incluye una primera capa de análisis de escenarios y un balance económico lateral persistente.
     </section>
 
     <section class="panel">
@@ -98,10 +98,20 @@
       </article>
     </section>
 
-    <section class="kpi-grid" id="kpi-grid"></section>
+    <section class="dashboard-layout">
+      <div class="dashboard-main">
+        <section class="panel">
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow">Resultados productivos</p>
+              <h2>Indicadores principales</h2>
+            </div>
+          </div>
+          <div class="kpi-grid" id="kpi-grid"></div>
+        </section>
 
-    <section class="two-column">
-      <article class="panel">
+        <section class="two-column">
+          <article class="panel">
         <div class="section-heading">
           <div>
             <p class="eyebrow">Flujo productivo</p>
@@ -166,22 +176,34 @@
       <div id="scenario-table" class="table-wrap"></div>
     </section>
 
-    <section class="panel">
-      <div class="section-heading">
-        <div>
-          <p class="eyebrow">Validación operativa</p>
-          <h2>Notas del modelo</h2>
-        </div>
+        <section class="panel">
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow">Validación operativa</p>
+              <h2>Notas del modelo</h2>
+            </div>
+          </div>
+          <ul class="model-notes">
+            <li>El cálculo de partos/hembra/año sigue la fórmula base: partos semanales × 52 / vientres.</li>
+            <li>El ciclo reproductivo usa 115 días de gestación + días de lactancia + días abiertos, expresado en semanas.</li>
+            <li>El alimento semanal replica la estructura del Excel: inventario alimentado × consumo diario × 7 × costo/kg.</li>
+            <li>El pie de cría incluye hembras gestantes, hembras lactantes y una relación macho:hembra de 1:20 para consumo de alimento.</li>
+            <li>El costo del alimento puede trabajarse en dos modos: dietas compradas capturadas por el usuario o formulación propia preparada para calcularse desde ingredientes y fórmulas.</li>
+            <li>El resumen económico mensual integra ingresos, costo de alimento, mano de obra y otros costos operativos editables.</li>
+            <li>Los escenarios de sensibilidad se calculan como proyecciones paralelas; no alteran los parámetros base capturados por el usuario.</li>
+          </ul>
+        </section>
       </div>
-      <ul class="model-notes">
-        <li>El cálculo de partos/hembra/año sigue la fórmula base: partos semanales × 52 / vientres.</li>
-        <li>El ciclo reproductivo usa 115 días de gestación + días de lactancia + días abiertos, expresado en semanas.</li>
-        <li>El alimento semanal replica la estructura del Excel: inventario alimentado × consumo diario × 7 × costo/kg.</li>
-        <li>El pie de cría incluye hembras gestantes, hembras lactantes y una relación macho:hembra de 1:20 para consumo de alimento.</li>
-        <li>El costo del alimento puede trabajarse en dos modos: dietas compradas capturadas por el usuario o formulación propia preparada para calcularse desde ingredientes y fórmulas.</li>
-        <li>El resumen económico mensual integra ingresos, costo de alimento, mano de obra y otros costos operativos editables.</li>
-        <li>Los escenarios de sensibilidad se calculan como proyecciones paralelas; no alteran los parámetros base capturados por el usuario.</li>
-      </ul>
+
+      <aside class="panel sticky-balance" aria-label="Balance económico mensual">
+        <div class="section-heading compact-heading">
+          <div>
+            <p class="eyebrow">Balance</p>
+            <h2>Resultado mensual</h2>
+          </div>
+        </div>
+        <div id="sticky-balance" class="balance-stack"></div>
+      </aside>
     </section>
   </main>
 

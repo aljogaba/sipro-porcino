@@ -107,3 +107,10 @@ Validación pendiente:
 - convertir estos escenarios en configuraciones editables por el usuario;
 - permitir guardar o exportar comparación de escenarios;
 - definir escenarios técnicos estandarizados para distintos perfiles de granja.
+
+
+## Ajuste de presentación v0.4.1-dev
+
+- El bloque principal de indicadores se reorganizó para mostrar únicamente resultados productivos y técnicos.
+- Se agregó el indicador `Lechones destetados/hembra/año`, derivado de `Lechones destetados/camada × Partos/hembra/año`.
+- Los indicadores económicos principales se trasladaron a un panel lateral persistente de balance mensual, mientras que el resumen económico detallado permanece en su sección específica.

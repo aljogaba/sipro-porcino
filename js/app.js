@@ -27,6 +27,7 @@ const economicResultsTable = document.querySelector("#economic-results-table");
 const expensesTable = document.querySelector("#expenses-table");
 const scenarioCards = document.querySelector("#scenario-cards");
 const scenarioTable = document.querySelector("#scenario-table");
+const stickyBalance = document.querySelector("#sticky-balance");
 const resetBtn = document.querySelector("#reset-btn");
 
 async function init() {
@@ -34,7 +35,7 @@ async function init() {
   baseParameters = await response.json();
   currentParameters = structuredClone(baseParameters);
 
-  document.querySelector("#app-version").textContent = baseParameters.metadata?.version ?? "0.3.0-dev";
+  document.querySelector("#app-version").textContent = baseParameters.metadata?.version ?? "0.4.1-dev";
 
   renderInputs();
   recalculate();
@@ -124,23 +125,21 @@ function recalculate() {
   renderFeed(feedResult);
   renderEconomicSummary(economicResult);
   renderScenarios(scenarioResult);
+  renderStickyBalance(feedResult, economicResult);
 }
 
-function renderKpis({ flow, groups }, feedResult, economicResult) {
+function renderKpis({ flow, groups }, feedResult) {
   const kpis = [
-    { label: "Cerdos vendidos/mes", value: formatNumber(flow.pigsSoldPerMonth, 2), unit: "cerdos", type: "positive" },
-    { label: "Días a mercado", value: formatInteger(flow.daysToMarket), unit: "días", type: "warning" },
-    { label: "Inventario total", value: formatNumber(groups.totalInventory, 1), unit: "animales", type: "positive" },
-    { label: "Inventario prom./hembra", value: formatNumber(groups.inventoryPerSow, 2), unit: "animales/vientre", type: "positive" },
     { label: "Partos/hembra/año", value: formatNumber(flow.farrowingsPerSowPerYear, 2), unit: "partos", type: "positive" },
     { label: "Lechones dest./camada", value: formatNumber(flow.weanedPerLitter, 2), unit: "lechones", type: "positive" },
+    { label: "Lechones dest./hembra/año", value: formatNumber(flow.weanedPerSowPerYear, 2), unit: "lechones", type: "positive" },
     { label: "Cerdos vend./hembra/año", value: formatNumber(flow.pigsSoldPerSowPerYear, 2), unit: "cerdos", type: "positive" },
-    { label: "Ingreso bruto mensual", value: formatCurrency(flow.grossMonthlyIncome, 2), unit: "MXN", type: "economic" },
+    { label: "Cerdos vendidos/mes", value: formatNumber(flow.pigsSoldPerMonth, 2), unit: "cerdos", type: "positive" },
+    { label: "Días a mercado", value: formatInteger(flow.daysToMarket), unit: "días", type: "warning" },
     { label: "Mortalidad global", value: formatPercent(flow.totalMortalityPercent, 1), unit: "suma de mortalidades", type: "warning" },
     { label: "Factor de eficiencia", value: formatNumber(groups.efficiencyFactor, 2), unit: "cerdos/hembra/mes", type: "positive" },
-    { label: "Costo alimento/mes", value: formatCurrency(feedResult.totals.totalCostMonth, 2), unit: "MXN", type: "economic" },
-    { label: "Egresos mes", value: formatCurrency(economicResult.totalCostsMonth, 2), unit: "MXN", type: "bad" },
-    { label: "Utilidad mes", value: formatCurrency(economicResult.profitMonth, 2), unit: "MXN", type: economicResult.profitMonth >= 0 ? "positive" : "bad" },
+    { label: "Inventario total", value: formatNumber(groups.totalInventory, 1), unit: "animales", type: "positive" },
+    { label: "Inventario prom./hembra", value: formatNumber(groups.inventoryPerSow, 2), unit: "animales/vientre", type: "positive" },
     { label: "Conv. alim. granja", value: formatNumber(feedResult.totals.feedConversionFarm, 2), unit: "kg alimento/kg vendido", type: "positive" }
   ];
 
@@ -332,6 +331,35 @@ function renderEconomicSummary(economicResult) {
   `;
 }
 
+
+function renderStickyBalance(feedResult, economicResult) {
+  if (!stickyBalance) return;
+
+  const profitType = economicResult.profitMonth >= 0 ? "positive" : "bad";
+  stickyBalance.innerHTML = `
+    <article class="balance-card economic">
+      <span>Ingresos mes</span>
+      <strong>${formatCurrency(economicResult.grossIncomeMonth, 2)}</strong>
+      <small>100 %</small>
+    </article>
+    <article class="balance-card bad">
+      <span>Egresos mes</span>
+      <strong>${formatCurrency(economicResult.totalCostsMonth, 2)}</strong>
+      <small>${formatPercent(economicResult.costPercentOfIncome, 1)} del ingreso</small>
+    </article>
+    <article class="balance-card ${profitType}">
+      <span>Utilidad mes</span>
+      <strong>${formatCurrency(economicResult.profitMonth, 2)}</strong>
+      <small>${formatPercent(economicResult.profitPercentOfIncome, 1)} del ingreso</small>
+    </article>
+    <div class="balance-mini-grid">
+      <div><span>Costo alimento/mes</span><strong>${formatCurrency(feedResult.totals.totalCostMonth, 2)}</strong></div>
+      <div><span>Conv. alim.</span><strong>${formatNumber(feedResult.totals.feedConversionFarm, 2)}</strong></div>
+      <div><span>Utilidad semana</span><strong>${formatCurrency(economicResult.profitWeek, 2)}</strong></div>
+      <div><span>Margen</span><strong>${formatPercent(economicResult.profitPercentOfIncome, 1)}</strong></div>
+    </div>
+  `;
+}
 
 function renderDelta(value, formatter = formatCurrency) {
   const sign = value > 0 ? "+" : "";
