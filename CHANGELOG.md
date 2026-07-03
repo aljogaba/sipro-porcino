@@ -2,6 +2,15 @@
 
 Todos los cambios importantes de SIPRO-Porcino serán documentados en este archivo.
 
+## [0.4.0-dev] - En desarrollo
+
+### Agregado
+
+- Módulo inicial de análisis de escenarios.
+- Comparación rápida entre escenario actual, mejora técnica, presión sanitaria, incremento de alimento y mercado adverso.
+- Cálculo de cambios en utilidad mensual, ingresos, egresos, costo de alimento y cerdos vendidos/mes.
+- Escenarios calculados como proyecciones paralelas sin modificar los parámetros capturados por el usuario.
+
 ## [0.3.0-dev] - En desarrollo
 
 ### Agregado

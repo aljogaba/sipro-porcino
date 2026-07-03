@@ -88,3 +88,22 @@ Validación pendiente:
 - comparar ingresos mensuales contra el Excel, considerando el ajuste de gestación de 115 días;
 - validar si el Excel usa 4.3 semanas/mes en todos los bloques económicos;
 - confirmar la lógica detallada de pie de cría y gastos médicos desde las hojas auxiliares.
+
+
+## Versión 0.4.0-dev — Análisis de escenarios
+
+Se agregó una capa inicial de análisis de escenarios. Los escenarios son proyecciones paralelas basadas en los parámetros capturados en el tablero y no modifican el escenario actual.
+
+Escenarios incluidos:
+
+- **Escenario actual:** resultados con los valores capturados por el usuario.
+- **Mejora técnica:** incremento de 0.5 LNV/hembra, reducción de mortalidad en maternidad, destete y engorda, y reducción de 3% en costo de alimento.
+- **Presión sanitaria:** incremento moderado de mortalidad en maternidad, destete, iniciación y engorda.
+- **Alimento +10%:** incremento de 10% en el costo de todas las dietas activas.
+- **Mercado adverso:** reducción de 5% en precio de venta y aumento de 5% en costo de alimento.
+
+Validación pendiente:
+
+- convertir estos escenarios en configuraciones editables por el usuario;
+- permitir guardar o exportar comparación de escenarios;
+- definir escenarios técnicos estandarizados para distintos perfiles de granja.

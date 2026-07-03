@@ -1,5 +1,6 @@
 import { calculateFeed } from "./modules/feed-consumption.js";
 import { calculateEconomicSummary } from "./modules/economic-summary.js";
+import { analyzeScenarios } from "./modules/scenario-analysis.js";
 import { formatCurrency, formatInteger, formatNumber, formatPercent } from "./utils/formatters.js";
 import { toNumber } from "./utils/validators.js";
 
@@ -24,6 +25,8 @@ const feedTable = document.querySelector("#feed-table");
 const economicKpis = document.querySelector("#economic-kpis");
 const economicResultsTable = document.querySelector("#economic-results-table");
 const expensesTable = document.querySelector("#expenses-table");
+const scenarioCards = document.querySelector("#scenario-cards");
+const scenarioTable = document.querySelector("#scenario-table");
 const resetBtn = document.querySelector("#reset-btn");
 
 async function init() {
@@ -113,12 +116,14 @@ function handleInputChange(event) {
 function recalculate() {
   const feedResult = calculateFeed(currentParameters);
   const economicResult = calculateEconomicSummary(currentParameters, feedResult);
+  const scenarioResult = analyzeScenarios(currentParameters);
   const result = feedResult.inventory;
   renderKpis(result, feedResult, economicResult);
   renderFlowTable(result.flow);
   renderInventory(result.groups);
   renderFeed(feedResult);
   renderEconomicSummary(economicResult);
+  renderScenarios(scenarioResult);
 }
 
 function renderKpis({ flow, groups }, feedResult, economicResult) {
@@ -322,6 +327,64 @@ function renderEconomicSummary(economicResult) {
           <td>${formatPercent(100, 2)}</td>
           <td>${formatPercent(economicResult.costPercentOfIncome, 2)}</td>
         </tr>
+      </tbody>
+    </table>
+  `;
+}
+
+
+function renderDelta(value, formatter = formatCurrency) {
+  const sign = value > 0 ? "+" : "";
+  const className = value >= 0 ? "delta-positive" : "delta-negative";
+  return `<span class="${className}">${sign}${formatter(value, 2)}</span>`;
+}
+
+function renderScenarios(scenarios) {
+  if (!scenarioCards || !scenarioTable) return;
+
+  const comparisonScenarios = scenarios.slice(1);
+
+  scenarioCards.innerHTML = comparisonScenarios.map((scenario) => `
+    <article class="scenario-card">
+      <div>
+        <h3>${scenario.name}</h3>
+        <p>${scenario.description}</p>
+      </div>
+      <div class="scenario-metric">
+        <span>Utilidad mensual</span>
+        <strong>${formatCurrency(scenario.metrics.profitMonth, 2)}</strong>
+        <small>Δ vs actual: ${renderDelta(scenario.delta.profitMonth)}</small>
+      </div>
+    </article>
+  `).join("");
+
+  scenarioTable.innerHTML = `
+    <table>
+      <thead>
+        <tr>
+          <th>Escenario</th>
+          <th>Cerdos vendidos/mes</th>
+          <th>Ingreso mes</th>
+          <th>Costo alimento mes</th>
+          <th>Egresos mes</th>
+          <th>Utilidad mes</th>
+          <th>Δ utilidad</th>
+          <th>Margen</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${scenarios.map((scenario) => `
+          <tr class="${scenario.id === "base" ? "total-row" : ""}">
+            <td>${scenario.name}</td>
+            <td>${formatNumber(scenario.metrics.pigsSoldPerMonth, 2)}</td>
+            <td>${formatCurrency(scenario.metrics.grossIncomeMonth, 2)}</td>
+            <td>${formatCurrency(scenario.metrics.feedCostMonth, 2)}</td>
+            <td>${formatCurrency(scenario.metrics.totalCostsMonth, 2)}</td>
+            <td>${formatCurrency(scenario.metrics.profitMonth, 2)}</td>
+            <td>${scenario.id === "base" ? "—" : renderDelta(scenario.delta.profitMonth)}</td>
+            <td>${formatPercent(scenario.metrics.profitPercentOfIncome, 1)}</td>
+          </tr>
+        `).join("")}
       </tbody>
     </table>
   `;

@@ -17,14 +17,14 @@
       </div>
       <div class="version-card">
         <span>Versión</span>
-        <strong id="app-version">0.3.0-dev</strong>
+        <strong id="app-version">0.4.0-dev</strong>
       </div>
     </div>
   </header>
 
   <main class="container main-layout">
     <section class="notice">
-      <strong>Módulo inicial:</strong> inventarios y flujo productivo. Esta versión reproduce la lógica base del Excel fuente para el tablero productivo visible. El módulo de alimento y el resumen económico mensual se integran de forma inicial; medicación detallada, formulación alimenticia completa y escenarios se integrarán por fases.
+      <strong>Módulo inicial:</strong> inventarios y flujo productivo. Esta versión reproduce la lógica base del Excel fuente para el tablero productivo visible. El módulo de alimento y el resumen económico mensual se integran de forma inicial; medicación detallada y formulación alimenticia completa se integrarán por fases. Esta versión ya incluye una primera capa de análisis de escenarios.
     </section>
 
     <section class="panel">
@@ -152,6 +152,20 @@
       </div>
     </section>
 
+
+
+    <section class="panel">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">Escenarios</p>
+          <h2>Comparación rápida de sensibilidad</h2>
+        </div>
+      </div>
+      <p class="panel-note">Estos escenarios no modifican los valores capturados; proyectan el impacto técnico-económico de cambios sanitarios, alimenticios y de mercado sobre el resultado mensual.</p>
+      <div id="scenario-cards" class="scenario-grid"></div>
+      <div id="scenario-table" class="table-wrap"></div>
+    </section>
+
     <section class="panel">
       <div class="section-heading">
         <div>
@@ -166,6 +180,7 @@
         <li>El pie de cría incluye hembras gestantes, hembras lactantes y una relación macho:hembra de 1:20 para consumo de alimento.</li>
         <li>El costo del alimento puede trabajarse en dos modos: dietas compradas capturadas por el usuario o formulación propia preparada para calcularse desde ingredientes y fórmulas.</li>
         <li>El resumen económico mensual integra ingresos, costo de alimento, mano de obra y otros costos operativos editables.</li>
+        <li>Los escenarios de sensibilidad se calculan como proyecciones paralelas; no alteran los parámetros base capturados por el usuario.</li>
       </ul>
     </section>
   </main>
