@@ -1,5 +1,21 @@
 # Changelog
 
+## [1.2.0-dev] - Publicación, identidad y beta controlada
+
+### Agregado
+
+- Header persistente con identidad del proyecto, autoría y enlace al perfil profesional.
+- Footer institucional con cita sugerida, enlace al perfil profesional y leyenda de derechos reservados.
+- Metadatos de autoría, perfil profesional y derechos en `default-parameters.json`.
+- Archivo `CITATION.cff` con cita sugerida del software.
+- Archivo `LICENSE` con reserva de derechos y uso sujeto a autorización.
+- Documento `docs/citation-and-license.md` con guía breve de cita, crédito y licencia.
+
+### Ajustado
+
+- Versión del proyecto actualizada a `1.2.0-dev`.
+- Reporte técnico imprimible ahora incluye autoría y derechos.
+
 
 
 ## [1.1.0-dev] - Salida profesional y reporte técnico

@@ -1869,6 +1869,7 @@ function renderTechnicalReport(formulationResult, feedResult, operationalExpense
         <p class="eyebrow">SIPRO-Porcino</p>
         <h3>Reporte técnico de simulación</h3>
         <p>Herramienta técnico-económica del Laboratorio de Sistemas Porcícolas.</p>
+        <p><strong>Autor:</strong> Alberto Jorge Galindo-Barboza · <strong>Perfil:</strong> aljogaba.github.io</p>
       </div>
       <div class="report-meta">
         <span>Versión ${escapeHtml(baseParameters.metadata?.version ?? "")}</span>
@@ -1884,7 +1885,8 @@ function renderTechnicalReport(formulationResult, feedResult, operationalExpense
       <article class="report-block report-block-wide"><h4>5. Escenarios y trazabilidad</h4><table>${scenarioRows}</table></article>
     </div>
     <div class="report-note">
-      <strong>Nota técnica:</strong> este reporte organiza los resultados activos del simulador. Debe interpretarse con base en los supuestos capturados, el modo de alimentación seleccionado, el cierre de fórmulas a 1,000 kg y la separación entre medicación en alimento y gastos sanitarios operativos.
+      <strong>Nota técnica:</strong> este reporte organiza los resultados activos del simulador. Debe interpretarse con base en los supuestos capturados, el modo de alimentación seleccionado, el cierre de fórmulas a 1,000 kg y la separación entre medicación en alimento y gastos sanitarios operativos.<br><br>
+      <strong>Derechos:</strong> © 2026 Alberto Jorge Galindo-Barboza. Todos los derechos reservados.
     </div>
   `;
 }
