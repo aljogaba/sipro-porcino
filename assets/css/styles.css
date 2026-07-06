@@ -1370,3 +1370,294 @@ table .total-row td {
     text-align: left;
   }
 }
+
+/* Entrega 3/4 v1.1.0: salida profesional y mayor visibilidad gráfica */
+#decision-charts-panel {
+  background: linear-gradient(180deg, rgba(255,255,255,0.96), rgba(239,247,243,0.92));
+  border: 1px solid rgba(15, 61, 54, 0.18);
+}
+
+.decision-chart-grid {
+  gap: 24px;
+}
+
+.chart-card {
+  border: 1px solid rgba(15, 61, 54, 0.20);
+  background: linear-gradient(180deg, #ffffff 0%, #ffffff 58%, #f2f8f5 100%);
+  box-shadow: 0 20px 46px rgba(12, 44, 37, 0.105);
+  padding: 22px;
+  overflow: hidden;
+}
+
+.chart-card::before {
+  height: 7px;
+  background: linear-gradient(90deg, #0f3d36, #2f8068, #b7d6ca);
+}
+
+.chart-card::after {
+  content: "";
+  position: absolute;
+  right: -80px;
+  top: -90px;
+  width: 210px;
+  height: 210px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(15,61,54,0.08), rgba(15,61,54,0));
+  pointer-events: none;
+}
+
+.chart-header {
+  padding-bottom: 14px;
+  margin-bottom: 16px;
+  border-bottom: 1px solid rgba(217, 228, 222, 0.92);
+}
+
+.chart-header h3 {
+  font-size: 1.22rem;
+  color: #0d2e29;
+}
+
+.chart-header p {
+  font-size: 0.92rem;
+}
+
+.chart-insight {
+  border-color: rgba(15, 61, 54, 0.18);
+  background: linear-gradient(180deg, #ffffff, #eaf5ef);
+  box-shadow: inset 5px 0 0 rgba(15, 61, 54, 0.38);
+  font-size: 0.92rem;
+}
+
+.decision-bar-list {
+  gap: 12px;
+}
+
+.decision-bar-row {
+  grid-template-columns: 38px minmax(150px, 220px) minmax(190px, 1fr) minmax(118px, auto);
+  gap: 14px;
+  padding: 12px;
+  border: 1px solid rgba(217, 228, 222, 0.75);
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.78);
+  transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+}
+
+.decision-bar-row:hover {
+  transform: translateY(-1px);
+  border-color: rgba(15, 61, 54, 0.24);
+  box-shadow: 0 12px 24px rgba(12, 44, 37, 0.08);
+}
+
+.decision-rank {
+  width: 32px;
+  height: 32px;
+  border-radius: 12px;
+  background: linear-gradient(180deg, #ffffff, #eef6f1);
+  color: var(--brand);
+}
+
+.decision-bar-label span {
+  font-size: 1.02rem;
+}
+
+.decision-bar-track {
+  height: 24px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #e9f1ed, #f7faf8);
+  border: 1px solid rgba(15, 61, 54, 0.07);
+}
+
+.decision-bar-fill {
+  min-width: 14px;
+  box-shadow: 0 8px 16px rgba(12, 44, 37, 0.15);
+}
+
+.decision-bar-value {
+  font-size: 1.04rem;
+  min-width: 128px;
+}
+
+.chart-caption {
+  background: rgba(255,255,255,0.72);
+  border: 1px solid rgba(217, 228, 222, 0.85);
+  border-radius: 12px;
+  padding: 10px 12px;
+}
+
+.tornado-row {
+  padding: 12px;
+  border: 1px solid rgba(217, 228, 222, 0.75);
+  border-radius: 16px;
+  background: rgba(255,255,255,0.80);
+}
+
+.tornado-scale {
+  height: 24px;
+}
+
+/* Reporte técnico */
+#technical-report-panel {
+  border: 1px solid rgba(15, 61, 54, 0.20);
+  background: linear-gradient(180deg, #ffffff 0%, #f7fbf9 100%);
+}
+
+.report-preview {
+  margin-top: 18px;
+  display: grid;
+  gap: 18px;
+}
+
+.report-cover {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 18px;
+  align-items: end;
+  padding: 20px;
+  border-radius: 18px;
+  border: 1px solid rgba(15, 61, 54, 0.16);
+  background: linear-gradient(135deg, #0f3d36, #1f6f61);
+  color: #fff;
+}
+
+.report-cover .eyebrow,
+.report-cover p {
+  color: rgba(255,255,255,0.78);
+}
+
+.report-cover h3 {
+  margin-bottom: 8px;
+  font-size: clamp(1.6rem, 3vw, 2.4rem);
+  letter-spacing: -0.04em;
+}
+
+.report-meta {
+  display: grid;
+  gap: 8px;
+  justify-items: end;
+  font-size: 0.88rem;
+  font-weight: 800;
+}
+
+.report-meta span {
+  padding: 6px 10px;
+  border-radius: 999px;
+  background: rgba(255,255,255,0.12);
+  border: 1px solid rgba(255,255,255,0.18);
+}
+
+.report-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.report-block {
+  border: 1px solid rgba(217, 228, 222, 0.94);
+  border-radius: 18px;
+  padding: 16px;
+  background: #fff;
+  box-shadow: 0 10px 24px rgba(12, 44, 37, 0.055);
+}
+
+.report-block-wide {
+  grid-column: 1 / -1;
+}
+
+.report-block h4 {
+  margin: 0 0 12px;
+  font-size: 1rem;
+  color: var(--brand);
+}
+
+.report-block table {
+  font-size: 0.86rem;
+}
+
+.report-block td:nth-child(1) {
+  width: 34%;
+  font-weight: 850;
+  color: var(--ink);
+}
+
+.report-block td:nth-child(2) {
+  width: 28%;
+  font-weight: 850;
+}
+
+.report-block td:nth-child(3) {
+  color: var(--muted);
+  text-align: left;
+}
+
+.report-note {
+  border: 1px solid rgba(15, 61, 54, 0.14);
+  border-radius: 16px;
+  padding: 14px 16px;
+  background: var(--surface-soft);
+  color: var(--muted);
+  line-height: 1.45;
+}
+
+@media (max-width: 900px) {
+  .report-cover,
+  .report-grid {
+    grid-template-columns: 1fr;
+  }
+  .report-meta {
+    justify-items: start;
+  }
+}
+
+@media print {
+  body {
+    background: #fff !important;
+  }
+
+  .site-header,
+  .notice,
+  #productive-inputs,
+  #duration-inputs,
+  #feed-consumption-inputs,
+  #feed-cost-inputs,
+  #feed-formulation-panel,
+  .two-column:has(.sticky-balance),
+  #decision-charts-panel,
+  #scenario-cards,
+  #scenario-table,
+  #model-audit-panel,
+  .sticky-balance,
+  .site-footer,
+  #print-report-btn,
+  .secondary-button,
+  .mode-switch {
+    display: none !important;
+  }
+
+  .container {
+    width: 100% !important;
+  }
+
+  .main-layout {
+    padding: 0 !important;
+    display: block !important;
+  }
+
+  #technical-report-panel {
+    display: block !important;
+    box-shadow: none !important;
+    border: none !important;
+    padding: 0 !important;
+  }
+
+  .panel {
+    box-shadow: none !important;
+    break-inside: avoid;
+  }
+
+  .report-cover,
+  .report-block,
+  .report-note {
+    break-inside: avoid;
+    box-shadow: none !important;
+  }
+}

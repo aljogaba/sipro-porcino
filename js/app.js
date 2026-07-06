@@ -58,6 +58,9 @@ const chartScenarios = document.querySelector("#chart-scenarios");
 const chartTornado = document.querySelector("#chart-tornado");
 const chartOperationalExpenses = document.querySelector("#chart-operational-expenses");
 const chartBreedingImpact = document.querySelector("#chart-breeding-impact");
+const reportKpis = document.querySelector("#report-kpis");
+const technicalReportPreview = document.querySelector("#technical-report-preview");
+const printReportBtn = document.querySelector("#print-report-btn");
 const stickyBalance = document.querySelector("#sticky-balance");
 const resetBtn = document.querySelector("#reset-btn");
 
@@ -67,6 +70,7 @@ async function init() {
   currentParameters = structuredClone(baseParameters);
 
   document.querySelector("#app-version").textContent = baseParameters.metadata?.version ?? "0.6.0-dev";
+  printReportBtn?.addEventListener("click", () => window.print());
 
   renderInputs();
   applyModuleNumbering();
@@ -357,6 +361,7 @@ function recalculate() {
   renderStickyBalance(feedResult, economicResult);
   renderModelAudit(formulationResult, feedResult, operationalExpenseResult, breedingStockResult, economicResult);
   renderDecisionCharts(formulationResult, feedResult, operationalExpenseResult, breedingStockResult, economicResult, scenarioResult);
+  renderTechnicalReport(formulationResult, feedResult, operationalExpenseResult, breedingStockResult, economicResult, scenarioResult);
 }
 
 function renderKpis({ flow, groups }, feedResult) {
@@ -1297,7 +1302,7 @@ function formatShortCurrency(value) {
 
 function percentOfMax(value, max) {
   if (!Number.isFinite(value) || !Number.isFinite(max) || max <= 0) return 0;
-  return Math.max(2, Math.min(100, Math.abs(value) / max * 100));
+  return Math.max(6, Math.min(100, Math.abs(value) / max * 100));
 }
 
 function chartEmpty(message) {
@@ -1748,6 +1753,140 @@ function renderDecisionCharts(formulationResult, feedResult, operationalExpenseR
   renderIngredientBalanceChart(formulationResult, feedResult);
   renderScenarioProfitChart(scenarios);
   renderTornadoChart(economicResult);
+}
+
+
+function getParam(section, key, fallback = 0) {
+  return Number(currentParameters?.[section]?.[key]?.value ?? fallback);
+}
+
+function getParamLabel(section, key, fallback = "") {
+  return currentParameters?.[section]?.[key]?.label ?? fallback;
+}
+
+function buildReportRows(rows) {
+  return rows.map(([label, value, note = ""]) => `
+    <tr>
+      <td>${escapeHtml(label)}</td>
+      <td>${value}</td>
+      <td>${escapeHtml(note)}</td>
+    </tr>
+  `).join("");
+}
+
+function getTopExpense(economicResult) {
+  return [...(economicResult?.expenseRows ?? [])].sort((a, b) => b.amount - a.amount)[0];
+}
+
+function getTopFeedStage(feedResult) {
+  return [...(feedResult?.rows ?? [])].sort((a, b) => b.costMonth - a.costMonth)[0];
+}
+
+function getTopScenario(scenarios) {
+  return [...(scenarios ?? [])].sort((a, b) => b.metrics.profitMonth - a.metrics.profitMonth)[0];
+}
+
+function renderTechnicalReport(formulationResult, feedResult, operationalExpenseResult, breedingStockResult, economicResult, scenarios) {
+  if (!reportKpis || !technicalReportPreview) return;
+
+  const inventory = feedResult?.inventory;
+  const flow = inventory?.flow ?? {};
+  const groups = inventory?.groups ?? {};
+  const feedMode = currentParameters.feed_cost_mode?.active === "formulated" ? "Formulación propia" : "Dietas compradas";
+  const breedingMode = breedingStockResult?.mode === "external" ? "Compra externa" : "Autorreemplazo";
+  const topExpense = getTopExpense(economicResult);
+  const topFeed = getTopFeedStage(feedResult);
+  const topScenario = getTopScenario(scenarios);
+  const unbalanced = formulationResult?.diets?.filter((diet) => !diet.isBalanced) ?? [];
+  const generatedAt = new Date().toLocaleString("es-MX", {
+    year: "numeric", month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit"
+  });
+
+  reportKpis.innerHTML = `
+    <article class="kpi-card economic">
+      <div class="label">Ingresos mensuales</div>
+      <div><div class="value">${formatCurrency(economicResult.grossIncomeMonth, 2)}</div><div class="unit">venta + desecho</div></div>
+    </article>
+    <article class="kpi-card ${economicResult.profitMonth >= 0 ? "positive" : "warning"}">
+      <div class="label">Utilidad mensual</div>
+      <div><div class="value">${formatCurrency(economicResult.profitMonth, 2)}</div><div class="unit">${formatPercent(economicResult.profitPercentOfIncome, 1)} de margen</div></div>
+    </article>
+    <article class="kpi-card positive">
+      <div class="label">Cerdos vendidos/mes</div>
+      <div><div class="value">${formatNumber(flow.pigsSoldPerMonth, 2)}</div><div class="unit">indicador productivo</div></div>
+    </article>
+    <article class="kpi-card ${unbalanced.length ? "warning" : "positive"}">
+      <div class="label">Auditoría de fórmulas</div>
+      <div><div class="value">${(formulationResult?.diets?.length ?? 0) - unbalanced.length}/${formulationResult?.diets?.length ?? 0}</div><div class="unit">dietas cerradas a 1,000 kg</div></div>
+    </article>
+  `;
+
+  const productiveRows = buildReportRows([
+    ["No. de vientres", formatNumber(getParam("productive_parameters", "sows"), 0), "Base reproductiva del modelo."],
+    ["Partos/hembra/año", formatNumber(flow.farrowingsPerSowPerYear, 2), "Calculado con gestación + lactancia + días abiertos."],
+    ["Lechones destetados/camada", formatNumber(flow.weanedPerLitter, 2), "Después de mortalidad en maternidad."],
+    ["Cerdos vendidos/hembra/año", formatNumber(flow.pigsSoldPerSowPerYear, 2), "Indicador productivo; no se afecta por ajuste económico de autorreemplazo."],
+    ["Mortalidad global", formatPercent(flow.totalMortalityPercent, 1), "Suma de mortalidades por etapa."],
+    ["Inventario total cerdos", formatNumber(groups.totalInventory, 1), "Inventario productivo, sin duplicar reemplazos."],
+    ["Hembras de reemplazo", formatNumber(groups.breedingFemales?.replacement ?? 0, 1), "Población visible; no agrega alimento para evitar doble conteo."]
+  ]);
+
+  const economicRows = buildReportRows([
+    ["Ingresos mensuales", formatCurrency(economicResult.grossIncomeMonth, 2), "Incluye venta a rastro e ingreso por desecho."],
+    ["Egresos mensuales", formatCurrency(economicResult.totalCostsMonth, 2), "Suma alimento, mano de obra, gastos operativos y pie de cría."],
+    ["Utilidad mensual", formatCurrency(economicResult.profitMonth, 2), "Resultado económico mensual estimado."],
+    ["Margen mensual", formatPercent(economicResult.profitPercentOfIncome, 1), "Utilidad / ingreso mensual."],
+    ["Principal egreso", topExpense ? `${topExpense.label} (${formatPercent(topExpense.percentOfTotalCosts, 1)})` : "—", "Rubro con mayor participación en egresos."]
+  ]);
+
+  const feedRows = buildReportRows([
+    ["Modo de alimento", feedMode, "Define si los costos/kg provienen de captura directa o formulación."],
+    ["Costo alimento/mes", formatCurrency(feedResult.totals.totalCostMonth, 2), "Incluye consumo por etapa y costo/kg activo."],
+    ["Kg alimento/mes", formatNumber(feedResult.totals.totalKgMonth, 1), "Estimado mensual total."],
+    ["Conversión alimenticia granja", formatNumber(feedResult.totals.feedConversionFarm, 2), "Kg alimento / kg vendido."],
+    ["Etapa con mayor costo", topFeed ? `${topFeed.label} (${formatShortCurrency(topFeed.costMonth)})` : "—", "Lectura ejecutiva del módulo de alimento."],
+    ["Fórmulas por revisar", unbalanced.length ? unbalanced.map((diet) => diet.label).join(", ") : "Ninguna", "Solo aplica en formulación propia."]
+  ]);
+
+  const breedingRows = buildReportRows([
+    ["Modo de reposición", breedingMode, "Define costo de hembras de reemplazo."],
+    ["Reemplazo anual hembras", formatPercent(getParam("breeding_stock", "female_replacement_rate_annual"), 1), "Base para entradas y desechos mensuales."],
+    ["Hembras reemplazo/mes", formatNumber(breedingStockResult?.female?.replacementFemalesMonth ?? 0, 2), "Hembras que entran al sistema."],
+    ["Ingreso por desecho", formatCurrency(breedingStockResult?.totals?.cullIncomeMonth ?? 0, 2), "Suma a ingresos generales."],
+    ["Egresos pie de cría", formatCurrency(breedingStockResult?.totals?.expenseMonth ?? 0, 2), "Suma a egresos generales."],
+    ["Impacto neto", formatCurrency(breedingStockResult?.totals?.netImpactMonth ?? 0, 2), "Ingreso por desecho menos egresos y ajustes." ]
+  ]);
+
+  const scenarioRows = buildReportRows([
+    ["Mejor escenario", topScenario ? `${topScenario.shortName ?? topScenario.name}: ${formatCurrency(topScenario.metrics.profitMonth, 2)}` : "—", "Comparación predefinida de sensibilidad."],
+    ["Escenario actual", scenarios?.[0] ? formatCurrency(scenarios[0].metrics.profitMonth, 2) : "—", "Base capturada por el usuario."],
+    ["Fecha/hora reporte", generatedAt, "Generado localmente en navegador." ]
+  ]);
+
+  technicalReportPreview.innerHTML = `
+    <div class="report-cover">
+      <div>
+        <p class="eyebrow">SIPRO-Porcino</p>
+        <h3>Reporte técnico de simulación</h3>
+        <p>Herramienta técnico-económica del Laboratorio de Sistemas Porcícolas.</p>
+      </div>
+      <div class="report-meta">
+        <span>Versión ${escapeHtml(baseParameters.metadata?.version ?? "")}</span>
+        <span>${escapeHtml(generatedAt)}</span>
+        <span>${escapeHtml(baseParameters.metadata?.country_context ?? "México")}</span>
+      </div>
+    </div>
+    <div class="report-grid">
+      <article class="report-block"><h4>1. Productivo e inventarios</h4><table>${productiveRows}</table></article>
+      <article class="report-block"><h4>2. Económico mensual</h4><table>${economicRows}</table></article>
+      <article class="report-block"><h4>3. Alimentación</h4><table>${feedRows}</table></article>
+      <article class="report-block"><h4>4. Pie de cría</h4><table>${breedingRows}</table></article>
+      <article class="report-block report-block-wide"><h4>5. Escenarios y trazabilidad</h4><table>${scenarioRows}</table></article>
+    </div>
+    <div class="report-note">
+      <strong>Nota técnica:</strong> este reporte organiza los resultados activos del simulador. Debe interpretarse con base en los supuestos capturados, el modo de alimentación seleccionado, el cierre de fórmulas a 1,000 kg y la separación entre medicación en alimento y gastos sanitarios operativos.
+    </div>
+  `;
 }
 
 function renderStickyBalance(feedResult, economicResult) {

@@ -1,12 +1,12 @@
 {
   "metadata": {
     "project": "SIPRO-Porcino",
-    "version": "1.0.3-dev",
+    "version": "1.1.0-dev",
     "country_context": "México",
     "production_system": "Granja ciclo completo",
     "source": "Mapa técnico inicial derivado del modelo Excel privado",
     "language": "es",
-    "last_module": "pulido_grafico_integral"
+    "last_module": "reporte_tecnico_salida_profesional"
   },
   "productive_parameters": {
     "breeding_sows": {

@@ -1,6 +1,21 @@
 # Changelog
 
 
+
+## [1.1.0-dev] - Salida profesional y reporte técnico
+
+### Agregado
+
+- Se integra un módulo de reporte técnico imprimible con resumen productivo, económico, alimenticio, pie de cría, escenarios y trazabilidad.
+- Se agrega botón para imprimir o guardar el reporte como PDF desde el navegador.
+- Se incorporan KPIs de reporte ejecutivo para revisión rápida.
+
+### Mejorado
+
+- Se refuerza la visibilidad de las tarjetas gráficas del tablero de decisión.
+- Se mejora el contraste, jerarquía y lectura de barras en gráficos de egresos, alimento, insumos, escenarios y sensibilidad.
+- Se amplía la separación visual entre gráficos para evitar que se perciban encapsulados dentro del panel.
+
 ## [1.0.3-dev] - Pulido gráfico integral
 
 ### Agregado
