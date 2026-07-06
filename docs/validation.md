@@ -1,3 +1,13 @@
+
+## v0.9.0-dev — Auditoría dinámica del modelo
+
+Se agregó una sección de auditoría interna para revisar consistencia de supuestos e integración de módulos. La auditoría no modifica los cálculos; resume el modo de alimento activo, cierre de fórmulas a 1,000 kg, integración de medicación/premezclas, gastos sanitarios, pie de cría, ingresos por hembras de desecho y ajuste de autorreemplazo.
+
+### Estado
+
+- Validación visual y funcional pendiente por el usuario en entorno local.
+- Pendiente comparación fina Excel vs SIPRO para cerrar diferencias menores derivadas de cambios de supuestos y nuevos módulos integrados.
+
 # Validación inicial
 
 ## Caso base auditado desde Excel fuente

@@ -776,3 +776,18 @@ table .total-row td {
 .wide-text-input {
   width: min(260px, 100%);
 }
+
+.status-chip.info {
+  background: var(--blue);
+  color: #0f3d36;
+}
+
+.compact-notes {
+  margin-top: 18px;
+  opacity: 0.92;
+}
+
+#model-audit-table td:nth-child(3),
+#model-audit-table td:nth-child(4) {
+  text-align: left;
+}

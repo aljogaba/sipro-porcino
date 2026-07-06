@@ -1,5 +1,20 @@
 # Changelog
 
+## [0.9.0-dev] - En desarrollo
+
+### Agregado
+
+- Panel dinámico de auditoría del modelo.
+- Revisión automática del modo de alimento activo.
+- Revisión de cierre de fórmulas a 1,000 kg.
+- Trazabilidad de ingresos por hembras de desecho y ajuste de autorreemplazo.
+- Resumen de integración entre alimento, gastos sanitarios, pie de cría e ingresos/egresos.
+
+### Documentado
+
+- Pendiente de validación fina Excel vs SIPRO después de la integración de módulos mayores.
+
+
 Todos los cambios importantes de SIPRO-Porcino serán documentados en este archivo.
 
 ## [0.8.1-dev] - En desarrollo

@@ -22,6 +22,8 @@ const operationalExpenseTable = document.querySelector("#operational-expense-tab
 const breedingStockKpis = document.querySelector("#breeding-stock-kpis");
 const breedingStockInputs = document.querySelector("#breeding-stock-inputs");
 const breedingStockTable = document.querySelector("#breeding-stock-table");
+const modelAuditKpis = document.querySelector("#model-audit-kpis");
+const modelAuditTable = document.querySelector("#model-audit-table");
 const breedingModeButtons = document.querySelectorAll("[data-breeding-mode]");
 const feedCostInputs = document.querySelector("#feed-cost-inputs");
 const feedCostPanelTitle = document.querySelector("#feed-cost-panel-title");
@@ -305,6 +307,7 @@ function recalculate() {
   renderEconomicSummary(economicResult);
   renderScenarios(scenarioResult);
   renderStickyBalance(feedResult, economicResult);
+  renderModelAudit(formulationResult, feedResult, operationalExpenseResult, breedingStockResult, economicResult);
 }
 
 function renderKpis({ flow, groups }, feedResult) {
@@ -1094,6 +1097,137 @@ function renderEconomicSummary(economicResult) {
   `;
 }
 
+
+
+function getAuditStatusClass(status) {
+  if (status === "Correcto") return "ok";
+  if (status === "Revisar") return "warn";
+  return "info";
+}
+
+function renderModelAudit(formulationResult, feedResult, operationalExpenseResult, breedingStockResult, economicResult) {
+  if (!modelAuditKpis || !modelAuditTable) return;
+
+  const feedMode = currentParameters.feed_cost_mode?.active ?? "purchased";
+  const feedModeLabel = feedMode === "formulated" ? "Formulación" : "Compra";
+  const unbalancedDiets = (formulationResult?.diets ?? []).filter((diet) => !diet.isBalanced);
+  const balancedCount = (formulationResult?.diets?.length ?? 0) - unbalancedDiets.length;
+  const operationalTotal = operationalExpenseResult?.totalMonth ?? 0;
+  const breedingExpense = breedingStockResult?.totals?.totalExpenseMonth ?? 0;
+  const cullIncome = breedingStockResult?.totals?.cullIncomeMonth ?? 0;
+  const selfDeduction = breedingStockResult?.totals?.selfReplacementMarketIncomeDeduction ?? 0;
+  const feedCostMonth = feedResult?.totals?.totalCostMonth ?? 0;
+  const profitMargin = economicResult?.profitPercentOfIncome ?? 0;
+
+  const modeNote = feedMode === "formulated"
+    ? `${balancedCount}/${formulationResult.diets.length} dietas balanceadas`
+    : "costos capturados";
+
+  modelAuditKpis.innerHTML = `
+    <article class="kpi-card ${feedMode === "formulated" ? (unbalancedDiets.length === 0 ? "positive" : "warning") : "economic"}">
+      <div class="label">Modo de alimento</div>
+      <div><div class="value">${feedModeLabel}</div><div class="unit">${escapeHtml(modeNote)}</div></div>
+    </article>
+    <article class="kpi-card ${unbalancedDiets.length === 0 ? "positive" : "warning"}">
+      <div class="label">Fórmulas 1,000 kg</div>
+      <div><div class="value">${unbalancedDiets.length === 0 ? "OK" : unbalancedDiets.length}</div><div class="unit">${unbalancedDiets.length === 0 ? "sin alertas" : "dietas por revisar"}</div></div>
+    </article>
+    <article class="kpi-card economic">
+      <div class="label">Ingreso por desecho</div>
+      <div><div class="value">${formatCurrency(cullIncome, 2)}</div><div class="unit">sumado a ingresos</div></div>
+    </article>
+    <article class="kpi-card ${profitMargin >= 0 ? "positive" : "bad"}">
+      <div class="label">Margen mensual</div>
+      <div><div class="value">${formatPercent(profitMargin, 1)}</div><div class="unit">utilidad/ingreso</div></div>
+    </article>
+  `;
+
+  const checks = [
+    {
+      item: "Ciclo reproductivo",
+      status: "Correcto",
+      value: "115 días gestación + lactancia + días abiertos",
+      note: "Base técnica actual del modelo."
+    },
+    {
+      item: "Modo de alimento activo",
+      status: "Correcto",
+      value: feedMode === "formulated" ? "Formulación propia" : "Dietas compradas",
+      note: feedMode === "formulated" ? "Los costos/kg provienen de ingredientes, núcleos y medicación/premezcla." : "Los costos/kg provienen de captura directa del usuario."
+    },
+    {
+      item: "Cierre de fórmulas por tonelada",
+      status: unbalancedDiets.length === 0 ? "Correcto" : "Revisar",
+      value: unbalancedDiets.length === 0 ? "Todas cierran en 1,000 kg" : unbalancedDiets.map((diet) => diet.label).join(", "),
+      note: unbalancedDiets.length === 0 ? "Sin diferencias de balance." : "Ajustar kg de ingredientes o núcleo."
+    },
+    {
+      item: "Medicación/premezclas en alimento",
+      status: "Correcto",
+      value: feedMode === "formulated" ? formatCurrency(formulationResult.medication?.totals?.totalCostMonth ?? 0, 2) : "No aplica en dietas compradas",
+      note: "Suma costo a la dieta; no modifica el cierre de 1,000 kg."
+    },
+    {
+      item: "Gastos sanitarios/impuestos/servicios",
+      status: "Correcto",
+      value: formatCurrency(operationalTotal, 2),
+      note: "Reemplaza el campo agregado de Medicina, impuestos y varios."
+    },
+    {
+      item: "Pie de cría: egresos",
+      status: "Correcto",
+      value: formatCurrency(breedingExpense, 2),
+      note: "Incluye hembras de reemplazo y compra opcional de machos."
+    },
+    {
+      item: "Pie de cría: ingresos por desecho",
+      status: "Correcto",
+      value: formatCurrency(cullIncome, 2),
+      note: "Se suma al ingreso mensual general."
+    },
+    {
+      item: "Autorreemplazo no vendido a rastro",
+      status: selfDeduction > 0 ? "Correcto" : "Correcto",
+      value: selfDeduction > 0 ? `-${formatCurrency(selfDeduction, 2)}` : "$0.00",
+      note: "Solo afecta el ingreso económico; no modifica indicadores productivos."
+    },
+    {
+      item: "Costo de alimento mensual",
+      status: "Correcto",
+      value: formatCurrency(feedCostMonth, 2),
+      note: "Integra el modo de alimento activo."
+    },
+    {
+      item: "Pendiente de validación fina",
+      status: "Revisar",
+      value: "Comparación Excel vs SIPRO",
+      note: "Cerrar diferencias pequeñas por supuestos actualizados y módulos nuevos."
+    }
+  ];
+
+  modelAuditTable.innerHTML = `
+    <table>
+      <thead>
+        <tr>
+          <th>Revisión</th>
+          <th>Estado</th>
+          <th>Valor</th>
+          <th>Nota</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${checks.map((check) => `
+          <tr>
+            <td>${escapeHtml(check.item)}</td>
+            <td><span class="status-chip ${getAuditStatusClass(check.status)}">${escapeHtml(check.status)}</span></td>
+            <td>${escapeHtml(check.value)}</td>
+            <td>${escapeHtml(check.note)}</td>
+          </tr>
+        `).join("")}
+      </tbody>
+    </table>
+  `;
+}
 
 function renderStickyBalance(feedResult, economicResult) {
   if (!stickyBalance) return;

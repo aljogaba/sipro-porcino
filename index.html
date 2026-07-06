@@ -17,14 +17,14 @@
       </div>
       <div class="version-card">
         <span>Versión</span>
-        <strong id="app-version">0.8.1-dev</strong>
+        <strong id="app-version">0.9.0-dev</strong>
       </div>
     </div>
   </header>
 
   <main class="container main-layout">
     <section class="notice">
-      <strong>Módulo inicial:</strong> inventarios y flujo productivo. Esta versión reproduce la lógica base del Excel fuente para el tablero productivo visible. El módulo de alimento y el resumen económico mensual se integran de forma inicial; medicación detallada y formulación alimenticia completa se integrarán por fases. Esta versión ya incluye una primera capa de análisis de escenarios, balance económico lateral y separación del inventario productivo de cerdos e inventario de hembras reproductivas. El módulo de alimento trabaja con dos modos: dietas compradas o formulación propia. En formulación propia se integra una primera capa de medicación/premezcla como costo no ponderal por tonelada. Esta versión agrega el módulo detallado de gastos sanitarios, impuestos y servicios, además de pie de cría, reemplazos y desechos. La compra de machos se maneja como gasto opcional prorrateado, no como porcentaje de reemplazo.
+      <strong>Módulo inicial:</strong> inventarios y flujo productivo. Esta versión reproduce la lógica base del Excel fuente para el tablero productivo visible. El módulo de alimento y el resumen económico mensual se integran de forma inicial; medicación detallada y formulación alimenticia completa se integrarán por fases. Esta versión ya incluye una primera capa de análisis de escenarios, balance económico lateral y separación del inventario productivo de cerdos e inventario de hembras reproductivas. El módulo de alimento trabaja con dos modos: dietas compradas o formulación propia. En formulación propia se integra una primera capa de medicación/premezcla como costo no ponderal por tonelada. Esta versión agrega el módulo detallado de gastos sanitarios, impuestos y servicios, además de pie de cría, reemplazos y desechos. La compra de machos se maneja como gasto opcional prorrateado, no como porcentaje de reemplazo. Esta versión agrega una auditoría dinámica del modelo para revisar consistencia de supuestos, integración de ingresos/egresos y puntos pendientes de validación.
     </section>
 
     <section class="panel">
@@ -293,21 +293,20 @@
       <div id="scenario-table" class="table-wrap"></div>
     </section>
 
-        <section class="panel">
+        <section class="panel" id="model-audit-panel">
           <div class="section-heading">
             <div>
-              <p class="eyebrow">Validación operativa</p>
-              <h2>Notas del modelo</h2>
+              <p class="eyebrow">Auditoría del modelo</p>
+              <h2>Consistencia y trazabilidad</h2>
             </div>
           </div>
-          <ul class="model-notes">
-            <li>El cálculo de partos/hembra/año sigue la fórmula base: partos semanales × 52 / vientres.</li>
-            <li>El ciclo reproductivo usa 115 días de gestación + días de lactancia + días abiertos, expresado en semanas.</li>
-            <li>El alimento semanal replica la estructura del Excel: inventario alimentado × consumo diario × 7 × costo/kg.</li>
-            <li>El pie de cría incluye hembras gestantes, hembras lactantes y una relación macho:hembra de 1:20 para consumo de alimento.</li>
-            <li>El costo del alimento puede trabajarse en dos modos: dietas compradas capturadas por el usuario o formulación propia calculada desde ingredientes, núcleos y medicación/premezcla no ponderal.</li>
-            <li>El resumen económico mensual integra ingresos, costo de alimento, mano de obra y otros costos operativos editables.</li>
-            <li>Los escenarios de sensibilidad se calculan como proyecciones paralelas; no alteran los parámetros base capturados por el usuario.</li>
+          <p class="panel-note">Esta sección no cambia los cálculos; resume cómo se están integrando los módulos activos y alerta posibles puntos de revisión antes de interpretar los resultados.</p>
+          <div class="kpi-grid compact-kpis" id="model-audit-kpis"></div>
+          <div id="model-audit-table" class="table-wrap"></div>
+          <ul class="model-notes compact-notes">
+            <li>El ciclo reproductivo usa días de gestación + días de lactancia + días abiertos, expresado en semanas.</li>
+            <li>El alimento se calcula como inventario alimentado × consumo diario × 7 × costo/kg.</li>
+            <li>Los escenarios son proyecciones paralelas y no modifican los parámetros base capturados por el usuario.</li>
           </ul>
         </section>
       </div>
