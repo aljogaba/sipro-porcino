@@ -2,6 +2,15 @@
 
 Todos los cambios importantes de SIPRO-Porcino serán documentados en este archivo.
 
+
+## [0.5.1-dev] - En desarrollo
+
+### Corregido
+
+- El módulo de formulación alimenticia queda oculto cuando el modo activo es `Dietas compradas`.
+- El selector de costo de alimento ahora muestra solo el flujo operativo correspondiente al modo seleccionado.
+- Se reduce la confusión visual del módulo de alimentación al separar claramente captura de dietas compradas y formulación propia.
+
 ## [0.5.0-dev] - En desarrollo
 
 ### Agregado

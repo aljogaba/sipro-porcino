@@ -17,6 +17,7 @@ const feedCostInputs = document.querySelector("#feed-cost-inputs");
 const feedCostPanelTitle = document.querySelector("#feed-cost-panel-title");
 const feedCostModeNote = document.querySelector("#feed-cost-mode-note");
 const feedCostModeButtons = document.querySelectorAll("[data-feed-mode]");
+const feedFormulationPanel = document.querySelector("#feed-formulation-panel");
 const formulationKpis = document.querySelector("#formulation-kpis");
 const formulationIngredientTable = document.querySelector("#formulation-ingredient-table");
 const formulationNucleiTable = document.querySelector("#formulation-nuclei-table");
@@ -103,6 +104,11 @@ function renderFeedCostMode() {
     button.setAttribute("aria-pressed", String(isActive));
   });
 
+  if (feedFormulationPanel) {
+    feedFormulationPanel.hidden = !isFormulated;
+    feedFormulationPanel.setAttribute("aria-hidden", String(!isFormulated));
+  }
+
   feedCostInputs.innerHTML = renderInputCards(section, currentParameters[section], {
     disabled: isFormulated
   });
@@ -177,7 +183,9 @@ function recalculate() {
   renderFlowTable(result.flow);
   renderInventory(result.groups);
   renderFeed(feedResult);
-  renderFeedFormulation(formulationResult);
+  if ((currentParameters.feed_cost_mode?.active ?? "purchased") === "formulated") {
+    renderFeedFormulation(formulationResult);
+  }
   renderEconomicSummary(economicResult);
   renderScenarios(scenarioResult);
   renderStickyBalance(feedResult, economicResult);

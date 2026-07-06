@@ -155,3 +155,8 @@ Se integra el primer módulo de formulación alimenticia con enfoque económico,
 - No calcula proteína, energía, lisina, minerales ni restricciones nutricionales.
 - La medicación/suplementación no ponderal no se suma todavía al costo formulado; queda reservada para el módulo posterior de medicación/premezclas.
 - Fase 0 y Fase 1 se tratan como dietas completas compradas dentro del bloque de núcleos.
+
+
+## Ajuste de modo de alimentación `v0.5.1-dev`
+
+El módulo de formulación alimenticia se muestra únicamente cuando el usuario selecciona `Formulación propia`. En modo `Dietas compradas`, la interfaz conserva solo la captura directa del costo por kg de dieta, reduciendo duplicidad visual y evitando que el usuario capture datos de formulación cuando no aplican.

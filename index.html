@@ -24,7 +24,7 @@
 
   <main class="container main-layout">
     <section class="notice">
-      <strong>Módulo inicial:</strong> inventarios y flujo productivo. Esta versión reproduce la lógica base del Excel fuente para el tablero productivo visible. El módulo de alimento y el resumen económico mensual se integran de forma inicial; medicación detallada y formulación alimenticia completa se integrarán por fases. Esta versión ya incluye una primera capa de análisis de escenarios, balance económico lateral y separación del inventario productivo de cerdos e inventario de hembras reproductivas. Integra además el primer módulo de formulación económica de dietas por tonelada.
+      <strong>Módulo inicial:</strong> inventarios y flujo productivo. Esta versión reproduce la lógica base del Excel fuente para el tablero productivo visible. El módulo de alimento y el resumen económico mensual se integran de forma inicial; medicación detallada y formulación alimenticia completa se integrarán por fases. Esta versión ya incluye una primera capa de análisis de escenarios, balance económico lateral y separación del inventario productivo de cerdos e inventario de hembras reproductivas. El módulo de alimento trabaja con dos modos: dietas compradas o formulación propia.
     </section>
 
     <section class="panel">
@@ -71,11 +71,11 @@
           <button type="button" data-feed-mode="formulated" aria-pressed="false">Formulación propia</button>
         </div>
       </div>
-      <p id="feed-cost-mode-note" class="panel-note">Seleccione si el costo del alimento se capturará como dieta comprada o se tomará del módulo de formulación.</p>
+      <p id="feed-cost-mode-note" class="panel-note">Seleccione el modo de trabajo. En dietas compradas solo se capturan costos/kg; en formulación propia se activa el módulo económico de dietas.</p>
       <div id="feed-cost-inputs" class="input-grid compact"></div>
     </section>
 
-    <section class="panel" id="feed-formulation-panel">
+    <section class="panel" id="feed-formulation-panel" hidden aria-hidden="true">
       <div class="section-heading">
         <div>
           <p class="eyebrow">Formulación alimenticia</p>
