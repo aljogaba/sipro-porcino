@@ -2,6 +2,14 @@
 
 Todos los cambios importantes de SIPRO-Porcino serán documentados en este archivo.
 
+## [0.6.1-dev] - En desarrollo
+
+### Cambiado
+
+- Todos los productos del módulo de medicación y premezclas ahora tienen nombre editable.
+- Los productos precargados se documentan como ejemplos modificables, no como lista fija del modelo.
+- Se ajustan notas de ayuda para explicar que el usuario puede cambiar nombre, precio e inclusión por dieta.
+
 ## [0.6.0-dev] - En desarrollo
 
 ### Agregado

@@ -758,7 +758,7 @@
   "medication_premix": {
     "enabled": true,
     "batch_size_kg": 1000,
-    "note": "Costos no ponderales por tonelada. La inclusión captura kg o equivalente técnico por tonelada de dieta, pero no se suma al balance de 1,000 kg de la fórmula alimenticia.",
+    "note": "Costos no ponderales por tonelada. Los productos incluidos son ejemplos editables: el usuario puede cambiar nombre, precio e inclusión por dieta. La inclusión captura kg o equivalente técnico por tonelada de dieta, pero no se suma al balance de 1,000 kg de la fórmula alimenticia.",
     "stage_order": [
       "gestation",
       "lactation_sow",
@@ -774,91 +774,91 @@
         "label": "Bio Powder",
         "price": 98.0,
         "unit": "$/kg",
-        "editable_label": false
+        "editable_label": true
       },
       "klinofeed": {
         "label": "Klinofeed",
         "price": 17.76,
         "unit": "$/kg",
-        "editable_label": false
+        "editable_label": true
       },
       "ph_acid": {
         "label": "Ph Acid",
         "price": 23.2,
         "unit": "$/kg",
-        "editable_label": false
+        "editable_label": true
       },
       "tiamucoll_ctc": {
         "label": "Tiamucoll CTC",
         "price": 145.0,
         "unit": "$/kg",
-        "editable_label": false
+        "editable_label": true
       },
       "lawcoll": {
         "label": "Lawcoll",
         "price": 52.0,
         "unit": "$/kg",
-        "editable_label": false
+        "editable_label": true
       },
       "nutricoll_40": {
         "label": "Nutricoll 40",
         "price": 85.0,
         "unit": "$/kg",
-        "editable_label": false
+        "editable_label": true
       },
       "collinclor_44": {
         "label": "Collinclor 44",
         "price": 75.0,
         "unit": "$/kg",
-        "editable_label": false
+        "editable_label": true
       },
       "vetityl": {
         "label": "Vetityl",
         "price": 260.0,
         "unit": "$/kg",
-        "editable_label": false
+        "editable_label": true
       },
       "oxicoll_200": {
         "label": "Oxicoll 200",
         "price": 57.6,
         "unit": "$/kg",
-        "editable_label": false
+        "editable_label": true
       },
       "selacid_green_grow": {
         "label": "Selacid Green Grow",
         "price": 47.84,
         "unit": "$/kg",
-        "editable_label": false
+        "editable_label": true
       },
       "bio_zinc": {
         "label": "Bio Zinc",
         "price": 56.25,
         "unit": "$/kg",
-        "editable_label": false
+        "editable_label": true
       },
       "mebecoll": {
         "label": "Mebecoll",
         "price": 103.4,
         "unit": "$/kg",
-        "editable_label": false
+        "editable_label": true
       },
       "tetracoll_200": {
         "label": "Tetracoll 200",
         "price": 101.2,
         "unit": "$/kg",
-        "editable_label": false
+        "editable_label": true
       },
       "canela": {
         "label": "Canela",
         "price": 38.0,
         "unit": "$/kg",
-        "editable_label": false
+        "editable_label": true
       },
       "collinclor_plus": {
         "label": "Collinclor Plus",
         "price": 142.0,
         "unit": "$/kg",
-        "editable_label": false
+        "editable_label": true
       },
       "otros_1": {
         "label": "Otros 1",

@@ -629,7 +629,7 @@ function renderMedicationProductTable(medicationResult) {
     <table class="compact-table">
       <thead>
         <tr>
-          <th>Producto ${helpIcon("Producto, aditivo, medicación o suplementación usada como costo no ponderal. Puede representar kg o equivalente técnico por tonelada.")}</th>
+          <th>Producto ${helpIcon("Producto, aditivo, medicación o suplementación usada como costo no ponderal. Los nombres son editables y los valores precargados son solo ejemplos.")}</th>
           <th>Precio/kg ${helpIcon("Costo unitario del producto. Se usa para calcular el cargo económico por tonelada de dieta.")}</th>
         </tr>
       </thead>
@@ -658,7 +658,7 @@ function renderMedicationMatrixTable(medicationResult, formulation) {
     <table class="formula-table medication-table">
       <thead>
         <tr>
-          <th>Producto ${helpIcon("Cada fila captura la inclusión por tonelada de dieta. Estos kg no modifican el cierre de 1,000 kg de la fórmula alimenticia.")}</th>
+          <th>Producto ${helpIcon("Cada fila captura la inclusión por tonelada de dieta. Puedes cambiar el nombre del producto en la tabla de productos; estos kg no modifican el cierre de 1,000 kg de la fórmula alimenticia.")}</th>
           ${stageOrder.map((dietKey) => `<th>${escapeHtml(getDietLabel(formulation, dietKey))}<br><span>kg/ton</span></th>`).join("")}
           <th>Total $/ton ${helpIcon("Suma del costo por tonelada considerando todas las etapas donde se usa el producto. Es una lectura de referencia, no un costo de una sola dieta.")}</th>
         </tr>

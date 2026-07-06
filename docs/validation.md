@@ -243,3 +243,8 @@ Los costos base de medicación/premezcla por tonelada son:
 | Finalización | 296.16 |
 
 Estos costos explican la diferencia entre el costo de formulación económica pura y el costo final usado por el tablero original del Excel.
+
+
+## Nota v0.6.1-dev — Productos editables
+
+El módulo de medicación y premezclas mantiene productos precargados como ejemplos de trabajo, pero todos los nombres, precios e inclusiones por dieta son editables. Los productos no deben interpretarse como una lista fija del modelo.
