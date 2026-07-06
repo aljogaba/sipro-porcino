@@ -934,8 +934,7 @@ function renderBreedingStockInputs(config, mode) {
     mode === "external" ? "external_female_price" : "self_replacement_cost_per_kg",
     "cull_sow_weight",
     "cull_sow_price_per_kg",
-    "boar_inventory",
-    "boar_replacement_rate_annual",
+    "boars_purchased_per_year",
     "boar_unit_price"
   ];
 
@@ -993,7 +992,7 @@ function renderBreedingStock(result, economicResult) {
     </article>
     <article class="kpi-card bad">
       <div class="label">Egreso pie de cría/mes</div>
-      <div><div class="value">${formatCurrency(result.totals.totalExpenseMonth, 2)}</div><div class="unit">hembras + machos</div></div>
+      <div><div class="value">${formatCurrency(result.totals.totalExpenseMonth, 2)}</div><div class="unit">hembras + compra opcional</div></div>
     </article>
   `;
 
@@ -1011,7 +1010,8 @@ function renderBreedingStock(result, economicResult) {
         <tr><td>Ingreso por hembras de desecho</td><td>${formatCurrency(result.female.cullIncomeMonth, 2)}</td><td>Se suma al ingreso general</td></tr>
         ${result.female.selfReplacementMarketIncomeDeduction > 0 ? `<tr><td>Ajuste por autorreemplazo no vendido</td><td>-${formatCurrency(result.female.selfReplacementMarketIncomeDeduction, 2)}</td><td>Solo económico; no modifica indicadores</td></tr>` : ""}
         <tr><td>Costo reemplazo hembras</td><td>${formatCurrency(result.female.replacementExpenseMonth, 2)}</td><td>${mode === "external" ? "Compra externa" : "Costo de producción propio"}</td></tr>
-        <tr><td>Compra reemplazo machos</td><td>${formatCurrency(result.boar.replacementExpenseMonth, 2)}</td><td>${formatNumber(result.boar.replacementPerMonth, 2)} machos/mes</td></tr>
+        <tr><td>Inventario estimado de machos</td><td>${formatNumber(result.boar.referenceInventory, 1)}</td><td>Referencia 1:20; informativo, no modela reposición</td></tr>
+        <tr><td>Compra opcional de machos</td><td>${formatCurrency(result.boar.replacementExpenseMonth, 2)}</td><td>${formatNumber(result.boar.purchasedPerYear, 1)} machos/año · ${formatNumber(result.boar.purchasedPerMonth, 2)} machos/mes</td></tr>
         <tr class="total-row"><td>Egresos pie de cría</td><td>${formatCurrency(result.totals.totalExpenseMonth, 2)}</td><td>${formatCurrency(result.totals.costPerPigSold, 2)} por cerdo vendido</td></tr>
         <tr class="total-row"><td>Impacto neto pie de cría</td><td>${formatCurrency(result.totals.netImpactMonth, 2)}</td><td>Ingreso desecho - egresos - ajuste autorreemplazo</td></tr>
       </tbody>

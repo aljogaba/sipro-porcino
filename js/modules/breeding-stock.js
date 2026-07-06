@@ -29,11 +29,11 @@ export function calculateBreedingStock(parameters, feedResult = null) {
   const cullPricePerKg = getValue(parameters, "breeding_stock", "cull_sow_price_per_kg", 0);
   const cullIncomeMonth = femalesCullMonth * cullWeight * cullPricePerKg;
 
-  const boarInventory = getValue(parameters, "breeding_stock", "boar_inventory", breedingSows / 20);
-  const boarReplacementRateAnnual = getValue(parameters, "breeding_stock", "boar_replacement_rate_annual", 0);
+  const boarReferenceInventory = breedingSows / 20;
+  const boarsPurchasedPerYear = getValue(parameters, "breeding_stock", "boars_purchased_per_year", 0);
   const boarUnitPrice = getValue(parameters, "breeding_stock", "boar_unit_price", 0);
-  const boarsReplacementMonth = boarInventory * (boarReplacementRateAnnual / 100) / 12;
-  const boarReplacementExpenseMonth = boarsReplacementMonth * boarUnitPrice;
+  const boarsPurchasedPerMonth = boarsPurchasedPerYear / 12;
+  const boarReplacementExpenseMonth = boarsPurchasedPerMonth * boarUnitPrice;
 
   // Solo en autorreemplazo se descuenta económicamente la venta a rastro de las hembras seleccionadas
   // del propio flujo. Los indicadores productivos se conservan sin modificación.
@@ -70,9 +70,9 @@ export function calculateBreedingStock(parameters, feedResult = null) {
       selfReplacementMarketIncomeDeduction
     },
     boar: {
-      inventory: boarInventory,
-      replacementRateAnnual: boarReplacementRateAnnual,
-      replacementPerMonth: boarsReplacementMonth,
+      referenceInventory: boarReferenceInventory,
+      purchasedPerYear: boarsPurchasedPerYear,
+      purchasedPerMonth: boarsPurchasedPerMonth,
       unitPrice: boarUnitPrice,
       replacementExpenseMonth: boarReplacementExpenseMonth
     },

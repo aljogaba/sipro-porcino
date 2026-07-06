@@ -291,3 +291,11 @@ Pendientes de validación fina:
 
 - Confirmar si el costo de producción/kg para autorreemplazo debe quedar como entrada manual o derivarse de un costo de producción/kg calculado por el modelo.
 - Validar el criterio de meses promedio como reemplazo para estimar inventario visible de hembras de reemplazo.
+
+
+## v0.8.1-dev — Ajuste de compra opcional de machos
+
+- Se eliminó el campo `% reemplazo anual machos` para evitar confusión conceptual.
+- La compra de machos se captura como `Machos comprados/año` y se prorratea mensualmente.
+- El inventario estimado de machos queda como referencia informativa basada en relación 1:20, sin modificar el flujo productivo.
+- No se modela venta de machos de desecho.

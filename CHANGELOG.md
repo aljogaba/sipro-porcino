@@ -2,6 +2,15 @@
 
 Todos los cambios importantes de SIPRO-Porcino serán documentados en este archivo.
 
+## [0.8.1-dev] - En desarrollo
+
+### Cambiado
+
+- Se eliminó `% reemplazo anual machos` del módulo de pie de cría para evitar confusión con el autorreemplazo de hembras.
+- La compra de machos ahora se captura como **Machos comprados/año** y se prorratea como gasto mensual opcional.
+- El inventario estimado de machos queda como dato informativo basado en la relación 1:20, sin modificar el flujo productivo.
+- Se ajustaron textos de ayuda y tabla de resumen para aclarar que no se modela venta de machos de desecho.
+
 ## [0.7.0-dev] - En desarrollo
 
 ### Agregado

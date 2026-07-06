@@ -1,12 +1,12 @@
 {
   "metadata": {
     "project": "SIPRO-Porcino",
-    "version": "0.8.0-dev",
+    "version": "0.8.1-dev",
     "country_context": "México",
     "production_system": "Granja ciclo completo",
     "source": "Mapa técnico inicial derivado del modelo Excel privado",
     "language": "es",
-    "last_module": "pie_cria_reemplazos_desechos"
+    "last_module": "pie_cria_compra_opcional_machos"
   },
   "productive_parameters": {
     "breeding_sows": {
@@ -1566,23 +1566,17 @@
       "unit": "$/kg",
       "note": "Precio de venta por kg en pie de hembras de desecho."
     },
-    "boar_inventory": {
-      "label": "Inventario machos",
-      "value": 15,
-      "unit": "machos",
-      "note": "Inventario de machos usado para estimar compras opcionales de reemplazo. No se autorreemplazan."
-    },
-    "boar_replacement_rate_annual": {
-      "label": "% reemplazo anual machos",
-      "value": 50,
-      "unit": "%/año",
-      "note": "Porcentaje anual de reemplazo de machos. Se modela como compra opcional, sin venta de machos de desecho."
+    "boars_purchased_per_year": {
+      "label": "Machos comprados/año",
+      "value": 0,
+      "unit": "machos/año",
+      "note": "Compra opcional de sementales. Si la granja no compra machos o usa inseminación artificial, deje este valor en 0. No modifica el flujo productivo."
     },
     "boar_unit_price": {
       "label": "Precio compra macho",
       "value": 2200,
       "unit": "$/cabeza",
-      "note": "Costo unitario de compra de macho de reemplazo."
+      "note": "Costo unitario de compra de macho o semental. Solo se prorratea si se captura una compra anual."
     }
   }
 }
