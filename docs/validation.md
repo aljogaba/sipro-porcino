@@ -187,3 +187,59 @@ Se ajustó la presentación de campos numéricos editables para mejorar la lectu
 - campos numéricos generales: separador de miles cuando aplica.
 
 Al entrar al campo, el valor cambia temporalmente a formato limpio para facilitar la captura; al salir del campo, se vuelve a aplicar el formato visual. La lectura interna del modelo acepta separadores de miles, por lo que valores como `24,514.95` o `1,000.0` se interpretan correctamente.
+
+
+## v0.6.0-dev — Medicación y premezclas
+
+Se integra un módulo inicial de medicación, aditivos y suplementación como costo no ponderal por tonelada de dieta.
+
+### Alcance
+
+- Productos editables con precio/kg.
+- Inclusión por dieta expresada como kg/ton o equivalente técnico por tonelada.
+- Cálculo de costo de medicación/premezcla por tonelada y por kg de dieta.
+- Integración automática al costo formulado cuando el modo activo es `Formulación propia`.
+- Resumen mensual estimado de kg y costo por dieta, ligado al consumo mensual de alimento.
+
+### Regla técnica
+
+La medicación/premezcla se suma como costo económico, pero no modifica el cierre de la fórmula alimenticia:
+
+```text
+costo_formulado_ton = costo_ingredientes + costo_núcleo + costo_medicación_premezcla
+costo_formulado_kg = costo_formulado_ton / 1000
+```
+
+La suma de ingredientes + núcleo debe permanecer en 1,000 kg; la medicación/premezcla se maneja como cargo no ponderal.
+
+### Dietas incluidas
+
+El módulo inicial incluye:
+
+- Gestación
+- Lactancia
+- Fase 2
+- Fase 3
+- Iniciación
+- Crecimiento
+- Desarrollo
+- Finalización
+
+Fase 0 y Fase 1 no se incluyen en esta matriz porque se tratan como dietas completas compradas.
+
+### Valores base auditados desde Excel
+
+Los costos base de medicación/premezcla por tonelada son:
+
+| Dieta | Costo medicación/premezcla por ton |
+|---|---:|
+| Gestación | 437.14 |
+| Lactancia | 485.34 |
+| Fase 2 | 278.96 |
+| Fase 3 | 278.96 |
+| Iniciación | 340.76 |
+| Crecimiento | 336.56 |
+| Desarrollo | 336.56 |
+| Finalización | 296.16 |
+
+Estos costos explican la diferencia entre el costo de formulación económica pura y el costo final usado por el tablero original del Excel.

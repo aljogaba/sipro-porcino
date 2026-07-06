@@ -17,14 +17,14 @@
       </div>
       <div class="version-card">
         <span>Versión</span>
-        <strong id="app-version">0.5.3-dev</strong>
+        <strong id="app-version">0.6.0-dev</strong>
       </div>
     </div>
   </header>
 
   <main class="container main-layout">
     <section class="notice">
-      <strong>Módulo inicial:</strong> inventarios y flujo productivo. Esta versión reproduce la lógica base del Excel fuente para el tablero productivo visible. El módulo de alimento y el resumen económico mensual se integran de forma inicial; medicación detallada y formulación alimenticia completa se integrarán por fases. Esta versión ya incluye una primera capa de análisis de escenarios, balance económico lateral y separación del inventario productivo de cerdos e inventario de hembras reproductivas. El módulo de alimento trabaja con dos modos: dietas compradas o formulación propia.
+      <strong>Módulo inicial:</strong> inventarios y flujo productivo. Esta versión reproduce la lógica base del Excel fuente para el tablero productivo visible. El módulo de alimento y el resumen económico mensual se integran de forma inicial; medicación detallada y formulación alimenticia completa se integrarán por fases. Esta versión ya incluye una primera capa de análisis de escenarios, balance económico lateral y separación del inventario productivo de cerdos e inventario de hembras reproductivas. El módulo de alimento trabaja con dos modos: dietas compradas o formulación propia. En formulación propia se integra una primera capa de medicación/premezcla como costo no ponderal por tonelada.
     </section>
 
     <section class="panel">
@@ -82,7 +82,7 @@
           <h2>Formulación económica de dietas</h2>
         </div>
       </div>
-      <p class="panel-note">Módulo económico por tonelada: calcula costo/ton y costo/kg a partir de ingredientes, núcleos y kg incluidos por dieta. No sustituye una formulación nutricional. La medicación/suplementación no ponderal queda preparada para integrarse desde un módulo posterior.</p>
+      <p class="panel-note">Módulo económico por tonelada: calcula costo/ton y costo/kg a partir de ingredientes, núcleos y kg incluidos por dieta. No sustituye una formulación nutricional. La medicación/suplementación no ponderal se integra en un módulo independiente y suma costo por tonelada sin alterar el cierre de 1,000 kg de la fórmula.</p>
       <div class="context-help">
         <strong>Guía rápida</strong>
         <ul>
@@ -105,6 +105,31 @@
       </div>
       <h3 class="mini-title">Fórmulas por tonelada</h3>
       <div id="formulation-diet-table" class="table-wrap wide-table"></div>
+
+      <h3 class="mini-title">Medicación y premezclas</h3>
+      <p class="panel-note">Este bloque captura productos de medicación, aditivos o suplementación que se cargan como costo por tonelada de dieta. No modifican el cierre de 1,000 kg de la fórmula; solo agregan costo económico.</p>
+      <div class="context-help subtle-help">
+        <strong>Lectura técnica</strong>
+        <ul>
+          <li>La inclusión se captura como kg/ton o equivalente técnico por tonelada.</li>
+          <li>El costo por dieta se suma al costo formulado cuando está activo el modo <strong>Formulación propia</strong>.</li>
+          <li>Fase 0 y Fase 1 no se muestran aquí porque se manejan como dietas completas compradas.</li>
+        </ul>
+      </div>
+      <div class="kpi-grid compact-kpis" id="medication-kpis"></div>
+      <div class="two-column nested">
+        <div>
+          <h3 class="mini-title">Productos</h3>
+          <div id="medication-product-table" class="table-wrap"></div>
+        </div>
+        <div>
+          <h3 class="mini-title">Resumen por dieta</h3>
+          <div id="medication-balance-table" class="table-wrap"></div>
+        </div>
+      </div>
+      <h3 class="mini-title">Inclusión por dieta</h3>
+      <div id="medication-matrix-table" class="table-wrap wide-table"></div>
+
       <h3 class="mini-title">Balance mensual de insumos</h3>
       <div id="formulation-balance-table" class="table-wrap"></div>
     </section>
@@ -222,7 +247,7 @@
             <li>El ciclo reproductivo usa 115 días de gestación + días de lactancia + días abiertos, expresado en semanas.</li>
             <li>El alimento semanal replica la estructura del Excel: inventario alimentado × consumo diario × 7 × costo/kg.</li>
             <li>El pie de cría incluye hembras gestantes, hembras lactantes y una relación macho:hembra de 1:20 para consumo de alimento.</li>
-            <li>El costo del alimento puede trabajarse en dos modos: dietas compradas capturadas por el usuario o formulación propia preparada para calcularse desde ingredientes y fórmulas.</li>
+            <li>El costo del alimento puede trabajarse en dos modos: dietas compradas capturadas por el usuario o formulación propia calculada desde ingredientes, núcleos y medicación/premezcla no ponderal.</li>
             <li>El resumen económico mensual integra ingresos, costo de alimento, mano de obra y otros costos operativos editables.</li>
             <li>Los escenarios de sensibilidad se calculan como proyecciones paralelas; no alteran los parámetros base capturados por el usuario.</li>
           </ul>

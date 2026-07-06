@@ -2,6 +2,21 @@
 
 Todos los cambios importantes de SIPRO-Porcino serán documentados en este archivo.
 
+## [0.6.0-dev] - En desarrollo
+
+### Agregado
+
+- Módulo inicial de medicación y premezclas como costo no ponderal por tonelada de dieta.
+- Tabla editable de productos, precios e inclusiones por dieta.
+- Cálculo automático de costo de medicación/premezcla por tonelada y por kg de dieta.
+- Integración automática de estos costos al modo `Formulación propia`, sin alterar el cierre de 1,000 kg de la fórmula alimenticia.
+- Resumen mensual estimado de kg y costo de medicación/premezcla ligado al consumo de alimento.
+
+### Cambiado
+
+- El módulo de formulación propia ahora calcula el costo/kg de dietas usando ingredientes, núcleos y medicación/premezcla no ponderal.
+- Fase 0 y Fase 1 permanecen fuera del módulo de medicación/premezcla por tratarse como dietas completas compradas.
+
 ## [0.5.3-dev] - En desarrollo
 
 ### Cambiado

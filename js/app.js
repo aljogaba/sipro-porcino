@@ -23,6 +23,10 @@ const formulationIngredientTable = document.querySelector("#formulation-ingredie
 const formulationNucleiTable = document.querySelector("#formulation-nuclei-table");
 const formulationDietTable = document.querySelector("#formulation-diet-table");
 const formulationBalanceTable = document.querySelector("#formulation-balance-table");
+const medicationKpis = document.querySelector("#medication-kpis");
+const medicationProductTable = document.querySelector("#medication-product-table");
+const medicationMatrixTable = document.querySelector("#medication-matrix-table");
+const medicationBalanceTable = document.querySelector("#medication-balance-table");
 const kpiGrid = document.querySelector("#kpi-grid");
 const flowTable = document.querySelector("#flow-table");
 const inventoryTable = document.querySelector("#inventory-table");
@@ -42,7 +46,7 @@ async function init() {
   baseParameters = await response.json();
   currentParameters = structuredClone(baseParameters);
 
-  document.querySelector("#app-version").textContent = baseParameters.metadata?.version ?? "0.5.3-dev";
+  document.querySelector("#app-version").textContent = baseParameters.metadata?.version ?? "0.6.0-dev";
 
   renderInputs();
   recalculate();
@@ -234,6 +238,22 @@ function handleFormulationInput(event) {
 
   if (formulationType === "diet-nucleus") {
     formulation.diets[dietKey].nucleus_kg = toNumber(event.target.value, formulation.diets[dietKey].nucleus_kg);
+  }
+
+  if (formulationType === "med-product") {
+    const premix = currentParameters.medication_premix;
+    if (!premix?.products?.[key]) return;
+    if (field === "label") {
+      premix.products[key].label = event.target.value;
+    } else if (field === "price") {
+      premix.products[key].price = toNumber(event.target.value, premix.products[key].price);
+    }
+  }
+
+  if (formulationType === "med-inclusion") {
+    const premix = currentParameters.medication_premix;
+    if (!premix?.inclusions_kg_ton?.[key]) return;
+    premix.inclusions_kg_ton[key][dietKey] = toNumber(event.target.value, premix.inclusions_kg_ton[key][dietKey] ?? 0);
   }
 
   recalculate();
@@ -458,6 +478,7 @@ function renderFeedFormulation(formulationResult) {
   formulationIngredientTable.innerHTML = renderIngredientTable(formulation.ingredients ?? {});
   formulationNucleiTable.innerHTML = renderNucleiTable(formulation.nuclei ?? {});
   formulationDietTable.innerHTML = renderDietFormulaTable(formulation, formulationResult);
+  renderMedicationPremix(formulationResult.medication, formulation);
   formulationBalanceTable.innerHTML = renderIngredientBalanceTable(formulationResult.balance);
 
   document.querySelectorAll("[data-formulation-type]").forEach((input) => {
@@ -565,6 +586,132 @@ function renderDietFormulaTable(formulation, formulationResult) {
             </tr>
           `;
         }).join("")}
+      </tbody>
+    </table>
+  `;
+}
+
+
+function getDietLabel(formulation, dietKey) {
+  return formulation?.diets?.[dietKey]?.label ?? dietKey;
+}
+
+function renderMedicationPremix(medicationResult, formulation) {
+  if (!medicationKpis || !medicationProductTable || !medicationMatrixTable || !medicationBalanceTable || !medicationResult) return;
+
+  const maxCostDiet = Object.entries(medicationResult.stageTotals ?? {})
+    .map(([dietKey, value]) => ({ dietKey, ...value }))
+    .sort((a, b) => b.costPerTon - a.costPerTon)[0];
+
+  medicationKpis.innerHTML = `
+    <article class="kpi-card economic">
+      <div class="label">Costo mensual medicación</div>
+      <div><div class="value">${formatCurrency(medicationResult.totals.totalCostMonth, 2)}</div><div class="unit">MXN/mes</div></div>
+    </article>
+    <article class="kpi-card positive">
+      <div class="label">Mayor costo/ton</div>
+      <div><div class="value">${formatCurrency(maxCostDiet?.costPerTon ?? 0, 2)}</div><div class="unit">${escapeHtml(getDietLabel(formulation, maxCostDiet?.dietKey))}</div></div>
+    </article>
+    <article class="kpi-card positive">
+      <div class="label">Insumo mensual</div>
+      <div><div class="value">${formatNumber(medicationResult.totals.totalKgMonth, 1)}</div><div class="unit">kg/mes no ponderal</div></div>
+    </article>
+  `;
+
+  medicationProductTable.innerHTML = renderMedicationProductTable(medicationResult);
+  medicationMatrixTable.innerHTML = renderMedicationMatrixTable(medicationResult, formulation);
+  medicationBalanceTable.innerHTML = renderMedicationBalanceTable(medicationResult, formulation);
+}
+
+function renderMedicationProductTable(medicationResult) {
+  const rows = medicationResult.allRows ?? [];
+  return `
+    <table class="compact-table">
+      <thead>
+        <tr>
+          <th>Producto ${helpIcon("Producto, aditivo, medicación o suplementación usada como costo no ponderal. Puede representar kg o equivalente técnico por tonelada.")}</th>
+          <th>Precio/kg ${helpIcon("Costo unitario del producto. Se usa para calcular el cargo económico por tonelada de dieta.")}</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${rows.map((row) => `
+          <tr>
+            <td>
+              ${row.editableLabel ? `
+                <input class="inline-input text-input" type="text" value="${escapeHtml(row.label)}" data-formulation-type="med-product" data-key="${row.key}" data-field="label" />
+              ` : `<strong>${escapeHtml(row.label)}</strong>`}
+            </td>
+            <td>
+              <input class="inline-input money-input" type="text" inputmode="decimal" step="0.01" value="${formatInputValue(row.price, 2)}" data-decimals="2" data-formulation-type="med-product" data-key="${row.key}" data-field="price" />
+            </td>
+          </tr>
+        `).join("")}
+      </tbody>
+    </table>
+  `;
+}
+
+function renderMedicationMatrixTable(medicationResult, formulation) {
+  const stageOrder = medicationResult.stageOrder ?? [];
+  const rows = medicationResult.allRows ?? [];
+  return `
+    <table class="formula-table medication-table">
+      <thead>
+        <tr>
+          <th>Producto ${helpIcon("Cada fila captura la inclusión por tonelada de dieta. Estos kg no modifican el cierre de 1,000 kg de la fórmula alimenticia.")}</th>
+          ${stageOrder.map((dietKey) => `<th>${escapeHtml(getDietLabel(formulation, dietKey))}<br><span>kg/ton</span></th>`).join("")}
+          <th>Total $/ton ${helpIcon("Suma del costo por tonelada considerando todas las etapas donde se usa el producto. Es una lectura de referencia, no un costo de una sola dieta.")}</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${rows.map((row) => `
+          <tr>
+            <td><strong>${escapeHtml(row.label)}</strong></td>
+            ${stageOrder.map((dietKey) => `
+              <td>
+                <input class="inline-input small-input weight-input" type="text" inputmode="decimal" step="0.1" value="${formatInputValue(row.dietValues?.[dietKey]?.kgTon ?? 0, 2)}" data-decimals="2" data-formulation-type="med-inclusion" data-key="${row.key}" data-diet-key="${dietKey}" />
+              </td>
+            `).join("")}
+            <td>${formatCurrency(row.totalCostPerTon, 2)}</td>
+          </tr>
+        `).join("")}
+        <tr class="total-row">
+          <td>Costo medicación/ton</td>
+          ${stageOrder.map((dietKey) => `<td>${formatCurrency(medicationResult.stageTotals?.[dietKey]?.costPerTon ?? 0, 2)}</td>`).join("")}
+          <td>${formatCurrency(medicationResult.totals.totalCostPerTonAcrossDiets, 2)}</td>
+        </tr>
+      </tbody>
+    </table>
+  `;
+}
+
+function renderMedicationBalanceTable(medicationResult, formulation) {
+  const stageOrder = medicationResult.stageOrder ?? [];
+  return `
+    <table>
+      <thead>
+        <tr><th>Dieta</th><th>Costo/ton</th><th>Costo/kg dieta</th><th>Kg/mes estimados</th><th>Costo mensual</th></tr>
+      </thead>
+      <tbody>
+        ${stageOrder.map((dietKey) => {
+          const item = medicationResult.stageTotals?.[dietKey] ?? {};
+          return `
+            <tr>
+              <td>${escapeHtml(getDietLabel(formulation, dietKey))}</td>
+              <td>${formatCurrency(item.costPerTon ?? 0, 2)}</td>
+              <td>${formatCurrency((item.costPerTon ?? 0) / (medicationResult.batchKg || 1000), 4)}</td>
+              <td>${formatNumber(item.kgMonth ?? 0, 1)}</td>
+              <td>${formatCurrency(item.costMonth ?? 0, 2)}</td>
+            </tr>
+          `;
+        }).join("")}
+        <tr class="total-row">
+          <td>Total</td>
+          <td>—</td>
+          <td>—</td>
+          <td>${formatNumber(medicationResult.totals.totalKgMonth, 1)}</td>
+          <td>${formatCurrency(medicationResult.totals.totalCostMonth, 2)}</td>
+        </tr>
       </tbody>
     </table>
   `;
