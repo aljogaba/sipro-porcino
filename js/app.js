@@ -1297,28 +1297,106 @@ function renderWaterfallChart(economicResult) {
   if (!chartWaterfall) return;
 
   const income = economicResult.grossIncomeMonth ?? 0;
-  const rows = [
-    { label: "Ingresos totales", value: income, secondary: "venta + desecho", className: "income" },
-    ...economicResult.expenseRows.map((row) => ({
-      label: row.label,
-      value: -row.amount,
-      secondary: `${formatPercent(row.percentOfIncome, 1)} del ingreso`,
-      className: "expense"
-    })),
-    { label: "Utilidad mensual", value: economicResult.profitMonth, secondary: `${formatPercent(economicResult.profitPercentOfIncome, 1)} margen`, className: economicResult.profitMonth >= 0 ? "profit" : "loss" }
+  const expenses = economicResult.expenseRows.map((row) => ({
+    label: row.label,
+    value: -row.amount,
+    amount: row.amount,
+    percentOfIncome: row.percentOfIncome,
+    type: "expense"
+  }));
+
+  const steps = [
+    { label: "Ingresos", value: income, amount: income, type: "income", detail: "venta + desecho" },
+    ...expenses,
+    { label: "Utilidad", value: economicResult.profitMonth, amount: economicResult.profitMonth, type: economicResult.profitMonth >= 0 ? "profit" : "loss", detail: `${formatPercent(economicResult.profitPercentOfIncome, 1)} margen` }
   ];
 
+  const runningSteps = [];
+  let cumulative = 0;
+  steps.forEach((step, index) => {
+    if (index === 0) {
+      runningSteps.push({ ...step, start: 0, end: income, display: income });
+      cumulative = income;
+      return;
+    }
+
+    if (index === steps.length - 1) {
+      runningSteps.push({ ...step, start: 0, end: economicResult.profitMonth, display: economicResult.profitMonth });
+      return;
+    }
+
+    const start = cumulative;
+    const end = cumulative + step.value;
+    runningSteps.push({ ...step, start, end, display: step.value });
+    cumulative = end;
+  });
+
+  const minValue = Math.min(0, ...runningSteps.map((step) => Math.min(step.start, step.end)));
+  const maxValue = Math.max(1, ...runningSteps.map((step) => Math.max(step.start, step.end)));
+  const range = maxValue - minValue || 1;
+
+  const width = 1040;
+  const height = 440;
+  const margin = { top: 30, right: 34, bottom: 110, left: 34 };
+  const chartHeight = height - margin.top - margin.bottom;
+  const barWidth = 88;
+  const available = width - margin.left - margin.right;
+  const gap = (available - barWidth * runningSteps.length) / Math.max(1, runningSteps.length - 1);
+
+  const y = (value) => margin.top + (maxValue - value) / range * chartHeight;
+  const zeroY = y(0);
+
+  const bars = runningSteps.map((step, index) => {
+    const x = margin.left + index * (barWidth + gap);
+    const y1 = y(step.start);
+    const y2 = y(step.end);
+    const top = Math.min(y1, y2);
+    const h = Math.max(4, Math.abs(y2 - y1));
+    const cls = step.type;
+    const valueLabel = index === 0 || index === runningSteps.length - 1 ? formatShortCurrency(step.display) : `-${formatShortCurrency(Math.abs(step.display)).replace("-", "")}`;
+    const pct = index > 0 && index < runningSteps.length - 1 ? `${formatPercent(step.percentOfIncome, 1)} del ingreso` : step.detail;
+    const labelY = top > 52 ? top - 10 : top + h + 20;
+    const labelAnchorClass = top > 52 ? "above" : "below";
+    return { ...step, x, y1, y2, top, h, cls, valueLabel, pct, labelY, labelAnchorClass };
+  });
+
+  const connectors = bars.slice(0, -2).map((bar, index) => {
+    const next = bars[index + 1];
+    const connectorY = bar.y2;
+    return `<line class="waterfall-connector" x1="${bar.x + barWidth}" y1="${connectorY.toFixed(1)}" x2="${next.x}" y2="${connectorY.toFixed(1)}" />`;
+  }).join("");
+
   chartWaterfall.innerHTML = `
-    <div class="waterfall-summary">
-      ${rows.map((row) => `
-        <div class="waterfall-step ${row.className}">
-          <span>${escapeHtml(row.label)}</span>
-          <strong>${formatShortCurrency(row.value)}</strong>
-          <small>${escapeHtml(row.secondary)}</small>
-        </div>
-      `).join("")}
+    <div class="waterfall-kpi-strip">
+      <article class="mini-economic-card income">
+        <span>Ingresos totales</span>
+        <strong>${formatCurrency(income, 2)}</strong>
+      </article>
+      <article class="mini-economic-card expense">
+        <span>Egresos totales</span>
+        <strong>${formatCurrency(economicResult.totalCostsMonth, 2)}</strong>
+      </article>
+      <article class="mini-economic-card ${economicResult.profitMonth >= 0 ? "profit" : "loss"}">
+        <span>Utilidad mensual</span>
+        <strong>${formatCurrency(economicResult.profitMonth, 2)}</strong>
+      </article>
     </div>
-    <div class="chart-caption">Lectura: los egresos se muestran como salidas del ingreso mensual; la utilidad es el remanente económico.</div>
+    <div class="real-waterfall-wrap" role="img" aria-label="Puente económico mensual de ingresos a utilidad">
+      <svg class="real-waterfall" viewBox="0 0 ${width} ${height}" preserveAspectRatio="xMidYMid meet">
+        <line class="waterfall-zero-line" x1="${margin.left}" y1="${zeroY.toFixed(1)}" x2="${(width - margin.right).toFixed(1)}" y2="${zeroY.toFixed(1)}" />
+        ${connectors}
+        ${bars.map((bar) => `
+          <g class="waterfall-bar-group ${bar.cls}">
+            <title>${bar.label}: ${formatCurrency(bar.display, 2)}${bar.pct ? ` | ${bar.pct}` : ""}</title>
+            <rect class="waterfall-bar ${bar.cls}" x="${bar.x.toFixed(1)}" y="${bar.top.toFixed(1)}" width="${barWidth}" height="${bar.h.toFixed(1)}" rx="12" />
+            <text class="waterfall-value ${bar.labelAnchorClass}" x="${(bar.x + barWidth / 2).toFixed(1)}" y="${bar.labelY.toFixed(1)}" text-anchor="middle">${bar.valueLabel}</text>
+            <text class="waterfall-axis-label" x="${(bar.x + barWidth / 2).toFixed(1)}" y="${height - 64}" text-anchor="middle">${escapeHtml(bar.label)}</text>
+            <text class="waterfall-axis-note" x="${(bar.x + barWidth / 2).toFixed(1)}" y="${height - 42}" text-anchor="middle">${escapeHtml(bar.pct ?? "")}</text>
+          </g>
+        `).join("")}
+      </svg>
+    </div>
+    <div class="chart-caption">Lectura: los egresos reducen el ingreso mensual de forma acumulada; la barra final muestra la utilidad económica remanente.</div>
   `;
 }
 

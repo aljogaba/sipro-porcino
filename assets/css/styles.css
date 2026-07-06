@@ -1039,3 +1039,102 @@ table .total-row td {
   .decision-bar-value,
   .tornado-value { text-align: left; }
 }
+
+/* Waterfall económico real */
+.waterfall-kpi-strip {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.mini-economic-card {
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  padding: 14px 16px;
+  display: grid;
+  gap: 5px;
+  background: #fff;
+  min-width: 0;
+}
+
+.mini-economic-card span {
+  color: var(--muted);
+  font-size: 0.78rem;
+  font-weight: 900;
+}
+
+.mini-economic-card strong {
+  font-size: clamp(1.05rem, 1.8vw, 1.4rem);
+  letter-spacing: -0.04em;
+  white-space: nowrap;
+}
+
+.mini-economic-card.income { background: linear-gradient(180deg, #ffffff, var(--blue)); }
+.mini-economic-card.expense { background: linear-gradient(180deg, #ffffff, #ffe4e4); }
+.mini-economic-card.profit { background: linear-gradient(180deg, #ffffff, var(--ok)); }
+.mini-economic-card.loss { background: linear-gradient(180deg, #ffffff, var(--bad)); }
+
+.real-waterfall-wrap {
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: 10px 8px 2px;
+  background: linear-gradient(180deg, #ffffff 0%, #fbfdfc 100%);
+  overflow-x: auto;
+}
+
+.real-waterfall {
+  width: 100%;
+  min-width: 860px;
+  height: auto;
+  display: block;
+}
+
+.waterfall-zero-line {
+  stroke: rgba(15, 61, 54, 0.18);
+  stroke-width: 2;
+  stroke-dasharray: 8 7;
+}
+
+.waterfall-connector {
+  stroke: rgba(15, 61, 54, 0.28);
+  stroke-width: 2;
+  stroke-dasharray: 5 5;
+}
+
+.waterfall-bar {
+  filter: drop-shadow(0 8px 14px rgba(12, 44, 37, 0.12));
+}
+
+.waterfall-bar.income { fill: url(#unused); }
+.waterfall-bar-group.income .waterfall-bar { fill: #6fb6df; }
+.waterfall-bar-group.expense .waterfall-bar { fill: #e07c7c; }
+.waterfall-bar-group.profit .waterfall-bar { fill: #64c783; }
+.waterfall-bar-group.loss .waterfall-bar { fill: #c94d4d; }
+
+.waterfall-value {
+  font-size: 21px;
+  font-weight: 950;
+  fill: var(--ink);
+  letter-spacing: -0.04em;
+}
+
+.waterfall-value.below { font-size: 18px; }
+
+.waterfall-axis-label {
+  font-size: 15px;
+  font-weight: 950;
+  fill: var(--ink);
+}
+
+.waterfall-axis-note {
+  font-size: 12px;
+  font-weight: 800;
+  fill: var(--muted);
+}
+
+@media (max-width: 760px) {
+  .waterfall-kpi-strip {
+    grid-template-columns: 1fr;
+  }
+}

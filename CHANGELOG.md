@@ -1,5 +1,14 @@
 # Changelog
 
+## [1.0.1-dev] - Waterfall económico real
+
+### Cambiado
+
+- Se reemplazó la lectura tipo waterfall en tarjetas por un gráfico waterfall económico real.
+- Se agregó un puente visual acumulado desde ingresos totales, egresos principales y utilidad mensual.
+- Se conservaron KPIs ejecutivos de ingresos, egresos y utilidad para lectura rápida.
+- Se ajustó el título del gráfico a “Formación de la utilidad mensual”.
+
 ## [1.0.0-dev] - Tablero gráfico de decisión
 
 ### Agregado
