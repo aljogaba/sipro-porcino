@@ -309,3 +309,17 @@ Pendientes de validación fina:
 - La compra de machos se captura como `Machos comprados/año` y se prorratea mensualmente.
 - El inventario estimado de machos queda como referencia informativa basada en relación 1:20, sin modificar el flujo productivo.
 - No se modela venta de machos de desecho.
+
+
+## v1.0.0-dev — Tablero gráfico de decisión
+
+Se agregó una capa visual ejecutiva que no modifica los cálculos del modelo. Los gráficos sintetizan resultados económicos, estructura de egresos, alimento, insumos, escenarios y sensibilidad. Esta capa debe validarse como herramienta de interpretación visual; la consistencia numérica depende de los módulos previamente calculados.
+
+Gráficos integrados:
+
+- Resultado mensual tipo waterfall.
+- Composición de egresos.
+- Costo de alimento por etapa.
+- Balance mensual de insumos.
+- Utilidad por escenario.
+- Sensibilidad de utilidad tipo tornado.

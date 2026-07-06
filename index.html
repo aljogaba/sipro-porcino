@@ -17,14 +17,14 @@
       </div>
       <div class="version-card">
         <span>Versión</span>
-        <strong id="app-version">0.9.0-dev</strong>
+        <strong id="app-version">1.0.0-dev</strong>
       </div>
     </div>
   </header>
 
   <main class="container main-layout">
     <section class="notice">
-      <strong>Módulo inicial:</strong> inventarios y flujo productivo. Esta versión reproduce la lógica base del Excel fuente para el tablero productivo visible. El módulo de alimento y el resumen económico mensual se integran de forma inicial; medicación detallada y formulación alimenticia completa se integrarán por fases. Esta versión ya incluye una primera capa de análisis de escenarios, balance económico lateral y separación del inventario productivo de cerdos e inventario de hembras reproductivas. El módulo de alimento trabaja con dos modos: dietas compradas o formulación propia. En formulación propia se integra una primera capa de medicación/premezcla como costo no ponderal por tonelada. Esta versión agrega el módulo detallado de gastos sanitarios, impuestos y servicios, además de pie de cría, reemplazos y desechos. La compra de machos se maneja como gasto opcional prorrateado, no como porcentaje de reemplazo. Esta versión agrega una auditoría dinámica del modelo para revisar consistencia de supuestos, integración de ingresos/egresos y puntos pendientes de validación.
+      <strong>Módulo inicial:</strong> inventarios y flujo productivo. Esta versión reproduce la lógica base del Excel fuente para el tablero productivo visible. El módulo de alimento y el resumen económico mensual se integran de forma inicial; medicación detallada y formulación alimenticia completa se integrarán por fases. Esta versión ya incluye una primera capa de análisis de escenarios, balance económico lateral y separación del inventario productivo de cerdos e inventario de hembras reproductivas. El módulo de alimento trabaja con dos modos: dietas compradas o formulación propia. En formulación propia se integra una primera capa de medicación/premezcla como costo no ponderal por tonelada. Esta versión agrega el módulo detallado de gastos sanitarios, impuestos y servicios, además de pie de cría, reemplazos y desechos. La compra de machos se maneja como gasto opcional prorrateado, no como porcentaje de reemplazo. Esta versión agrega una auditoría dinámica del modelo para revisar consistencia de supuestos, integración de ingresos/egresos y puntos pendientes de validación. También incorpora un tablero gráfico de decisión con visualizaciones ejecutivas para interpretar rentabilidad, egresos, alimento, insumos, escenarios y sensibilidad.
     </section>
 
     <section class="panel">
@@ -279,6 +279,78 @@
       </div>
     </section>
 
+
+
+    <section class="panel" id="decision-charts-panel">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">Visualización ejecutiva</p>
+          <h2>Tablero gráfico de decisión</h2>
+        </div>
+      </div>
+      <p class="panel-note">Gráficos diseñados para interpretar rápidamente el resultado económico, la estructura de egresos, el costo de alimento, los insumos, los escenarios y la sensibilidad de utilidad. No modifican los cálculos; solo los traducen a lectura visual.</p>
+      <div class="decision-chart-grid">
+        <article class="chart-card chart-card-wide">
+          <div class="chart-header">
+            <div>
+              <h3>Resultado mensual tipo waterfall</h3>
+              <p>Cómo se forma la utilidad a partir de ingresos, egresos y ajustes principales.</p>
+            </div>
+          </div>
+          <div id="chart-waterfall"></div>
+        </article>
+
+        <article class="chart-card">
+          <div class="chart-header">
+            <div>
+              <h3>Composición de egresos</h3>
+              <p>Participación relativa de cada rubro en los costos mensuales.</p>
+            </div>
+          </div>
+          <div id="chart-expenses"></div>
+        </article>
+
+        <article class="chart-card">
+          <div class="chart-header">
+            <div>
+              <h3>Costo de alimento por etapa</h3>
+              <p>Costo mensual estimado de alimentación por fase productiva.</p>
+            </div>
+          </div>
+          <div id="chart-feed-stage"></div>
+        </article>
+
+        <article class="chart-card">
+          <div class="chart-header">
+            <div>
+              <h3>Balance mensual de insumos</h3>
+              <p>Principales ingredientes y núcleos por costo mensual.</p>
+            </div>
+          </div>
+          <div id="chart-ingredient-balance"></div>
+        </article>
+
+        <article class="chart-card">
+          <div class="chart-header">
+            <div>
+              <h3>Utilidad por escenario</h3>
+              <p>Comparación visual del resultado económico bajo escenarios predefinidos.</p>
+            </div>
+          </div>
+          <div id="chart-scenarios"></div>
+        </article>
+
+        <article class="chart-card chart-card-wide">
+          <div class="chart-header">
+            <div>
+              <h3>Sensibilidad de utilidad</h3>
+              <p>Variables que más mueven la utilidad mensual en pruebas rápidas del modelo.</p>
+            </div>
+          </div>
+          <div id="chart-tornado"></div>
+        </article>
+      </div>
+    </section>
 
 
     <section class="panel">

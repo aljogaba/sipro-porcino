@@ -50,6 +50,12 @@ const economicResultsTable = document.querySelector("#economic-results-table");
 const expensesTable = document.querySelector("#expenses-table");
 const scenarioCards = document.querySelector("#scenario-cards");
 const scenarioTable = document.querySelector("#scenario-table");
+const chartWaterfall = document.querySelector("#chart-waterfall");
+const chartExpenses = document.querySelector("#chart-expenses");
+const chartFeedStage = document.querySelector("#chart-feed-stage");
+const chartIngredientBalance = document.querySelector("#chart-ingredient-balance");
+const chartScenarios = document.querySelector("#chart-scenarios");
+const chartTornado = document.querySelector("#chart-tornado");
 const stickyBalance = document.querySelector("#sticky-balance");
 const resetBtn = document.querySelector("#reset-btn");
 
@@ -308,6 +314,7 @@ function recalculate() {
   renderScenarios(scenarioResult);
   renderStickyBalance(feedResult, economicResult);
   renderModelAudit(formulationResult, feedResult, operationalExpenseResult, breedingStockResult, economicResult);
+  renderDecisionCharts(formulationResult, feedResult, operationalExpenseResult, breedingStockResult, economicResult, scenarioResult);
 }
 
 function renderKpis({ flow, groups }, feedResult) {
@@ -1227,6 +1234,285 @@ function renderModelAudit(formulationResult, feedResult, operationalExpenseResul
       </tbody>
     </table>
   `;
+}
+
+
+function formatShortCurrency(value) {
+  const number = Number(value) || 0;
+  const abs = Math.abs(number);
+  const sign = number < 0 ? "-" : "";
+
+  if (abs >= 1000000) {
+    return `${sign}$${(abs / 1000000).toLocaleString("es-MX", { minimumFractionDigits: 2, maximumFractionDigits: 2 })} M`;
+  }
+
+  if (abs >= 1000) {
+    return `${sign}$${(abs / 1000).toLocaleString("es-MX", { minimumFractionDigits: 1, maximumFractionDigits: 1 })} mil`;
+  }
+
+  return formatCurrency(number, 2);
+}
+
+function percentOfMax(value, max) {
+  if (!Number.isFinite(value) || !Number.isFinite(max) || max <= 0) return 0;
+  return Math.max(2, Math.min(100, Math.abs(value) / max * 100));
+}
+
+function chartEmpty(message) {
+  return `<div class="chart-empty">${escapeHtml(message)}</div>`;
+}
+
+function renderDecisionBarRows(rows, options = {}) {
+  const max = options.max ?? Math.max(...rows.map((row) => Math.abs(row.value)), 1);
+  const valueFormatter = options.valueFormatter ?? formatShortCurrency;
+  const percentFormatter = options.percentFormatter;
+
+  if (!rows.length) return chartEmpty(options.empty ?? "Sin datos para graficar.");
+
+  return `
+    <div class="decision-bar-list">
+      ${rows.map((row) => {
+        const width = percentOfMax(row.value, max);
+        const cssClass = row.className ?? (row.value < 0 ? "negative" : "positive");
+        const secondary = row.secondary ? `<small>${escapeHtml(row.secondary)}</small>` : "";
+        const percent = percentFormatter ? `<em>${escapeHtml(percentFormatter(row))}</em>` : "";
+        return `
+          <div class="decision-bar-row">
+            <div class="decision-bar-label">
+              <span>${escapeHtml(row.label)}</span>
+              ${secondary}
+            </div>
+            <div class="decision-bar-track" aria-hidden="true">
+              <div class="decision-bar-fill ${cssClass}" style="width:${width}%"></div>
+            </div>
+            <div class="decision-bar-value">${valueFormatter(row.value)}${percent}</div>
+          </div>
+        `;
+      }).join("")}
+    </div>
+  `;
+}
+
+function renderWaterfallChart(economicResult) {
+  if (!chartWaterfall) return;
+
+  const income = economicResult.grossIncomeMonth ?? 0;
+  const rows = [
+    { label: "Ingresos totales", value: income, secondary: "venta + desecho", className: "income" },
+    ...economicResult.expenseRows.map((row) => ({
+      label: row.label,
+      value: -row.amount,
+      secondary: `${formatPercent(row.percentOfIncome, 1)} del ingreso`,
+      className: "expense"
+    })),
+    { label: "Utilidad mensual", value: economicResult.profitMonth, secondary: `${formatPercent(economicResult.profitPercentOfIncome, 1)} margen`, className: economicResult.profitMonth >= 0 ? "profit" : "loss" }
+  ];
+
+  chartWaterfall.innerHTML = `
+    <div class="waterfall-summary">
+      ${rows.map((row) => `
+        <div class="waterfall-step ${row.className}">
+          <span>${escapeHtml(row.label)}</span>
+          <strong>${formatShortCurrency(row.value)}</strong>
+          <small>${escapeHtml(row.secondary)}</small>
+        </div>
+      `).join("")}
+    </div>
+    <div class="chart-caption">Lectura: los egresos se muestran como salidas del ingreso mensual; la utilidad es el remanente económico.</div>
+  `;
+}
+
+function renderExpenseChart(economicResult) {
+  if (!chartExpenses) return;
+
+  const rows = [...economicResult.expenseRows]
+    .sort((a, b) => b.amount - a.amount)
+    .map((row) => ({
+      label: row.label,
+      value: row.amount,
+      secondary: `${formatPercent(row.percentOfTotalCosts, 1)} de egresos`,
+      className: row.key === "feed" ? "feed" : row.key === "labor" ? "labor" : row.key === "medicine_taxes_misc" ? "sanitary" : "neutral",
+      percentOfTotalCosts: row.percentOfTotalCosts
+    }));
+
+  chartExpenses.innerHTML = renderDecisionBarRows(rows, {
+    percentFormatter: (row) => formatPercent(row.percentOfTotalCosts, 1)
+  });
+}
+
+function renderFeedStageChart(feedResult) {
+  if (!chartFeedStage) return;
+
+  const rows = [...(feedResult.rows ?? [])]
+    .sort((a, b) => b.costMonth - a.costMonth)
+    .map((row) => ({
+      label: row.label,
+      value: row.costMonth,
+      secondary: `${formatNumber(row.kgMonth / 1000, 2)} ton/mes`,
+      className: row.group === "pie_cria" ? "breeding" : row.group === "destete" ? "nursery" : row.group === "iniciadores" ? "starter" : "finishing"
+    }));
+
+  chartFeedStage.innerHTML = renderDecisionBarRows(rows, {
+    empty: "Sin consumo de alimento calculado."
+  });
+}
+
+function renderIngredientBalanceChart(formulationResult, feedResult) {
+  if (!chartIngredientBalance) return;
+
+  const feedMode = currentParameters.feed_cost_mode?.active ?? "purchased";
+  if (feedMode !== "formulated") {
+    chartIngredientBalance.innerHTML = chartEmpty("Activa Formulación propia para ver el balance de insumos calculado por ingrediente y núcleo.");
+    return;
+  }
+
+  const rows = [...(formulationResult.balance?.rows ?? [])]
+    .sort((a, b) => b.costMonth - a.costMonth)
+    .slice(0, 10)
+    .map((row) => ({
+      label: row.label,
+      value: row.costMonth,
+      secondary: `${formatNumber(row.kgMonth / 1000, 2)} ton/mes`,
+      className: row.type === "Núcleo / dieta completa" ? "nucleus" : "ingredient"
+    }));
+
+  chartIngredientBalance.innerHTML = renderDecisionBarRows(rows, {
+    empty: "No hay insumos calculados para graficar."
+  });
+}
+
+function renderScenarioProfitChart(scenarios) {
+  if (!chartScenarios) return;
+
+  const rows = scenarios.map((scenario) => ({
+    label: scenario.shortName ?? scenario.name,
+    value: scenario.metrics.profitMonth,
+    secondary: scenario.id === "base" ? "base" : `Δ ${formatShortCurrency(scenario.delta.profitMonth)}`,
+    className: scenario.id === "base" ? "base" : scenario.delta.profitMonth >= 0 ? "profit" : "loss"
+  }));
+
+  chartScenarios.innerHTML = renderDecisionBarRows(rows, {
+    empty: "Sin escenarios calculados.",
+    valueFormatter: (value) => formatShortCurrency(value)
+  });
+}
+
+function setParameterValue(parameters, section, key, value) {
+  if (parameters?.[section]?.[key]) {
+    parameters[section][key].value = value;
+  }
+}
+
+function getParameterValue(parameters, section, key, fallback = 0) {
+  return Number(parameters?.[section]?.[key]?.value ?? fallback);
+}
+
+function multiplyActiveFeedCostsForChart(parameters, factor) {
+  const mode = parameters?.feed_cost_mode?.active ?? "purchased";
+  const section = mode === "formulated" ? "feed_costs_formulated_per_kg" : "feed_costs_purchased_per_kg";
+  Object.keys(parameters?.[section] ?? {}).forEach((key) => {
+    const current = getParameterValue(parameters, section, key, 0);
+    setParameterValue(parameters, section, key, current * factor);
+  });
+}
+
+function calculateProfitForChart(parameters) {
+  const formulationPreResult = calculateFeedFormulation(parameters);
+  const mode = parameters.feed_cost_mode?.active ?? "purchased";
+  if (mode === "formulated") {
+    Object.entries(formulationPreResult.dietCostMap ?? {}).forEach(([key, value]) => {
+      setParameterValue(parameters, "feed_costs_formulated_per_kg", key, value);
+    });
+  }
+  const feed = calculateFeed(parameters);
+  const operational = calculateOperationalExpenses(parameters);
+  const breeding = calculateBreedingStock(parameters, feed);
+  const economic = calculateEconomicSummary(parameters, feed, operational, breeding);
+  return economic.profitMonth;
+}
+
+function buildSensitivityRows(baseProfit) {
+  const tests = [
+    {
+      label: "Precio venta +5%",
+      apply: (p) => setParameterValue(p, "productive_parameters", "sale_price_per_kg", getParameterValue(p, "productive_parameters", "sale_price_per_kg") * 1.05)
+    },
+    {
+      label: "Alimento +10%",
+      apply: (p) => multiplyActiveFeedCostsForChart(p, 1.10)
+    },
+    {
+      label: "LNV +0.5",
+      apply: (p) => setParameterValue(p, "productive_parameters", "liveborn_per_sow", getParameterValue(p, "productive_parameters", "liveborn_per_sow") + 0.5)
+    },
+    {
+      label: "Mortalidad maternidad +2 pp",
+      apply: (p) => setParameterValue(p, "productive_parameters", "mortality_maternity", getParameterValue(p, "productive_parameters", "mortality_maternity") + 2)
+    },
+    {
+      label: "Mortalidad finalización +2 pp",
+      apply: (p) => setParameterValue(p, "productive_parameters", "mortality_finishing", getParameterValue(p, "productive_parameters", "mortality_finishing") + 2)
+    },
+    {
+      label: "Días abiertos +3",
+      apply: (p) => setParameterValue(p, "productive_parameters", "open_days", getParameterValue(p, "productive_parameters", "open_days") + 3)
+    },
+    {
+      label: "Peso venta +5 kg",
+      apply: (p) => setParameterValue(p, "productive_parameters", "market_weight", getParameterValue(p, "productive_parameters", "market_weight") + 5)
+    },
+    {
+      label: "Reemplazo +10 pp",
+      apply: (p) => setParameterValue(p, "breeding_stock", "female_replacement_rate_annual", getParameterValue(p, "breeding_stock", "female_replacement_rate_annual") + 10)
+    }
+  ];
+
+  return tests.map((test) => {
+    const clone = structuredClone(currentParameters);
+    test.apply(clone);
+    const profit = calculateProfitForChart(clone);
+    return {
+      label: test.label,
+      value: profit - baseProfit,
+      profit
+    };
+  }).sort((a, b) => Math.abs(b.value) - Math.abs(a.value));
+}
+
+function renderTornadoChart(economicResult) {
+  if (!chartTornado) return;
+
+  const rows = buildSensitivityRows(economicResult.profitMonth);
+  const max = Math.max(...rows.map((row) => Math.abs(row.value)), 1);
+
+  chartTornado.innerHTML = `
+    <div class="tornado-chart">
+      ${rows.map((row) => {
+        const width = percentOfMax(row.value, max) / 2;
+        const directionClass = row.value >= 0 ? "positive" : "negative";
+        return `
+          <div class="tornado-row">
+            <div class="tornado-label">${escapeHtml(row.label)}</div>
+            <div class="tornado-scale" aria-hidden="true">
+              <span class="tornado-zero"></span>
+              <span class="tornado-fill ${directionClass}" style="width:${width}%"></span>
+            </div>
+            <div class="tornado-value ${directionClass}">${row.value >= 0 ? "+" : ""}${formatShortCurrency(row.value)}</div>
+          </div>
+        `;
+      }).join("")}
+    </div>
+    <div class="chart-caption">Lectura: muestra el cambio en utilidad mensual al modificar una variable, manteniendo las demás constantes.</div>
+  `;
+}
+
+function renderDecisionCharts(formulationResult, feedResult, operationalExpenseResult, breedingStockResult, economicResult, scenarios) {
+  renderWaterfallChart(economicResult);
+  renderExpenseChart(economicResult);
+  renderFeedStageChart(feedResult);
+  renderIngredientBalanceChart(formulationResult, feedResult);
+  renderScenarioProfitChart(scenarios);
+  renderTornadoChart(economicResult);
 }
 
 function renderStickyBalance(feedResult, economicResult) {

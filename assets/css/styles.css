@@ -791,3 +791,251 @@ table .total-row td {
 #model-audit-table td:nth-child(4) {
   text-align: left;
 }
+
+/* Tablero gráfico de decisión */
+.decision-chart-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.chart-card {
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: 18px;
+  background: linear-gradient(180deg, #ffffff 0%, #f8fbf9 100%);
+  min-width: 0;
+  box-shadow: 0 12px 28px rgba(12, 44, 37, 0.055);
+}
+
+.chart-card-wide { grid-column: 1 / -1; }
+
+.chart-header {
+  display: flex;
+  justify-content: space-between;
+  gap: 14px;
+  margin-bottom: 14px;
+}
+
+.chart-header h3 {
+  margin-bottom: 4px;
+  font-size: 1.06rem;
+  letter-spacing: -0.02em;
+}
+
+.chart-header p,
+.chart-caption,
+.chart-empty {
+  color: var(--muted);
+  font-size: 0.86rem;
+  line-height: 1.45;
+  margin: 0;
+}
+
+.chart-empty {
+  border: 1px dashed var(--line);
+  border-radius: 14px;
+  padding: 18px;
+  background: var(--surface-soft);
+}
+
+.decision-bar-list {
+  display: grid;
+  gap: 12px;
+}
+
+.decision-bar-row {
+  display: grid;
+  grid-template-columns: minmax(135px, 190px) minmax(0, 1fr) minmax(92px, auto);
+  gap: 12px;
+  align-items: center;
+}
+
+.decision-bar-label {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+}
+
+.decision-bar-label span {
+  font-weight: 900;
+  color: var(--ink);
+  overflow-wrap: anywhere;
+}
+
+.decision-bar-label small,
+.decision-bar-value em {
+  color: var(--muted);
+  font-size: 0.78rem;
+  font-style: normal;
+  font-weight: 800;
+}
+
+.decision-bar-track {
+  height: 16px;
+  border-radius: 999px;
+  background: #e8f0ec;
+  overflow: hidden;
+  position: relative;
+}
+
+.decision-bar-fill {
+  height: 100%;
+  border-radius: inherit;
+  min-width: 4px;
+}
+
+.decision-bar-fill.income,
+.decision-bar-fill.economic,
+.decision-bar-fill.base,
+.decision-bar-fill.positive { background: linear-gradient(90deg, #1f6f61, #7fc895); }
+.decision-bar-fill.expense,
+.decision-bar-fill.negative,
+.decision-bar-fill.loss { background: linear-gradient(90deg, #d98080, #f4b7b7); }
+.decision-bar-fill.profit { background: linear-gradient(90deg, #168a56, #b8edc1); }
+.decision-bar-fill.feed { background: linear-gradient(90deg, #0f3d36, #66a27d); }
+.decision-bar-fill.labor { background: linear-gradient(90deg, #496d8f, #b8d6ec); }
+.decision-bar-fill.sanitary { background: linear-gradient(90deg, #916c2c, #f1d99b); }
+.decision-bar-fill.neutral { background: linear-gradient(90deg, #71817a, #cfd8d3); }
+.decision-bar-fill.breeding { background: linear-gradient(90deg, #2a6f62, #a1d9bb); }
+.decision-bar-fill.nursery { background: linear-gradient(90deg, #4a728c, #c1e2f2); }
+.decision-bar-fill.starter { background: linear-gradient(90deg, #7c8c45, #e0e6a9); }
+.decision-bar-fill.finishing { background: linear-gradient(90deg, #3e7b57, #77c082); }
+.decision-bar-fill.nucleus { background: linear-gradient(90deg, #4d6782, #bfd4e8); }
+.decision-bar-fill.ingredient { background: linear-gradient(90deg, #0f3d36, #8ac59e); }
+
+.decision-bar-value {
+  text-align: right;
+  font-weight: 900;
+  color: var(--ink);
+  white-space: nowrap;
+  display: grid;
+  gap: 1px;
+}
+
+.waterfall-summary {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.waterfall-step {
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  padding: 14px;
+  display: grid;
+  gap: 5px;
+  min-height: 116px;
+  position: relative;
+  overflow: hidden;
+}
+
+.waterfall-step::before {
+  content: "";
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 6px;
+  background: var(--line);
+}
+
+.waterfall-step span {
+  color: var(--muted);
+  font-size: 0.78rem;
+  font-weight: 900;
+}
+
+.waterfall-step strong {
+  font-size: clamp(1.15rem, 1.8vw, 1.55rem);
+  line-height: 1.1;
+  letter-spacing: -0.045em;
+  overflow-wrap: anywhere;
+}
+
+.waterfall-step small {
+  color: var(--muted);
+  font-weight: 750;
+}
+
+.waterfall-step.income { background: linear-gradient(180deg, #ffffff, var(--blue)); }
+.waterfall-step.expense { background: linear-gradient(180deg, #ffffff, #ffe1e1); }
+.waterfall-step.profit { background: linear-gradient(180deg, #ffffff, var(--ok)); }
+.waterfall-step.loss { background: linear-gradient(180deg, #ffffff, var(--bad)); }
+.waterfall-step.income::before { background: #3b87bd; }
+.waterfall-step.expense::before { background: #ca5959; }
+.waterfall-step.profit::before { background: #168a56; }
+.waterfall-step.loss::before { background: #b22727; }
+
+.tornado-chart {
+  display: grid;
+  gap: 12px;
+}
+
+.tornado-row {
+  display: grid;
+  grid-template-columns: minmax(170px, 240px) minmax(0, 1fr) minmax(95px, auto);
+  gap: 12px;
+  align-items: center;
+}
+
+.tornado-label {
+  color: var(--ink);
+  font-weight: 900;
+  font-size: 0.9rem;
+}
+
+.tornado-scale {
+  position: relative;
+  height: 20px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #f8dddd 0 50%, #dff4e5 50% 100%);
+  overflow: hidden;
+}
+
+.tornado-zero {
+  position: absolute;
+  left: 50%;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: rgba(15, 61, 54, 0.38);
+  z-index: 2;
+}
+
+.tornado-fill {
+  position: absolute;
+  top: 3px;
+  bottom: 3px;
+  border-radius: 999px;
+  z-index: 1;
+}
+
+.tornado-fill.positive {
+  left: 50%;
+  background: linear-gradient(90deg, #188a55, #92dba3);
+}
+
+.tornado-fill.negative {
+  right: 50%;
+  background: linear-gradient(90deg, #e6a2a2, #b83d3d);
+}
+
+.tornado-value {
+  text-align: right;
+  font-weight: 900;
+  white-space: nowrap;
+}
+
+.tornado-value.positive { color: #137348; }
+.tornado-value.negative { color: #b22727; }
+
+@media (max-width: 960px) {
+  .decision-chart-grid { grid-template-columns: 1fr; }
+  .decision-bar-row,
+  .tornado-row {
+    grid-template-columns: 1fr;
+    gap: 6px;
+  }
+  .decision-bar-value,
+  .tornado-value { text-align: left; }
+}

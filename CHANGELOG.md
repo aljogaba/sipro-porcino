@@ -1,5 +1,21 @@
 # Changelog
 
+## [1.0.0-dev] - Tablero gráfico de decisión
+
+### Agregado
+
+- Tablero gráfico ejecutivo para interpretación de resultados.
+- Gráfico tipo waterfall para resultado mensual.
+- Gráfico de composición de egresos mensuales.
+- Gráfico de costo de alimento por etapa.
+- Gráfico de balance mensual de insumos.
+- Gráfico comparativo de utilidad por escenario.
+- Gráfico de sensibilidad tipo tornado para variables clave.
+
+### Ajustado
+
+- Versión del modelo actualizada a `1.0.0-dev`.
+
 ## [0.9.0-dev] - En desarrollo
 
 ### Agregado
