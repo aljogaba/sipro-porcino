@@ -1138,3 +1138,95 @@ table .total-row td {
     grid-template-columns: 1fr;
   }
 }
+
+/* Pulido visual estructural v1.0.2 */
+.section-heading.module-numbered {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  column-gap: 14px;
+}
+
+.section-heading.module-numbered > div:not(.mode-switch) {
+  min-width: 0;
+}
+
+.module-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 14px;
+  border: 1px solid rgba(15, 61, 54, 0.18);
+  background: linear-gradient(180deg, #ffffff, var(--brand-soft));
+  color: var(--brand);
+  font-size: 0.82rem;
+  font-weight: 950;
+  letter-spacing: 0.04em;
+  box-shadow: 0 10px 22px rgba(12, 44, 37, 0.06);
+  flex: 0 0 auto;
+}
+
+.section-heading.module-numbered .eyebrow {
+  margin-bottom: 5px;
+}
+
+.section-heading.module-numbered h2 {
+  line-height: 1.12;
+}
+
+@media (max-width: 640px) {
+  .section-heading.module-numbered {
+    grid-template-columns: auto minmax(0, 1fr);
+    align-items: start;
+  }
+  .section-heading.module-numbered > .secondary-button,
+  .section-heading.module-numbered > .mode-switch {
+    grid-column: 1 / -1;
+    justify-self: start;
+    margin-top: 4px;
+  }
+  .module-badge {
+    width: 38px;
+    height: 38px;
+    border-radius: 12px;
+  }
+}
+
+/* Waterfall v1.0.2: lectura más clara y etiquetas compactas */
+.real-waterfall-wrap {
+  padding: 14px 12px 8px;
+}
+
+.real-waterfall {
+  min-width: 1040px;
+}
+
+.waterfall-axis-label {
+  font-size: 14px;
+  letter-spacing: -0.015em;
+}
+
+.waterfall-axis-label tspan {
+  dominant-baseline: middle;
+}
+
+.waterfall-axis-note {
+  font-size: 11px;
+  letter-spacing: -0.01em;
+}
+
+.waterfall-value {
+  font-size: 20px;
+}
+
+.waterfall-value.below {
+  font-size: 17px;
+}
+
+@media (max-width: 760px) {
+  .real-waterfall {
+    min-width: 1120px;
+  }
+}

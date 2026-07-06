@@ -1,5 +1,19 @@
 # Changelog
 
+
+## [1.0.2-dev] - En desarrollo
+
+### Agregado
+
+- Numeración visual automática de módulos principales mediante distintivos de sección.
+- Mejoras de jerarquía visual en encabezados de módulos.
+
+### Cambiado
+
+- Ajuste de etiquetas del waterfall económico con nombres abreviados y tooltip con nombre completo.
+- Mejor espaciado y comportamiento horizontal del waterfall para evitar etiquetas encimadas.
+- Título y lectura del puente económico mantienen enfoque ejecutivo: formación de la utilidad mensual.
+
 ## [1.0.1-dev] - Waterfall económico real
 
 ### Cambiado

@@ -67,6 +67,7 @@ async function init() {
   document.querySelector("#app-version").textContent = baseParameters.metadata?.version ?? "0.6.0-dev";
 
   renderInputs();
+  applyModuleNumbering();
   recalculate();
 }
 
@@ -82,6 +83,45 @@ function escapeHtml(value) {
 function helpIcon(text) {
   const safe = escapeHtml(text);
   return `<span class="help-icon" tabindex="0" role="img" aria-label="Ayuda: ${safe}" data-tooltip="${safe}" title="${safe}">?</span>`;
+}
+
+function applyModuleNumbering() {
+  const headings = Array.from(document.querySelectorAll("main .panel > .section-heading"))
+    .filter((heading) => !heading.closest("aside") && !heading.classList.contains("compact-heading"));
+
+  headings.forEach((heading, index) => {
+    if (heading.querySelector(".module-badge")) return;
+    heading.classList.add("module-numbered");
+    const badge = document.createElement("span");
+    badge.className = "module-badge";
+    badge.textContent = String(index + 1).padStart(2, "0");
+    badge.setAttribute("aria-hidden", "true");
+    heading.prepend(badge);
+  });
+}
+
+function shortWaterfallLabel(label) {
+  const map = {
+    "Ingresos": "Ingresos",
+    "Costo alimento": "Alimento",
+    "Mano de obra": "Mano obra",
+    "Medicina, impuestos y varios": "Med./Imp./Varios",
+    "Gastos extras": "Extras",
+    "Egresos pie de cría": "Pie de cría",
+    "Utilidad": "Utilidad"
+  };
+  return map[label] ?? label;
+}
+
+function svgTextLines(text, x, y, className, options = {}) {
+  const lines = String(text ?? "").split("/");
+  const lineHeight = options.lineHeight ?? 16;
+  const dyStart = lines.length > 1 ? -((lines.length - 1) * lineHeight) / 2 : 0;
+  return `
+    <text class="${className}" x="${x}" y="${y}" text-anchor="middle">
+      ${lines.map((line, index) => `<tspan x="${x}" dy="${index === 0 ? dyStart : lineHeight}">${escapeHtml(line)}</tspan>`).join("")}
+    </text>
+  `;
 }
 
 function formatInputValue(value, decimals = null) {
@@ -1335,11 +1375,11 @@ function renderWaterfallChart(economicResult) {
   const maxValue = Math.max(1, ...runningSteps.map((step) => Math.max(step.start, step.end)));
   const range = maxValue - minValue || 1;
 
-  const width = 1040;
-  const height = 440;
-  const margin = { top: 30, right: 34, bottom: 110, left: 34 };
+  const width = 1120;
+  const height = 470;
+  const margin = { top: 36, right: 42, bottom: 126, left: 42 };
   const chartHeight = height - margin.top - margin.bottom;
-  const barWidth = 88;
+  const barWidth = 96;
   const available = width - margin.left - margin.right;
   const gap = (available - barWidth * runningSteps.length) / Math.max(1, runningSteps.length - 1);
 
@@ -1355,12 +1395,13 @@ function renderWaterfallChart(economicResult) {
     const cls = step.type;
     const valueLabel = index === 0 || index === runningSteps.length - 1 ? formatShortCurrency(step.display) : `-${formatShortCurrency(Math.abs(step.display)).replace("-", "")}`;
     const pct = index > 0 && index < runningSteps.length - 1 ? `${formatPercent(step.percentOfIncome, 1)} del ingreso` : step.detail;
-    const labelY = top > 52 ? top - 10 : top + h + 20;
-    const labelAnchorClass = top > 52 ? "above" : "below";
-    return { ...step, x, y1, y2, top, h, cls, valueLabel, pct, labelY, labelAnchorClass };
+    const axisLabel = shortWaterfallLabel(step.label);
+    const labelY = top > 58 ? top - 12 : top + h + 24;
+    const labelAnchorClass = top > 58 ? "above" : "below";
+    return { ...step, x, y1, y2, top, h, cls, valueLabel, pct, axisLabel, labelY, labelAnchorClass };
   });
 
-  const connectors = bars.slice(0, -2).map((bar, index) => {
+  const connectors = bars.slice(0, -1).map((bar, index) => {
     const next = bars[index + 1];
     const connectorY = bar.y2;
     return `<line class="waterfall-connector" x1="${bar.x + barWidth}" y1="${connectorY.toFixed(1)}" x2="${next.x}" y2="${connectorY.toFixed(1)}" />`;
@@ -1390,7 +1431,7 @@ function renderWaterfallChart(economicResult) {
             <title>${bar.label}: ${formatCurrency(bar.display, 2)}${bar.pct ? ` | ${bar.pct}` : ""}</title>
             <rect class="waterfall-bar ${bar.cls}" x="${bar.x.toFixed(1)}" y="${bar.top.toFixed(1)}" width="${barWidth}" height="${bar.h.toFixed(1)}" rx="12" />
             <text class="waterfall-value ${bar.labelAnchorClass}" x="${(bar.x + barWidth / 2).toFixed(1)}" y="${bar.labelY.toFixed(1)}" text-anchor="middle">${bar.valueLabel}</text>
-            <text class="waterfall-axis-label" x="${(bar.x + barWidth / 2).toFixed(1)}" y="${height - 64}" text-anchor="middle">${escapeHtml(bar.label)}</text>
+            ${svgTextLines(bar.axisLabel, (bar.x + barWidth / 2).toFixed(1), height - 76, "waterfall-axis-label", { lineHeight: 16 })}
             <text class="waterfall-axis-note" x="${(bar.x + barWidth / 2).toFixed(1)}" y="${height - 42}" text-anchor="middle">${escapeHtml(bar.pct ?? "")}</text>
           </g>
         `).join("")}
