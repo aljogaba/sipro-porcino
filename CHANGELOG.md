@@ -2,6 +2,18 @@
 
 Todos los cambios importantes de SIPRO-Porcino serán documentados en este archivo.
 
+## [0.5.3-dev] - En desarrollo
+
+### Cambiado
+
+- Los campos editables de valores económicos se muestran con separador de miles y dos decimales.
+- Los campos editables de pesos/kg por tonelada se muestran con separador de miles y un decimal.
+- Los campos numéricos cambian a modo de edición limpio al recibir foco y se vuelven a formatear al salir del campo.
+
+### Corregido
+
+- La lectura de números acepta separadores de miles, evitando problemas al capturar valores grandes en costos o kg/ton.
+
 ## [0.5.2-dev] - En desarrollo
 
 ### Agregado

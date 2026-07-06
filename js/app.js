@@ -42,7 +42,7 @@ async function init() {
   baseParameters = await response.json();
   currentParameters = structuredClone(baseParameters);
 
-  document.querySelector("#app-version").textContent = baseParameters.metadata?.version ?? "0.5.2-dev";
+  document.querySelector("#app-version").textContent = baseParameters.metadata?.version ?? "0.5.3-dev";
 
   renderInputs();
   recalculate();
@@ -64,8 +64,42 @@ function helpIcon(text) {
 
 function formatInputValue(value, decimals = null) {
   const number = Number(value);
-  if (decimals === null || !Number.isFinite(number)) return value ?? "";
-  return number.toFixed(decimals);
+  if (!Number.isFinite(number)) return value ?? "";
+
+  if (decimals === null) {
+    return new Intl.NumberFormat("es-MX", {
+      maximumFractionDigits: 2
+    }).format(number);
+  }
+
+  return new Intl.NumberFormat("es-MX", {
+    minimumFractionDigits: decimals,
+    maximumFractionDigits: decimals
+  }).format(number);
+}
+
+function unformatInputValue(value) {
+  const parsed = toNumber(value, NaN);
+  return Number.isFinite(parsed) ? String(parsed) : "";
+}
+
+function applyInputFormatting(input) {
+  const decimals = input.dataset.decimals === "auto" ? null : Number(input.dataset.decimals);
+  const parsed = toNumber(input.value, NaN);
+  if (Number.isFinite(parsed)) {
+    input.value = formatInputValue(parsed, Number.isFinite(decimals) ? decimals : null);
+  }
+}
+
+function attachEditableNumberEvents(input) {
+  input.addEventListener("focus", () => {
+    input.value = unformatInputValue(input.value);
+    input.select();
+  });
+
+  input.addEventListener("blur", () => {
+    applyInputFormatting(input);
+  });
 }
 
 function getInputFormat(section, item) {
@@ -92,6 +126,7 @@ function renderInputs() {
 
   document.querySelectorAll("[data-section][data-key]").forEach((input) => {
     input.addEventListener("input", handleInputChange);
+    attachEditableNumberEvents(input);
   });
 }
 
@@ -108,11 +143,13 @@ function renderInputCards(section, entries, options = {}) {
         <div class="input-row">
           <input
             id="${section}-${key}"
-            type="number"
+            type="text"
+            inputmode="decimal"
             step="${step}"
             value="${formatInputValue(item.value, decimals)}"
             data-section="${section}"
             data-key="${key}"
+            data-decimals="${decimals === null ? "auto" : decimals}"
             ${disabled}
           />
           <span>${escapeHtml(item.unit ?? "")}</span>
@@ -425,6 +462,9 @@ function renderFeedFormulation(formulationResult) {
 
   document.querySelectorAll("[data-formulation-type]").forEach((input) => {
     input.addEventListener("change", handleFormulationInput);
+    if (input.dataset.decimals) {
+      attachEditableNumberEvents(input);
+    }
   });
 }
 
@@ -452,7 +492,7 @@ function renderIngredientTable(ingredients) {
               ` : `<strong>${escapeHtml(ingredient.label)}</strong>`}
             </td>
             <td>
-              <input class="inline-input money-input" type="number" step="0.01" value="${formatInputValue(ingredient.price, 2)}" data-formulation-type="ingredient" data-key="${key}" data-field="price" />
+              <input class="inline-input money-input" type="text" inputmode="decimal" step="0.01" value="${formatInputValue(ingredient.price, 2)}" data-decimals="2" data-formulation-type="ingredient" data-key="${key}" data-field="price" />
             </td>
             <td>${escapeHtml(ingredient.type ?? "ingrediente")}</td>
           </tr>
@@ -476,7 +516,7 @@ function renderNucleiTable(nuclei) {
           <tr>
             <td><strong>${escapeHtml(nucleus.label)}</strong>${["phase_0", "phase_1"].includes(key) ? ` <span class="stage-chip" title="Dieta completa comprada: por eso puede representar 1,000 kg de la fórmula.">Dieta completa</span>` : ""}</td>
             <td>
-              <input class="inline-input money-input" type="number" step="0.01" value="${formatInputValue(nucleus.price, 2)}" data-formulation-type="nucleus" data-key="${key}" />
+              <input class="inline-input money-input" type="text" inputmode="decimal" step="0.01" value="${formatInputValue(nucleus.price, 2)}" data-decimals="2" data-formulation-type="nucleus" data-key="${key}" />
             </td>
           </tr>
         `).join("")}
@@ -512,11 +552,11 @@ function renderDietFormulaTable(formulation, formulationResult) {
               <td><strong>${escapeHtml(diet.label)}</strong>${completeDiet ? ` <span class="stage-chip" title="Dieta completa comprada: normalmente no se formula en granja.">Dieta completa</span>` : ""}</td>
               ${ingredientKeys.map((ingredientKey) => `
                 <td>
-                  <input class="inline-input small-input weight-input" type="number" step="0.1" value="${formatInputValue(diet.ingredients_kg?.[ingredientKey] ?? 0, 1)}" data-formulation-type="diet-ingredient" data-diet-key="${dietKey}" data-ingredient-key="${ingredientKey}" />
+                  <input class="inline-input small-input weight-input" type="text" inputmode="decimal" step="0.1" value="${formatInputValue(diet.ingredients_kg?.[ingredientKey] ?? 0, 1)}" data-decimals="1" data-formulation-type="diet-ingredient" data-diet-key="${dietKey}" data-ingredient-key="${ingredientKey}" />
                 </td>
               `).join("")}
               <td>
-                <input class="inline-input small-input weight-input" type="number" step="0.1" value="${formatInputValue(diet.nucleus_kg, 1)}" data-formulation-type="diet-nucleus" data-diet-key="${dietKey}" />
+                <input class="inline-input small-input weight-input" type="text" inputmode="decimal" step="0.1" value="${formatInputValue(diet.nucleus_kg, 1)}" data-decimals="1" data-formulation-type="diet-nucleus" data-diet-key="${dietKey}" />
               </td>
               <td>${formatNumber(result.totalKg, 1)}</td>
               <td>${formatCurrency(result.costPerTon, 2)}</td>

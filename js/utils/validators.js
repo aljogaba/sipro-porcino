@@ -1,5 +1,19 @@
 export function toNumber(value, fallback = 0) {
-  const number = Number(value);
+  if (typeof value === "number") {
+    return Number.isFinite(value) ? value : fallback;
+  }
+
+  const normalized = String(value ?? "")
+    .trim()
+    .replace(/\s/g, "")
+    .replace(/\$/g, "")
+    .replace(/MXN/gi, "")
+    .replace(/%/g, "")
+    .replace(/,/g, "");
+
+  if (normalized === "" || normalized === "-" || normalized === ".") return fallback;
+
+  const number = Number(normalized);
   return Number.isFinite(number) ? number : fallback;
 }
 

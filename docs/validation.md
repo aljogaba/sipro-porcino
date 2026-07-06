@@ -176,3 +176,14 @@ También se normalizó la captura visual:
 - valores económicos con dos decimales;
 - inclusiones de peso en kg/ton con un decimal;
 - actualización de fórmulas al confirmar el campo, evitando reconstrucción de la tabla durante la escritura.
+
+
+## Ajuste v0.5.3-dev: separador de miles en campos editables
+
+Se ajustó la presentación de campos numéricos editables para mejorar la lectura de costos y cantidades grandes:
+
+- valores económicos: separador de miles y dos decimales;
+- inclusiones de peso en kg/ton: separador de miles y un decimal;
+- campos numéricos generales: separador de miles cuando aplica.
+
+Al entrar al campo, el valor cambia temporalmente a formato limpio para facilitar la captura; al salir del campo, se vuelve a aplicar el formato visual. La lectura interna del modelo acepta separadores de miles, por lo que valores como `24,514.95` o `1,000.0` se interpretan correctamente.
