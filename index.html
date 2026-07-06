@@ -17,14 +17,14 @@
       </div>
       <div class="version-card">
         <span>Versión</span>
-        <strong id="app-version">0.6.0-dev</strong>
+        <strong id="app-version">0.7.0-dev</strong>
       </div>
     </div>
   </header>
 
   <main class="container main-layout">
     <section class="notice">
-      <strong>Módulo inicial:</strong> inventarios y flujo productivo. Esta versión reproduce la lógica base del Excel fuente para el tablero productivo visible. El módulo de alimento y el resumen económico mensual se integran de forma inicial; medicación detallada y formulación alimenticia completa se integrarán por fases. Esta versión ya incluye una primera capa de análisis de escenarios, balance económico lateral y separación del inventario productivo de cerdos e inventario de hembras reproductivas. El módulo de alimento trabaja con dos modos: dietas compradas o formulación propia. En formulación propia se integra una primera capa de medicación/premezcla como costo no ponderal por tonelada.
+      <strong>Módulo inicial:</strong> inventarios y flujo productivo. Esta versión reproduce la lógica base del Excel fuente para el tablero productivo visible. El módulo de alimento y el resumen económico mensual se integran de forma inicial; medicación detallada y formulación alimenticia completa se integrarán por fases. Esta versión ya incluye una primera capa de análisis de escenarios, balance económico lateral y separación del inventario productivo de cerdos e inventario de hembras reproductivas. El módulo de alimento trabaja con dos modos: dietas compradas o formulación propia. En formulación propia se integra una primera capa de medicación/premezcla como costo no ponderal por tonelada. Esta versión agrega el módulo detallado de gastos sanitarios, impuestos y servicios.
     </section>
 
     <section class="panel">
@@ -150,11 +150,35 @@
         <div class="section-heading">
           <div>
             <p class="eyebrow">Costos operativos</p>
-            <h2>Otros costos mensuales</h2>
+            <h2>Otros costos y pie de cría</h2>
           </div>
         </div>
+        <p class="panel-note">Estos conceptos permanecen como captura mensual directa. El bloque “Medicina, impuestos y varios” ahora se calcula desde el módulo detallado de gastos sanitarios, impuestos y servicios.</p>
         <div id="other-cost-inputs" class="input-grid two-items"></div>
       </article>
+    </section>
+
+    <section class="panel" id="operational-expense-panel">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">Costos operativos</p>
+          <h2>Gastos sanitarios, impuestos y servicios</h2>
+        </div>
+      </div>
+      <p class="panel-note">Capture compras o servicios mensuales reales: cantidad adquirida o contratada × costo unitario. Este módulo reemplaza automáticamente el campo agregado de “Medicina, impuestos y varios” en el resumen económico. No duplique aquí productos que ya estén cargados como medicación/premezcla en alimento.</p>
+      <div class="context-help subtle-help">
+        <strong>Lectura técnica</strong>
+        <ul>
+          <li>Antibióticos inyectables, vacunas, diagnóstico, honorarios, impuestos y servicios se registran como gastos mensuales fuera del alimento.</li>
+          <li>Los nombres precargados son ejemplos editables; puede cambiarlos según la realidad de la granja.</li>
+          <li>Los honorarios veterinarios se incluyen como rubro propio para visualizar su impacto dentro de la economía de la unidad.</li>
+          <li>Las gráficas comparativas se integrarán al final con un diseño homogéneo para toda la plataforma.</li>
+        </ul>
+      </div>
+      <div class="kpi-grid compact-kpis" id="operational-expense-kpis"></div>
+      <div id="operational-expense-categories" class="expense-category-list"></div>
+      <h3 class="mini-title">Resumen por rubro</h3>
+      <div id="operational-expense-table" class="table-wrap"></div>
     </section>
 
     <section class="dashboard-layout">

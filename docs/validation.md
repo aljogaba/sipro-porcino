@@ -248,3 +248,29 @@ Estos costos explican la diferencia entre el costo de formulación económica pu
 ## Nota v0.6.1-dev — Productos editables
 
 El módulo de medicación y premezclas mantiene productos precargados como ejemplos de trabajo, pero todos los nombres, precios e inclusiones por dieta son editables. Los productos no deben interpretarse como una lista fija del modelo.
+
+
+## v0.7.0-dev — Módulo de gastos sanitarios, impuestos y servicios
+
+### Estado
+
+Módulo agregado para detallar el concepto agregado “Medicina, impuestos y varios”.
+
+### Criterio funcional
+
+- Cada rubro captura concepto, cantidad y costo unitario.
+- El total de cada fila se calcula como `cantidad × costo unitario`.
+- El total mensual del módulo sustituye automáticamente el valor manual de “Medicina, impuestos y varios” en el resumen económico.
+- El módulo no duplica productos ya capturados en medicación/premezclas de alimento.
+- Los productos precargados se consideran ejemplos editables.
+- El rubro de honorarios veterinarios queda disponible para capturar servicios profesionales y visualizar su impacto económico.
+
+### Total base
+
+Los valores de ejemplo suman 24,514.95 MXN/mes para conservar el valor base usado previamente en el tablero económico.
+
+### Pendientes
+
+- Validar rubros finales contra la hoja Excel “Gastos Med. Impu. Varios”.
+- Integrar visualizaciones finales homologadas al cierre del proyecto.
+- Desarrollar posteriormente una herramienta de proyección de honorarios veterinarios.

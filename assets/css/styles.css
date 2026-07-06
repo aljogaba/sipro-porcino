@@ -718,3 +718,61 @@ table .total-row td {
 .formula-table th {
   vertical-align: middle;
 }
+
+.expense-category-list {
+  display: grid;
+  gap: 14px;
+  margin: 18px 0;
+}
+
+.expense-category {
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: rgba(255,255,255,0.78);
+  overflow: hidden;
+}
+
+.expense-category summary {
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  gap: 14px;
+  align-items: center;
+  padding: 14px 16px;
+  cursor: pointer;
+  list-style: none;
+}
+
+.expense-category summary::-webkit-details-marker { display: none; }
+
+.expense-category summary span {
+  font-weight: 900;
+  color: var(--ink);
+}
+
+.expense-category summary strong {
+  font-size: 1.05rem;
+  white-space: nowrap;
+}
+
+.expense-category summary small {
+  color: var(--muted);
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.expense-category[open] summary {
+  border-bottom: 1px solid var(--line);
+  background: var(--surface-soft);
+}
+
+.category-note {
+  margin: 12px 16px 0;
+}
+
+.expense-entry-table {
+  min-width: 640px;
+}
+
+.wide-text-input {
+  width: min(260px, 100%);
+}

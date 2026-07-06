@@ -1,12 +1,12 @@
 {
   "metadata": {
     "project": "SIPRO-Porcino",
-    "version": "0.6.0-dev",
+    "version": "0.7.0-dev",
     "country_context": "México",
     "production_system": "Granja ciclo completo",
     "source": "Mapa técnico inicial derivado del modelo Excel privado",
     "language": "es",
-    "last_module": "medicacion_premezcla"
+    "last_module": "gastos_operativos_detallados"
   },
   "productive_parameters": {
     "breeding_sows": {
@@ -1139,6 +1139,380 @@
         "growth": 0,
         "development": 0,
         "finishing": 0
+      }
+    }
+  },
+  "operational_expenses": {
+    "enabled": true,
+    "base_note": "Los conceptos precargados son ejemplos editables. El total de este módulo reemplaza el campo agregado de Medicina, impuestos y varios en el resumen económico.",
+    "categories": {
+      "antibioticos_inyectables": {
+        "label": "Antibióticos inyectables",
+        "note": "Productos usados por necesidad sanitaria fuera de la formulación alimenticia. Capture unidades compradas y costo unitario.",
+        "rows": [
+          {
+            "concept": "Emicina L.A",
+            "quantity": 0,
+            "unit_cost": 4567
+          },
+          {
+            "concept": "Baytril",
+            "quantity": 3,
+            "unit_cost": 124
+          },
+          {
+            "concept": "",
+            "quantity": 0,
+            "unit_cost": 0
+          },
+          {
+            "concept": "",
+            "quantity": 0,
+            "unit_cost": 0
+          },
+          {
+            "concept": "",
+            "quantity": 0,
+            "unit_cost": 0
+          },
+          {
+            "concept": "",
+            "quantity": 0,
+            "unit_cost": 0
+          },
+          {
+            "concept": "",
+            "quantity": 0,
+            "unit_cost": 0
+          },
+          {
+            "concept": "",
+            "quantity": 0,
+            "unit_cost": 0
+          }
+        ]
+      },
+      "hormonales": {
+        "label": "Hormonales",
+        "note": "Hormonas u otros productos reproductivos comprados durante el mes.",
+        "rows": [
+          {
+            "concept": "Hormonal ejemplo",
+            "quantity": 1,
+            "unit_cost": 492.95
+          },
+          {
+            "concept": "",
+            "quantity": 0,
+            "unit_cost": 0
+          },
+          {
+            "concept": "",
+            "quantity": 0,
+            "unit_cost": 0
+          },
+          {
+            "concept": "",
+            "quantity": 0,
+            "unit_cost": 0
+          },
+          {
+            "concept": "",
+            "quantity": 0,
+            "unit_cost": 0
+          },
+          {
+            "concept": "",
+            "quantity": 0,
+            "unit_cost": 0
+          },
+          {
+            "concept": "",
+            "quantity": 0,
+            "unit_cost": 0
+          },
+          {
+            "concept": "",
+            "quantity": 0,
+            "unit_cost": 0
+          }
+        ]
+      },
+      "biologicos_vacunas": {
+        "label": "Biológicos / vacunas",
+        "note": "Vacunas o biológicos aplicados fuera del costo de alimento.",
+        "rows": [
+          {
+            "concept": "Vacuna ejemplo",
+            "quantity": 1,
+            "unit_cost": 12500
+          },
+          {
+            "concept": "",
+            "quantity": 0,
+            "unit_cost": 0
+          },
+          {
+            "concept": "",
+            "quantity": 0,
+            "unit_cost": 0
+          },
+          {
+            "concept": "",
+            "quantity": 0,
+            "unit_cost": 0
+          },
+          {
+            "concept": "",
+            "quantity": 0,
+            "unit_cost": 0
+          },
+          {
+            "concept": "",
+            "quantity": 0,
+            "unit_cost": 0
+          },
+          {
+            "concept": "",
+            "quantity": 0,
+            "unit_cost": 0
+          },
+          {
+            "concept": "",
+            "quantity": 0,
+            "unit_cost": 0
+          }
+        ]
+      },
+      "desinfectantes": {
+        "label": "Desinfectantes",
+        "note": "Desinfectantes, sanitizantes o insumos de bioseguridad comprados durante el mes.",
+        "rows": [
+          {
+            "concept": "Desinfectante ejemplo",
+            "quantity": 1,
+            "unit_cost": 2850
+          },
+          {
+            "concept": "",
+            "quantity": 0,
+            "unit_cost": 0
+          },
+          {
+            "concept": "",
+            "quantity": 0,
+            "unit_cost": 0
+          },
+          {
+            "concept": "",
+            "quantity": 0,
+            "unit_cost": 0
+          },
+          {
+            "concept": "",
+            "quantity": 0,
+            "unit_cost": 0
+          },
+          {
+            "concept": "",
+            "quantity": 0,
+            "unit_cost": 0
+          },
+          {
+            "concept": "",
+            "quantity": 0,
+            "unit_cost": 0
+          },
+          {
+            "concept": "",
+            "quantity": 0,
+            "unit_cost": 0
+          }
+        ]
+      },
+      "diagnostico_laboratorio": {
+        "label": "Diagnóstico / laboratorio",
+        "note": "Pruebas diagnósticas, muestreos o servicios de laboratorio.",
+        "rows": [
+          {
+            "concept": "Monitoreo sanitario",
+            "quantity": 1,
+            "unit_cost": 1200
+          },
+          {
+            "concept": "",
+            "quantity": 0,
+            "unit_cost": 0
+          },
+          {
+            "concept": "",
+            "quantity": 0,
+            "unit_cost": 0
+          },
+          {
+            "concept": "",
+            "quantity": 0,
+            "unit_cost": 0
+          },
+          {
+            "concept": "",
+            "quantity": 0,
+            "unit_cost": 0
+          },
+          {
+            "concept": "",
+            "quantity": 0,
+            "unit_cost": 0
+          },
+          {
+            "concept": "",
+            "quantity": 0,
+            "unit_cost": 0
+          },
+          {
+            "concept": "",
+            "quantity": 0,
+            "unit_cost": 0
+          }
+        ]
+      },
+      "honorarios_veterinarios": {
+        "label": "Honorarios veterinarios",
+        "note": "Servicios profesionales veterinarios: asesoría mensual, visitas técnicas, monitoreo o seguimiento sanitario.",
+        "rows": [
+          {
+            "concept": "Asesoría veterinaria mensual",
+            "quantity": 1,
+            "unit_cost": 3000
+          },
+          {
+            "concept": "",
+            "quantity": 0,
+            "unit_cost": 0
+          },
+          {
+            "concept": "",
+            "quantity": 0,
+            "unit_cost": 0
+          },
+          {
+            "concept": "",
+            "quantity": 0,
+            "unit_cost": 0
+          },
+          {
+            "concept": "",
+            "quantity": 0,
+            "unit_cost": 0
+          },
+          {
+            "concept": "",
+            "quantity": 0,
+            "unit_cost": 0
+          },
+          {
+            "concept": "",
+            "quantity": 0,
+            "unit_cost": 0
+          },
+          {
+            "concept": "",
+            "quantity": 0,
+            "unit_cost": 0
+          }
+        ]
+      },
+      "impuestos_cuotas": {
+        "label": "Impuestos y cuotas",
+        "note": "Impuestos, cuotas o pagos administrativos relacionados con la operación.",
+        "rows": [
+          {
+            "concept": "IMSS",
+            "quantity": 1,
+            "unit_cost": 800
+          },
+          {
+            "concept": "INFONAVIT",
+            "quantity": 1,
+            "unit_cost": 1800
+          },
+          {
+            "concept": "",
+            "quantity": 0,
+            "unit_cost": 0
+          },
+          {
+            "concept": "",
+            "quantity": 0,
+            "unit_cost": 0
+          },
+          {
+            "concept": "",
+            "quantity": 0,
+            "unit_cost": 0
+          },
+          {
+            "concept": "",
+            "quantity": 0,
+            "unit_cost": 0
+          },
+          {
+            "concept": "",
+            "quantity": 0,
+            "unit_cost": 0
+          },
+          {
+            "concept": "",
+            "quantity": 0,
+            "unit_cost": 0
+          }
+        ]
+      },
+      "otros_sanitarios": {
+        "label": "Otros gastos sanitarios",
+        "note": "Ajuste manual u otros conceptos no clasificados para mantener flexibilidad operativa.",
+        "rows": [
+          {
+            "concept": "Materiales diversos",
+            "quantity": 1,
+            "unit_cost": 1500
+          },
+          {
+            "concept": "",
+            "quantity": 0,
+            "unit_cost": 0
+          },
+          {
+            "concept": "",
+            "quantity": 0,
+            "unit_cost": 0
+          },
+          {
+            "concept": "",
+            "quantity": 0,
+            "unit_cost": 0
+          },
+          {
+            "concept": "",
+            "quantity": 0,
+            "unit_cost": 0
+          },
+          {
+            "concept": "",
+            "quantity": 0,
+            "unit_cost": 0
+          },
+          {
+            "concept": "",
+            "quantity": 0,
+            "unit_cost": 0
+          },
+          {
+            "concept": "",
+            "quantity": 0,
+            "unit_cost": 0
+          }
+        ]
       }
     }
   }

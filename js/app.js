@@ -1,6 +1,7 @@
 import { calculateFeed } from "./modules/feed-consumption.js";
 import { calculateFeedFormulation } from "./modules/feed-formulation.js";
 import { calculateEconomicSummary } from "./modules/economic-summary.js";
+import { calculateOperationalExpenses } from "./modules/operational-expenses.js";
 import { analyzeScenarios } from "./modules/scenario-analysis.js";
 import { formatCurrency, formatInteger, formatNumber, formatPercent } from "./utils/formatters.js";
 import { toNumber } from "./utils/validators.js";
@@ -13,6 +14,9 @@ const durationInputs = document.querySelector("#duration-inputs");
 const feedConsumptionInputs = document.querySelector("#feed-consumption-inputs");
 const laborInputs = document.querySelector("#labor-inputs");
 const otherCostInputs = document.querySelector("#other-cost-inputs");
+const operationalExpenseKpis = document.querySelector("#operational-expense-kpis");
+const operationalExpenseCategories = document.querySelector("#operational-expense-categories");
+const operationalExpenseTable = document.querySelector("#operational-expense-table");
 const feedCostInputs = document.querySelector("#feed-cost-inputs");
 const feedCostPanelTitle = document.querySelector("#feed-cost-panel-title");
 const feedCostModeNote = document.querySelector("#feed-cost-mode-note");
@@ -125,7 +129,8 @@ function renderInputs() {
   durationInputs.innerHTML = renderInputCards("stage_duration_weeks", currentParameters.stage_duration_weeks);
   feedConsumptionInputs.innerHTML = renderInputCards("feed_consumption_kg_day", currentParameters.feed_consumption_kg_day);
   laborInputs.innerHTML = renderInputCards("labor", currentParameters.labor);
-  otherCostInputs.innerHTML = renderInputCards("other_monthly_costs", currentParameters.other_monthly_costs);
+  const visibleOtherCosts = Object.fromEntries(Object.entries(currentParameters.other_monthly_costs ?? {}).filter(([key]) => key !== "medicine_taxes_misc"));
+  otherCostInputs.innerHTML = renderInputCards("other_monthly_costs", visibleOtherCosts);
   renderFeedCostMode();
 
   document.querySelectorAll("[data-section][data-key]").forEach((input) => {
@@ -271,7 +276,8 @@ function recalculate() {
   const formulationResult = calculateFeedFormulation(currentParameters, feedResult);
   syncFormulatedFeedCosts(formulationResult);
 
-  const economicResult = calculateEconomicSummary(currentParameters, feedResult);
+  const operationalExpenseResult = calculateOperationalExpenses(currentParameters);
+  const economicResult = calculateEconomicSummary(currentParameters, feedResult, operationalExpenseResult);
   const scenarioResult = analyzeScenarios(currentParameters);
   const result = feedResult.inventory;
   renderKpis(result, feedResult, economicResult);
@@ -281,6 +287,7 @@ function recalculate() {
   if ((currentParameters.feed_cost_mode?.active ?? "purchased") === "formulated") {
     renderFeedFormulation(formulationResult);
   }
+  renderOperationalExpenses(operationalExpenseResult);
   renderEconomicSummary(economicResult);
   renderScenarios(scenarioResult);
   renderStickyBalance(feedResult, economicResult);
@@ -749,6 +756,129 @@ function renderIngredientBalanceTable(balance) {
         </tr>
       </tbody>
     </table>
+  `;
+}
+
+function handleOperationalExpenseInput(event) {
+  const { categoryKey, rowIndex, field } = event.target.dataset;
+  const category = currentParameters.operational_expenses?.categories?.[categoryKey];
+  const row = category?.rows?.[Number(rowIndex)];
+
+  if (!row) return;
+
+  if (field === "concept") {
+    row.concept = event.target.value;
+  } else if (field === "quantity") {
+    row.quantity = toNumber(event.target.value, row.quantity ?? 0);
+  } else if (field === "unit_cost") {
+    row.unit_cost = toNumber(event.target.value, row.unit_cost ?? 0);
+  }
+
+  recalculate();
+}
+
+function renderOperationalExpenses(operationalExpenseResult) {
+  if (!operationalExpenseKpis || !operationalExpenseCategories || !operationalExpenseTable) return;
+
+  const categories = operationalExpenseResult?.categoryRows ?? [];
+  const totalMonth = operationalExpenseResult?.totalMonth ?? 0;
+  const topCategory = [...categories].sort((a, b) => b.total - a.total)[0];
+  const activeCategories = categories.filter((category) => category.total > 0).length;
+
+  operationalExpenseKpis.innerHTML = `
+    <article class="kpi-card economic">
+      <div class="label">Total mensual</div>
+      <div><div class="value">${formatCurrency(totalMonth, 2)}</div><div class="unit">medicina, impuestos y varios</div></div>
+    </article>
+    <article class="kpi-card positive">
+      <div class="label">Rubros con gasto</div>
+      <div><div class="value">${activeCategories}</div><div class="unit">categorías activas</div></div>
+    </article>
+    <article class="kpi-card ${topCategory?.total > 0 ? "warning" : "positive"}">
+      <div class="label">Mayor rubro</div>
+      <div><div class="value">${topCategory?.total > 0 ? formatCurrency(topCategory.total, 2) : "$0.00"}</div><div class="unit">${topCategory?.total > 0 ? escapeHtml(topCategory.label) : "sin gasto"}</div></div>
+    </article>
+  `;
+
+  operationalExpenseCategories.innerHTML = categories.map((category, index) => renderOperationalExpenseCategory(category, index === 0)).join("");
+
+  operationalExpenseTable.innerHTML = `
+    <table>
+      <thead>
+        <tr><th>Rubro</th><th>Total mensual</th><th>% del bloque</th></tr>
+      </thead>
+      <tbody>
+        ${categories.map((category) => `
+          <tr>
+            <td>${escapeHtml(category.label)}</td>
+            <td>${formatCurrency(category.total, 2)}</td>
+            <td>${formatPercent(category.percentOfTotal, 2)}</td>
+          </tr>
+        `).join("")}
+        <tr class="total-row">
+          <td>Total</td>
+          <td>${formatCurrency(totalMonth, 2)}</td>
+          <td>${formatPercent(100, 2)}</td>
+        </tr>
+      </tbody>
+    </table>
+  `;
+
+  document.querySelectorAll("[data-operational-field]").forEach((input) => {
+    input.addEventListener("change", handleOperationalExpenseInput);
+    input.addEventListener("keydown", (event) => {
+      if (event.key === "Enter") event.currentTarget.blur();
+    });
+    if (input.dataset.decimals) {
+      attachEditableNumberEvents(input);
+    }
+  });
+}
+
+function renderOperationalExpenseCategory(category, open = false) {
+  return `
+    <details class="expense-category" ${open ? "open" : ""}>
+      <summary>
+        <span>${escapeHtml(category.label)}</span>
+        <strong>${formatCurrency(category.total, 2)}</strong>
+        <small>${formatPercent(category.percentOfTotal, 1)}</small>
+      </summary>
+      ${category.note ? `<p class="panel-note category-note">${escapeHtml(category.note)}</p>` : ""}
+      <div class="table-wrap">
+        <table class="compact-table expense-entry-table">
+          <thead>
+            <tr>
+              <th>Concepto</th>
+              <th>Cantidad</th>
+              <th>Costo unitario</th>
+              <th>Total</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${category.rows.map((row) => `
+              <tr>
+                <td>
+                  <input class="inline-input text-input wide-text-input" type="text" value="${escapeHtml(row.concept)}" data-operational-field="true" data-category-key="${category.key}" data-row-index="${row.rowIndex}" data-field="concept" />
+                </td>
+                <td>
+                  <input class="inline-input small-input" type="text" inputmode="decimal" value="${formatInputValue(row.quantity, 1)}" data-decimals="1" data-operational-field="true" data-category-key="${category.key}" data-row-index="${row.rowIndex}" data-field="quantity" />
+                </td>
+                <td>
+                  <input class="inline-input money-input" type="text" inputmode="decimal" value="${formatInputValue(row.unitCost, 2)}" data-decimals="2" data-operational-field="true" data-category-key="${category.key}" data-row-index="${row.rowIndex}" data-field="unit_cost" />
+                </td>
+                <td>${formatCurrency(row.amount, 2)}</td>
+              </tr>
+            `).join("")}
+            <tr class="total-row">
+              <td>Total ${escapeHtml(category.label)}</td>
+              <td>—</td>
+              <td>—</td>
+              <td>${formatCurrency(category.total, 2)}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </details>
   `;
 }
 

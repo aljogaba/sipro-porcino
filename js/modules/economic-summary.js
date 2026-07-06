@@ -8,7 +8,7 @@ function pct(value, denominator) {
   return denominator > 0 ? (value / denominator) * 100 : 0;
 }
 
-export function calculateEconomicSummary(parameters, feedResult) {
+export function calculateEconomicSummary(parameters, feedResult, operationalExpensesResult = null) {
   const weeksPerMonth = feedResult?.assumptions?.weeksPerMonth ?? DEFAULT_WEEKS_PER_MONTH;
   const grossIncomeMonth = feedResult?.inventory?.flow?.grossMonthlyIncome ?? 0;
   const feedCostMonth = feedResult?.totals?.totalCostMonth ?? 0;
@@ -17,7 +17,9 @@ export function calculateEconomicSummary(parameters, feedResult) {
   const weeklySalary = getValue(parameters, "labor", "weekly_salary");
   const laborCostMonth = workers * weeklySalary * weeksPerMonth;
 
-  const medicineTaxesMisc = getValue(parameters, "other_monthly_costs", "medicine_taxes_misc");
+  const medicineTaxesMisc = operationalExpensesResult?.enabled
+    ? (operationalExpensesResult.totalMonth ?? 0)
+    : getValue(parameters, "other_monthly_costs", "medicine_taxes_misc");
   const extraExpenses = getValue(parameters, "other_monthly_costs", "extra_expenses");
   const nonSelfReplacementExpense = getValue(parameters, "other_monthly_costs", "non_self_replacement_expense");
   const breedingStockExpense = getValue(parameters, "other_monthly_costs", "breeding_stock_expense");

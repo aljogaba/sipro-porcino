@@ -1,5 +1,6 @@
 import { calculateFeed } from "./feed-consumption.js";
 import { calculateEconomicSummary } from "./economic-summary.js";
+import { calculateOperationalExpenses } from "./operational-expenses.js";
 
 function cloneParameters(parameters) {
   return structuredClone(parameters);
@@ -76,7 +77,8 @@ function applyScenario(parameters, scenarioId) {
 function calculateScenario(parameters, scenario) {
   const scenarioParameters = applyScenario(parameters, scenario.id);
   const feed = calculateFeed(scenarioParameters);
-  const economic = calculateEconomicSummary(scenarioParameters, feed);
+  const operationalExpenses = calculateOperationalExpenses(scenarioParameters);
+  const economic = calculateEconomicSummary(scenarioParameters, feed, operationalExpenses);
   const flow = feed.inventory.flow;
 
   return {

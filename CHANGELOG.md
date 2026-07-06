@@ -2,6 +2,22 @@
 
 Todos los cambios importantes de SIPRO-Porcino serán documentados en este archivo.
 
+## [0.7.0-dev] - En desarrollo
+
+### Agregado
+
+- Módulo de gastos sanitarios, impuestos y servicios.
+- Captura editable por rubro con concepto, cantidad, costo unitario y total mensual.
+- Rubro específico para honorarios veterinarios.
+- Resumen automático por rubro con porcentaje de participación.
+- Integración automática del total del módulo al concepto “Medicina, impuestos y varios” del resumen económico.
+- Separación explícita entre medicación/premezclas en alimento y gastos sanitarios fuera del alimento para evitar doble conteo.
+
+### Cambiado
+
+- El panel “Otros costos mensuales” ahora excluye “Medicina, impuestos y varios”, porque ese valor se calcula desde el nuevo módulo detallado.
+- Se documenta que los elementos gráficos comparativos se integrarán posteriormente con un diseño homologado.
+
 ## [0.6.1-dev] - En desarrollo
 
 ### Cambiado
