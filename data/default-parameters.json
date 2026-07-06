@@ -1,12 +1,12 @@
 {
   "metadata": {
     "project": "SIPRO-Porcino",
-    "version": "0.7.0-dev",
+    "version": "0.8.0-dev",
     "country_context": "México",
     "production_system": "Granja ciclo completo",
     "source": "Mapa técnico inicial derivado del modelo Excel privado",
     "language": "es",
-    "last_module": "gastos_operativos_detallados"
+    "last_module": "pie_cria_reemplazos_desechos"
   },
   "productive_parameters": {
     "breeding_sows": {
@@ -435,14 +435,14 @@
       "value": 0,
       "unit": "$/mes",
       "excel_source": "Tablero!J48",
-      "note": "Costo mensual editable asociado a pie de cría no autorreemplazado."
+      "note": "Campo heredado del Excel; en la interfaz se reemplaza por el módulo Pie de cría, reemplazos y desechos."
     },
     "breeding_stock_expense": {
       "label": "Egresos pie de cría",
       "value": 35630,
       "unit": "$/mes",
       "excel_source": "Tablero!J49",
-      "note": "Costo mensual editable para egresos asociados a pie de cría."
+      "note": "Campo heredado del Excel; en la interfaz se reemplaza por el módulo Pie de cría, reemplazos y desechos."
     }
   },
   "feed_formulation": {
@@ -1514,6 +1514,75 @@
           }
         ]
       }
+    }
+  },
+  "breeding_stock": {
+    "enabled": true,
+    "replacement_mode": {
+      "label": "Modo de reemplazo de hembras",
+      "value": "self",
+      "unit": "",
+      "note": "Autorreemplazo usa hembras seleccionadas del flujo productivo; compra externa agrega costo por hembra comprada."
+    },
+    "female_replacement_rate_annual": {
+      "label": "% reemplazo anual hembras",
+      "value": 40,
+      "unit": "%/año",
+      "note": "Porcentaje anual de vientres reemplazados. Valores frecuentes en sistemas intensivos: 40 a 50 % anual."
+    },
+    "replacement_inventory_months": {
+      "label": "Meses como reemplazo",
+      "value": 1,
+      "unit": "meses",
+      "note": "Tiempo promedio en que las hembras seleccionadas se mantienen como reemplazos visibles. Solo afecta el inventario mostrado; no agrega alimento ni modifica el flujo productivo."
+    },
+    "female_replacement_weight": {
+      "label": "Peso hembra reemplazo",
+      "value": 130,
+      "unit": "kg",
+      "note": "Peso usado para costear el autorreemplazo cuando se seleccionan hembras de la propia piara."
+    },
+    "self_replacement_cost_per_kg": {
+      "label": "Costo producción reemplazo",
+      "value": 26.35,
+      "unit": "$/kg",
+      "note": "Costo de producción por kg usado para valorar hembras de autorreemplazo."
+    },
+    "external_female_price": {
+      "label": "Precio compra hembra",
+      "value": 3425.5,
+      "unit": "$/cabeza",
+      "note": "Costo unitario cuando se selecciona compra externa de hembras de reemplazo."
+    },
+    "cull_sow_weight": {
+      "label": "Peso hembra desecho",
+      "value": 250,
+      "unit": "kg",
+      "note": "Peso promedio en pie de hembras desechadas."
+    },
+    "cull_sow_price_per_kg": {
+      "label": "Precio kg desecho",
+      "value": 13.5,
+      "unit": "$/kg",
+      "note": "Precio de venta por kg en pie de hembras de desecho."
+    },
+    "boar_inventory": {
+      "label": "Inventario machos",
+      "value": 15,
+      "unit": "machos",
+      "note": "Inventario de machos usado para estimar compras opcionales de reemplazo. No se autorreemplazan."
+    },
+    "boar_replacement_rate_annual": {
+      "label": "% reemplazo anual machos",
+      "value": 50,
+      "unit": "%/año",
+      "note": "Porcentaje anual de reemplazo de machos. Se modela como compra opcional, sin venta de machos de desecho."
+    },
+    "boar_unit_price": {
+      "label": "Precio compra macho",
+      "value": 2200,
+      "unit": "$/cabeza",
+      "note": "Costo unitario de compra de macho de reemplazo."
     }
   }
 }

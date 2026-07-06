@@ -34,6 +34,14 @@ export function calculateInventory(parameters) {
   const openFemales = flow.farrowingsPerWeek * (flow.assumptions.openDays / 7);
   const gestatingFemales = Math.max(breedingSows - lactatingFemales - openFemales, 0);
 
+  // Inventario visible de reemplazos. Se muestra por separado y no se suma al inventario
+  // productivo ni al consumo de alimento, porque en autorreemplazo esas hembras provienen del
+  // propio flujo de producción y no deben generar doble costo alimenticio.
+  const femaleReplacementRateAnnual = Number(parameters.breeding_stock?.female_replacement_rate_annual?.value ?? 0);
+  const replacementInventoryMonths = Number(parameters.breeding_stock?.replacement_inventory_months?.value ?? 1);
+  const replacementFemalesPerMonth = breedingSows * (femaleReplacementRateAnnual / 100) / 12;
+  const replacementFemalesInventory = replacementFemalesPerMonth * replacementInventoryMonths;
+
   return {
     flow,
     groups: {
@@ -47,7 +55,10 @@ export function calculateInventory(parameters) {
         lactating: lactatingFemales,
         open: openFemales,
         gestating: gestatingFemales,
-        total: breedingSows
+        replacement: replacementFemalesInventory,
+        replacementPerMonth: replacementFemalesPerMonth,
+        total: breedingSows,
+        totalWithReplacement: breedingSows + replacementFemalesInventory
       }
     }
   };

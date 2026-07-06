@@ -274,3 +274,20 @@ Los valores de ejemplo suman 24,514.95 MXN/mes para conservar el valor base usad
 - Validar rubros finales contra la hoja Excel “Gastos Med. Impu. Varios”.
 - Integrar visualizaciones finales homologadas al cierre del proyecto.
 - Desarrollar posteriormente una herramienta de proyección de honorarios veterinarios.
+
+## v0.8.0-dev — Pie de cría, reemplazos y desechos
+
+Se integró el módulo de pie de cría con las siguientes reglas operativas:
+
+- El inventario de vientres se mantiene constante; las hembras que entran como reemplazo compensan las hembras de desecho.
+- Las hembras reemplazadas por mes se calculan como: `vientres × % reemplazo anual / 100 / 12`.
+- Las hembras de desecho por mes usan la misma tasa que las hembras de reemplazo.
+- El ingreso por hembras de desecho se suma al ingreso mensual general.
+- En modo autorreemplazo, las hembras seleccionadas del flujo se descuentan solo del componente económico de venta a rastro; los indicadores productivos no se modifican.
+- El inventario visible de hembras de reemplazo se muestra por separado y no suma alimento para evitar doble conteo, ya que proviene del propio flujo productivo.
+- Los machos se tratan como compra opcional; no se autorreemplazan y no se modela venta de machos de desecho.
+
+Pendientes de validación fina:
+
+- Confirmar si el costo de producción/kg para autorreemplazo debe quedar como entrada manual o derivarse de un costo de producción/kg calculado por el modelo.
+- Validar el criterio de meses promedio como reemplazo para estimar inventario visible de hembras de reemplazo.

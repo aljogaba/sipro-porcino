@@ -17,14 +17,14 @@
       </div>
       <div class="version-card">
         <span>Versión</span>
-        <strong id="app-version">0.7.0-dev</strong>
+        <strong id="app-version">0.8.0-dev</strong>
       </div>
     </div>
   </header>
 
   <main class="container main-layout">
     <section class="notice">
-      <strong>Módulo inicial:</strong> inventarios y flujo productivo. Esta versión reproduce la lógica base del Excel fuente para el tablero productivo visible. El módulo de alimento y el resumen económico mensual se integran de forma inicial; medicación detallada y formulación alimenticia completa se integrarán por fases. Esta versión ya incluye una primera capa de análisis de escenarios, balance económico lateral y separación del inventario productivo de cerdos e inventario de hembras reproductivas. El módulo de alimento trabaja con dos modos: dietas compradas o formulación propia. En formulación propia se integra una primera capa de medicación/premezcla como costo no ponderal por tonelada. Esta versión agrega el módulo detallado de gastos sanitarios, impuestos y servicios.
+      <strong>Módulo inicial:</strong> inventarios y flujo productivo. Esta versión reproduce la lógica base del Excel fuente para el tablero productivo visible. El módulo de alimento y el resumen económico mensual se integran de forma inicial; medicación detallada y formulación alimenticia completa se integrarán por fases. Esta versión ya incluye una primera capa de análisis de escenarios, balance económico lateral y separación del inventario productivo de cerdos e inventario de hembras reproductivas. El módulo de alimento trabaja con dos modos: dietas compradas o formulación propia. En formulación propia se integra una primera capa de medicación/premezcla como costo no ponderal por tonelada. Esta versión agrega el módulo detallado de gastos sanitarios, impuestos y servicios, además de pie de cría, reemplazos y desechos.
     </section>
 
     <section class="panel">
@@ -150,10 +150,10 @@
         <div class="section-heading">
           <div>
             <p class="eyebrow">Costos operativos</p>
-            <h2>Otros costos y pie de cría</h2>
+            <h2>Gastos extras</h2>
           </div>
         </div>
-        <p class="panel-note">Estos conceptos permanecen como captura mensual directa. El bloque “Medicina, impuestos y varios” ahora se calcula desde el módulo detallado de gastos sanitarios, impuestos y servicios.</p>
+        <p class="panel-note">Este bloque conserva gastos extraordinarios mensuales no clasificados. Medicina/impuestos y pie de cría se calculan desde sus módulos detallados para evitar doble captura.</p>
         <div id="other-cost-inputs" class="input-grid two-items"></div>
       </article>
     </section>
@@ -179,6 +179,40 @@
       <div id="operational-expense-categories" class="expense-category-list"></div>
       <h3 class="mini-title">Resumen por rubro</h3>
       <div id="operational-expense-table" class="table-wrap"></div>
+    </section>
+
+
+    <section class="panel" id="breeding-stock-panel">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">Pie de cría</p>
+          <h2>Pie de cría, reemplazos y desechos</h2>
+        </div>
+        <div class="mode-switch" role="group" aria-label="Modo de reemplazo de hembras">
+          <button type="button" data-breeding-mode="self" aria-pressed="true">Autorreemplazo</button>
+          <button type="button" data-breeding-mode="external" aria-pressed="false">Compra externa</button>
+        </div>
+      </div>
+      <p class="panel-note">Modela el reemplazo mensual de hembras a partir del porcentaje anual de reposición. En autorreemplazo, las hembras seleccionadas se descuentan solo de los ingresos económicos por venta a rastro, sin modificar los indicadores productivos. Los ingresos por hembras de desecho se suman a los ingresos generales.</p>
+      <div class="context-help subtle-help">
+        <strong>Lectura técnica</strong>
+        <ul>
+          <li>El inventario de vientres se mantiene estable: las hembras que entran como reemplazo compensan las hembras de desecho.</li>
+          <li>Las hembras de reemplazo se muestran como población visible, pero no agregan alimento para evitar doble conteo porque provienen del flujo productivo.</li>
+          <li>Los machos no se autorreemplazan; su compra se modela como egreso opcional y no se considera venta de machos de desecho.</li>
+        </ul>
+      </div>
+      <div class="kpi-grid compact-kpis" id="breeding-stock-kpis"></div>
+      <div class="two-column nested">
+        <div>
+          <h3 class="mini-title">Parámetros de reemplazo</h3>
+          <div id="breeding-stock-inputs" class="input-grid two-items"></div>
+        </div>
+        <div>
+          <h3 class="mini-title">Resumen económico del pie de cría</h3>
+          <div id="breeding-stock-table" class="table-wrap"></div>
+        </div>
+      </div>
     </section>
 
     <section class="dashboard-layout">

@@ -2,12 +2,14 @@ import { calculateFeed } from "./modules/feed-consumption.js";
 import { calculateFeedFormulation } from "./modules/feed-formulation.js";
 import { calculateEconomicSummary } from "./modules/economic-summary.js";
 import { calculateOperationalExpenses } from "./modules/operational-expenses.js";
+import { calculateBreedingStock } from "./modules/breeding-stock.js";
 import { analyzeScenarios } from "./modules/scenario-analysis.js";
 import { formatCurrency, formatInteger, formatNumber, formatPercent } from "./utils/formatters.js";
 import { toNumber } from "./utils/validators.js";
 
 let baseParameters = null;
 let currentParameters = null;
+let openOperationalCategories = new Set();
 
 const productiveInputs = document.querySelector("#productive-inputs");
 const durationInputs = document.querySelector("#duration-inputs");
@@ -17,6 +19,10 @@ const otherCostInputs = document.querySelector("#other-cost-inputs");
 const operationalExpenseKpis = document.querySelector("#operational-expense-kpis");
 const operationalExpenseCategories = document.querySelector("#operational-expense-categories");
 const operationalExpenseTable = document.querySelector("#operational-expense-table");
+const breedingStockKpis = document.querySelector("#breeding-stock-kpis");
+const breedingStockInputs = document.querySelector("#breeding-stock-inputs");
+const breedingStockTable = document.querySelector("#breeding-stock-table");
+const breedingModeButtons = document.querySelectorAll("[data-breeding-mode]");
 const feedCostInputs = document.querySelector("#feed-cost-inputs");
 const feedCostPanelTitle = document.querySelector("#feed-cost-panel-title");
 const feedCostModeNote = document.querySelector("#feed-cost-mode-note");
@@ -110,6 +116,12 @@ function attachEditableNumberEvents(input) {
   });
 }
 
+function recalculatePreservingView() {
+  const scrollY = window.scrollY;
+  recalculate();
+  requestAnimationFrame(() => window.scrollTo(0, scrollY));
+}
+
 function getInputFormat(section, item) {
   const unit = String(item?.unit ?? "").toLowerCase();
 
@@ -129,7 +141,7 @@ function renderInputs() {
   durationInputs.innerHTML = renderInputCards("stage_duration_weeks", currentParameters.stage_duration_weeks);
   feedConsumptionInputs.innerHTML = renderInputCards("feed_consumption_kg_day", currentParameters.feed_consumption_kg_day);
   laborInputs.innerHTML = renderInputCards("labor", currentParameters.labor);
-  const visibleOtherCosts = Object.fromEntries(Object.entries(currentParameters.other_monthly_costs ?? {}).filter(([key]) => key !== "medicine_taxes_misc"));
+  const visibleOtherCosts = Object.fromEntries(Object.entries(currentParameters.other_monthly_costs ?? {}).filter(([key]) => !["medicine_taxes_misc", "non_self_replacement_expense", "breeding_stock_expense"].includes(key)));
   otherCostInputs.innerHTML = renderInputCards("other_monthly_costs", visibleOtherCosts);
   renderFeedCostMode();
 
@@ -207,7 +219,7 @@ function handleFeedModeChange(event) {
 function handleInputChange(event) {
   const { section, key } = event.target.dataset;
   currentParameters[section][key].value = toNumber(event.target.value, currentParameters[section][key].value);
-  recalculate();
+  recalculatePreservingView();
 }
 
 
@@ -261,7 +273,7 @@ function handleFormulationInput(event) {
     premix.inclusions_kg_ton[key][dietKey] = toNumber(event.target.value, premix.inclusions_kg_ton[key][dietKey] ?? 0);
   }
 
-  recalculate();
+  recalculatePreservingView();
 }
 
 function recalculate() {
@@ -277,7 +289,8 @@ function recalculate() {
   syncFormulatedFeedCosts(formulationResult);
 
   const operationalExpenseResult = calculateOperationalExpenses(currentParameters);
-  const economicResult = calculateEconomicSummary(currentParameters, feedResult, operationalExpenseResult);
+  const breedingStockResult = calculateBreedingStock(currentParameters, feedResult);
+  const economicResult = calculateEconomicSummary(currentParameters, feedResult, operationalExpenseResult, breedingStockResult);
   const scenarioResult = analyzeScenarios(currentParameters);
   const result = feedResult.inventory;
   renderKpis(result, feedResult, economicResult);
@@ -288,6 +301,7 @@ function recalculate() {
     renderFeedFormulation(formulationResult);
   }
   renderOperationalExpenses(operationalExpenseResult);
+  renderBreedingStock(breedingStockResult, economicResult);
   renderEconomicSummary(economicResult);
   renderScenarios(scenarioResult);
   renderStickyBalance(feedResult, economicResult);
@@ -356,10 +370,12 @@ function renderInventory(groups) {
     ["Hembras lactando", groups.breedingFemales?.lactating ?? 0],
     ["Hembras abiertas", groups.breedingFemales?.open ?? 0],
     ["Hembras gestantes", groups.breedingFemales?.gestating ?? 0],
-    ["Total vientres", groups.breedingFemales?.total ?? 0]
+    ["Hembras de reemplazo", groups.breedingFemales?.replacement ?? 0],
+    ["Total vientres", groups.breedingFemales?.total ?? 0],
+    ["Vientres + reemplazos", groups.breedingFemales?.totalWithReplacement ?? groups.breedingFemales?.total ?? 0]
   ];
 
-  const renderBars = (rows, max) => rows.slice(0, 3).map(([label, value]) => {
+  const renderBars = (rows, max, limit = 3) => rows.slice(0, limit).map(([label, value]) => {
     const width = max > 0 ? (value / max) * 100 : 0;
     return `
       <div class="bar-item">
@@ -373,7 +389,8 @@ function renderInventory(groups) {
   const maxFemales = Math.max(
     groups.breedingFemales?.lactating ?? 0,
     groups.breedingFemales?.open ?? 0,
-    groups.breedingFemales?.gestating ?? 0
+    groups.breedingFemales?.gestating ?? 0,
+    groups.breedingFemales?.replacement ?? 0
   );
 
   inventoryBars.innerHTML = `
@@ -383,7 +400,7 @@ function renderInventory(groups) {
     </div>
     <div class="inventory-subsection">
       <h3>Hembras reproductivas</h3>
-      ${renderBars(femaleRows, maxFemales)}
+      ${renderBars(femaleRows, maxFemales, 4)}
     </div>
   `;
 
@@ -774,7 +791,7 @@ function handleOperationalExpenseInput(event) {
     row.unit_cost = toNumber(event.target.value, row.unit_cost ?? 0);
   }
 
-  recalculate();
+  recalculatePreservingView();
 }
 
 function renderOperationalExpenses(operationalExpenseResult) {
@@ -800,7 +817,11 @@ function renderOperationalExpenses(operationalExpenseResult) {
     </article>
   `;
 
-  operationalExpenseCategories.innerHTML = categories.map((category, index) => renderOperationalExpenseCategory(category, index === 0)).join("");
+  if (openOperationalCategories.size === 0 && categories[0]) {
+    openOperationalCategories.add(categories[0].key);
+  }
+
+  operationalExpenseCategories.innerHTML = categories.map((category) => renderOperationalExpenseCategory(category, openOperationalCategories.has(category.key))).join("");
 
   operationalExpenseTable.innerHTML = `
     <table>
@@ -824,6 +845,15 @@ function renderOperationalExpenses(operationalExpenseResult) {
     </table>
   `;
 
+  document.querySelectorAll(".expense-category").forEach((details) => {
+    details.addEventListener("toggle", () => {
+      const key = details.dataset.categoryKey;
+      if (!key) return;
+      if (details.open) openOperationalCategories.add(key);
+      else openOperationalCategories.delete(key);
+    });
+  });
+
   document.querySelectorAll("[data-operational-field]").forEach((input) => {
     input.addEventListener("change", handleOperationalExpenseInput);
     input.addEventListener("keydown", (event) => {
@@ -837,7 +867,7 @@ function renderOperationalExpenses(operationalExpenseResult) {
 
 function renderOperationalExpenseCategory(category, open = false) {
   return `
-    <details class="expense-category" ${open ? "open" : ""}>
+    <details class="expense-category" data-category-key="${category.key}" ${open ? "open" : ""}>
       <summary>
         <span>${escapeHtml(category.label)}</span>
         <strong>${formatCurrency(category.total, 2)}</strong>
@@ -882,6 +912,121 @@ function renderOperationalExpenseCategory(category, open = false) {
   `;
 }
 
+
+
+function handleBreedingModeChange(event) {
+  currentParameters.breeding_stock.replacement_mode.value = event.currentTarget.dataset.breedingMode;
+  recalculatePreservingView();
+}
+
+function handleBreedingStockInput(event) {
+  const { key } = event.target.dataset;
+  if (!currentParameters.breeding_stock?.[key]) return;
+  currentParameters.breeding_stock[key].value = toNumber(event.target.value, currentParameters.breeding_stock[key].value ?? 0);
+  recalculatePreservingView();
+}
+
+function renderBreedingStockInputs(config, mode) {
+  const baseKeys = [
+    "female_replacement_rate_annual",
+    "replacement_inventory_months",
+    "female_replacement_weight",
+    mode === "external" ? "external_female_price" : "self_replacement_cost_per_kg",
+    "cull_sow_weight",
+    "cull_sow_price_per_kg",
+    "boar_inventory",
+    "boar_replacement_rate_annual",
+    "boar_unit_price"
+  ];
+
+  return baseKeys.map((key) => {
+    const item = config[key];
+    if (!item) return "";
+    const { decimals, step } = getInputFormat("breeding_stock", item);
+    const help = item.note ? helpIcon(item.note) : "";
+    return `
+      <div class="input-card">
+        <label for="breeding_stock-${key}">${escapeHtml(item.label)}${help}</label>
+        <div class="input-row">
+          <input
+            id="breeding_stock-${key}"
+            type="text"
+            inputmode="decimal"
+            step="${step}"
+            value="${formatInputValue(item.value, decimals)}"
+            data-breeding-field="true"
+            data-key="${key}"
+            data-decimals="${decimals === null ? "auto" : decimals}"
+          />
+          <span>${escapeHtml(item.unit ?? "")}</span>
+        </div>
+      </div>
+    `;
+  }).join("");
+}
+
+function renderBreedingStock(result, economicResult) {
+  if (!breedingStockKpis || !breedingStockInputs || !breedingStockTable) return;
+
+  const config = currentParameters.breeding_stock ?? {};
+  const mode = result?.mode ?? config.replacement_mode?.value ?? "self";
+  const modeLabel = mode === "external" ? "Compra externa" : "Autorreemplazo";
+
+  breedingModeButtons.forEach((button) => {
+    const isActive = button.dataset.breedingMode === mode;
+    button.classList.toggle("active", isActive);
+    button.setAttribute("aria-pressed", String(isActive));
+  });
+
+  breedingStockKpis.innerHTML = `
+    <article class="kpi-card positive">
+      <div class="label">Modo reemplazo</div>
+      <div><div class="value">${modeLabel}</div><div class="unit">hembras</div></div>
+    </article>
+    <article class="kpi-card positive">
+      <div class="label">Hembras reemplazo/mes</div>
+      <div><div class="value">${formatNumber(result.female.replacementPerMonth, 2)}</div><div class="unit">entran y salen</div></div>
+    </article>
+    <article class="kpi-card economic">
+      <div class="label">Ingreso desecho/mes</div>
+      <div><div class="value">${formatCurrency(result.female.cullIncomeMonth, 2)}</div><div class="unit">hembras desecho</div></div>
+    </article>
+    <article class="kpi-card bad">
+      <div class="label">Egreso pie de cría/mes</div>
+      <div><div class="value">${formatCurrency(result.totals.totalExpenseMonth, 2)}</div><div class="unit">hembras + machos</div></div>
+    </article>
+  `;
+
+  breedingStockInputs.innerHTML = renderBreedingStockInputs(config, mode);
+
+  breedingStockTable.innerHTML = `
+    <table>
+      <thead>
+        <tr><th>Concepto</th><th>Valor mensual</th><th>Nota</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Hembras reemplazo/mes</td><td>${formatNumber(result.female.replacementPerMonth, 2)}</td><td>${formatNumber(result.totals.femalePercentOfBreedingSowsPerMonth, 2)} % de vientres/mes</td></tr>
+        <tr><td>Inventario visible de reemplazos</td><td>${formatNumber(result.female.replacementInventory, 1)}</td><td>No agrega alimento; lectura poblacional</td></tr>
+        <tr><td>Hembras de desecho/mes</td><td>${formatNumber(result.female.cullPerMonth, 2)}</td><td>Sale la misma cantidad que entra</td></tr>
+        <tr><td>Ingreso por hembras de desecho</td><td>${formatCurrency(result.female.cullIncomeMonth, 2)}</td><td>Se suma al ingreso general</td></tr>
+        ${result.female.selfReplacementMarketIncomeDeduction > 0 ? `<tr><td>Ajuste por autorreemplazo no vendido</td><td>-${formatCurrency(result.female.selfReplacementMarketIncomeDeduction, 2)}</td><td>Solo económico; no modifica indicadores</td></tr>` : ""}
+        <tr><td>Costo reemplazo hembras</td><td>${formatCurrency(result.female.replacementExpenseMonth, 2)}</td><td>${mode === "external" ? "Compra externa" : "Costo de producción propio"}</td></tr>
+        <tr><td>Compra reemplazo machos</td><td>${formatCurrency(result.boar.replacementExpenseMonth, 2)}</td><td>${formatNumber(result.boar.replacementPerMonth, 2)} machos/mes</td></tr>
+        <tr class="total-row"><td>Egresos pie de cría</td><td>${formatCurrency(result.totals.totalExpenseMonth, 2)}</td><td>${formatCurrency(result.totals.costPerPigSold, 2)} por cerdo vendido</td></tr>
+        <tr class="total-row"><td>Impacto neto pie de cría</td><td>${formatCurrency(result.totals.netImpactMonth, 2)}</td><td>Ingreso desecho - egresos - ajuste autorreemplazo</td></tr>
+      </tbody>
+    </table>
+  `;
+
+  document.querySelectorAll("[data-breeding-field]").forEach((input) => {
+    input.addEventListener("change", handleBreedingStockInput);
+    input.addEventListener("keydown", (event) => {
+      if (event.key === "Enter") event.currentTarget.blur();
+    });
+    if (input.dataset.decimals) attachEditableNumberEvents(input);
+  });
+}
+
 function renderEconomicSummary(economicResult) {
   economicKpis.innerHTML = `
     <article class="kpi-card economic">
@@ -908,7 +1053,10 @@ function renderEconomicSummary(economicResult) {
         <tr><th>Resultado</th><th>Monto mensual</th><th>% ingreso</th></tr>
       </thead>
       <tbody>
-        <tr><td>Ingresos mes</td><td>${formatCurrency(economicResult.grossIncomeMonth, 2)}</td><td>${formatPercent(100, 1)}</td></tr>
+        <tr class="group-row"><td colspan="3">Ingresos</td></tr>
+        ${economicResult.incomeRows.map((row) => `<tr><td>${row.label}</td><td>${formatCurrency(row.amount, 2)}</td><td>${formatPercent(row.percentOfIncome, 1)}</td></tr>`).join("")}
+        <tr class="total-row"><td>Ingresos mes</td><td>${formatCurrency(economicResult.grossIncomeMonth, 2)}</td><td>${formatPercent(100, 1)}</td></tr>
+        <tr class="group-row"><td colspan="3">Egresos y utilidad</td></tr>
         <tr><td>Egresos mes</td><td>${formatCurrency(economicResult.totalCostsMonth, 2)}</td><td>${formatPercent(economicResult.costPercentOfIncome, 1)}</td></tr>
         <tr class="total-row"><td>Utilidad mes</td><td>${formatCurrency(economicResult.profitMonth, 2)}</td><td>${formatPercent(economicResult.profitPercentOfIncome, 1)}</td></tr>
         <tr><td>Utilidad semana</td><td>${formatCurrency(economicResult.profitWeek, 2)}</td><td>—</td></tr>
@@ -1035,6 +1183,10 @@ function renderScenarios(scenarios) {
 
 feedCostModeButtons.forEach((button) => {
   button.addEventListener("click", handleFeedModeChange);
+});
+
+breedingModeButtons.forEach((button) => {
+  button.addEventListener("click", handleBreedingModeChange);
 });
 
 resetBtn.addEventListener("click", () => {

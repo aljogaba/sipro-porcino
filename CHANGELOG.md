@@ -181,3 +181,21 @@ Todos los cambios importantes de SIPRO-Porcino serán documentados en este archi
 - Definición de identidad del proyecto.
 - Organización modular para inventarios, flujo reproductivo, alimento, costos y resumen económico.
 - Integración conceptual con el Laboratorio de Sistemas Porcícolas.
+
+## [0.8.0-dev] - En desarrollo
+
+### Agregado
+
+- Módulo **Pie de cría, reemplazos y desechos**.
+- Selector de modo de reemplazo de hembras: **autorreemplazo** o **compra externa**.
+- Cálculo de hembras reemplazadas/mes y hembras de desecho/mes a partir del porcentaje anual de reemplazo.
+- Inventario visible de hembras de reemplazo, separado del inventario productivo para evitar doble conteo de alimento.
+- Ingreso mensual por venta de hembras de desecho, integrado a ingresos generales.
+- Descuento económico por hembras de autorreemplazo que salen del flujo de venta a rastro, sin modificar los indicadores productivos.
+- Cálculo de costo mensual de reemplazo de hembras y compra opcional de machos.
+- Integración automática de egresos de pie de cría en el resumen económico.
+
+### Corregido
+
+- Se conserva la posición de scroll durante la captura en tablas largas para evitar regresar al inicio de la página.
+- Se conserva el estado abierto/cerrado de rubros en gastos operativos durante la edición.
