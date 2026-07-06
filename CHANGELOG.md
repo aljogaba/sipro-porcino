@@ -2,6 +2,20 @@
 
 Todos los cambios importantes de SIPRO-Porcino serán documentados en este archivo.
 
+## [0.5.2-dev] - En desarrollo
+
+### Agregado
+
+- Ayudas contextuales con iconos `?` en el módulo de formulación económica.
+- Guía rápida para explicar la base de 1,000 kg por tonelada, el uso de núcleos y el caso especial de Fase 0/Fase 1 como dietas completas.
+- Etiquetas visuales para identificar Fase 0 y Fase 1 como dietas completas.
+
+### Cambiado
+
+- Los valores económicos editables del módulo de alimentación se muestran con dos decimales.
+- Los campos de kg/ton en formulación se muestran con un decimal.
+- Las entradas de formulación actualizan el cálculo al confirmar el campo, evitando que la tabla se reconstruya en cada tecla y permitiendo capturar cifras completas.
+
 
 ## [0.5.1-dev] - En desarrollo
 

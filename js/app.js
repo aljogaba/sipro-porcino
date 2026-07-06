@@ -42,10 +42,44 @@ async function init() {
   baseParameters = await response.json();
   currentParameters = structuredClone(baseParameters);
 
-  document.querySelector("#app-version").textContent = baseParameters.metadata?.version ?? "0.5.0-dev";
+  document.querySelector("#app-version").textContent = baseParameters.metadata?.version ?? "0.5.2-dev";
 
   renderInputs();
   recalculate();
+}
+
+function escapeHtml(value) {
+  return String(value ?? "")
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
+}
+
+function helpIcon(text) {
+  const safe = escapeHtml(text);
+  return `<span class="help-icon" tabindex="0" role="img" aria-label="Ayuda: ${safe}" data-tooltip="${safe}" title="${safe}">?</span>`;
+}
+
+function formatInputValue(value, decimals = null) {
+  const number = Number(value);
+  if (decimals === null || !Number.isFinite(number)) return value ?? "";
+  return number.toFixed(decimals);
+}
+
+function getInputFormat(section, item) {
+  const unit = String(item?.unit ?? "").toLowerCase();
+
+  if (unit.includes("$/") || unit.includes("mxn") || section.includes("cost")) {
+    return { decimals: 2, step: "0.01" };
+  }
+
+  if (unit.includes("kg") || unit.includes("ton") || unit.includes("semanas")) {
+    return { decimals: 1, step: "0.1" };
+  }
+
+  return { decimals: null, step: "any" };
 }
 
 function renderInputs() {
@@ -65,23 +99,27 @@ function renderInputCards(section, entries, options = {}) {
   const disabled = options.disabled ? "disabled" : "";
   const disabledClass = options.disabled ? " is-disabled" : "";
 
-  return Object.entries(entries).map(([key, item]) => `
-    <div class="input-card${disabledClass}">
-      <label for="${section}-${key}">${item.label}</label>
-      <div class="input-row">
-        <input
-          id="${section}-${key}"
-          type="number"
-          step="any"
-          value="${item.value}"
-          data-section="${section}"
-          data-key="${key}"
-          ${disabled}
-        />
-        <span>${item.unit ?? ""}</span>
+  return Object.entries(entries).map(([key, item]) => {
+    const { decimals, step } = getInputFormat(section, item);
+    const help = item.note ? helpIcon(item.note) : "";
+    return `
+      <div class="input-card${disabledClass}">
+        <label for="${section}-${key}">${escapeHtml(item.label)}${help}</label>
+        <div class="input-row">
+          <input
+            id="${section}-${key}"
+            type="number"
+            step="${step}"
+            value="${formatInputValue(item.value, decimals)}"
+            data-section="${section}"
+            data-key="${key}"
+            ${disabled}
+          />
+          <span>${escapeHtml(item.unit ?? "")}</span>
+        </div>
       </div>
-    </div>
-  `).join("");
+    `;
+  }).join("");
 }
 
 function getActiveFeedCostSection() {
@@ -386,7 +424,7 @@ function renderFeedFormulation(formulationResult) {
   formulationBalanceTable.innerHTML = renderIngredientBalanceTable(formulationResult.balance);
 
   document.querySelectorAll("[data-formulation-type]").forEach((input) => {
-    input.addEventListener("input", handleFormulationInput);
+    input.addEventListener("change", handleFormulationInput);
   });
 }
 
@@ -399,20 +437,24 @@ function renderIngredientTable(ingredients) {
   return `
     <table class="compact-table">
       <thead>
-        <tr><th>Ingrediente</th><th>Precio/kg</th><th>Tipo</th></tr>
+        <tr>
+          <th>Ingrediente ${helpIcon("Insumo disponible para formular las dietas. Los opcionales permiten capturar ingredientes alternativos de la granja.")}</th>
+          <th>Precio/kg ${helpIcon("Valor económico del ingrediente. Se captura con dos decimales y se usa para calcular el costo por tonelada de dieta.")}</th>
+          <th>Tipo</th>
+        </tr>
       </thead>
       <tbody>
         ${Object.entries(ingredients).map(([key, ingredient]) => `
           <tr>
             <td>
               ${ingredient.editable_label ? `
-                <input class="inline-input text-input" type="text" value="${ingredient.label}" data-formulation-type="ingredient" data-key="${key}" data-field="label" />
-              ` : `<strong>${ingredient.label}</strong>`}
+                <input class="inline-input text-input" type="text" value="${escapeHtml(ingredient.label)}" data-formulation-type="ingredient" data-key="${key}" data-field="label" />
+              ` : `<strong>${escapeHtml(ingredient.label)}</strong>`}
             </td>
             <td>
-              <input class="inline-input" type="number" step="any" value="${ingredient.price}" data-formulation-type="ingredient" data-key="${key}" data-field="price" />
+              <input class="inline-input money-input" type="number" step="0.01" value="${formatInputValue(ingredient.price, 2)}" data-formulation-type="ingredient" data-key="${key}" data-field="price" />
             </td>
-            <td>${ingredient.type ?? "ingrediente"}</td>
+            <td>${escapeHtml(ingredient.type ?? "ingrediente")}</td>
           </tr>
         `).join("")}
       </tbody>
@@ -424,14 +466,17 @@ function renderNucleiTable(nuclei) {
   return `
     <table class="compact-table">
       <thead>
-        <tr><th>Núcleo / dieta</th><th>Precio/kg</th></tr>
+        <tr>
+          <th>Núcleo / dieta ${helpIcon("Núcleo, premezcla o dieta completa específica de la etapa. En Fase 0 y Fase 1 puede representar la dieta terminada.")}</th>
+          <th>Precio/kg ${helpIcon("Costo por kg del núcleo o dieta completa. Este valor entra al costo final de la tonelada formulada.")}</th>
+        </tr>
       </thead>
       <tbody>
         ${Object.entries(nuclei).map(([key, nucleus]) => `
           <tr>
-            <td><strong>${nucleus.label}</strong></td>
+            <td><strong>${escapeHtml(nucleus.label)}</strong>${["phase_0", "phase_1"].includes(key) ? ` <span class="stage-chip" title="Dieta completa comprada: por eso puede representar 1,000 kg de la fórmula.">Dieta completa</span>` : ""}</td>
             <td>
-              <input class="inline-input" type="number" step="any" value="${nucleus.price}" data-formulation-type="nucleus" data-key="${key}" />
+              <input class="inline-input money-input" type="number" step="0.01" value="${formatInputValue(nucleus.price, 2)}" data-formulation-type="nucleus" data-key="${key}" />
             </td>
           </tr>
         `).join("")}
@@ -449,28 +494,29 @@ function renderDietFormulaTable(formulation, formulationResult) {
     <table class="formula-table">
       <thead>
         <tr>
-          <th>Dieta</th>
-          ${ingredientKeys.map((key) => `<th>${ingredients[key].label}<br><span>kg/ton</span></th>`).join("")}
-          <th>Núcleo<br><span>kg/ton</span></th>
-          <th>Total kg</th>
-          <th>Costo/ton</th>
-          <th>Costo/kg</th>
-          <th>Estado</th>
+          <th>Dieta ${helpIcon("Cada fila representa una dieta calculada sobre una base de 1,000 kg.")}</th>
+          ${ingredientKeys.map((key) => `<th>${escapeHtml(ingredients[key].label)}<br><span>kg/ton</span></th>`).join("")}
+          <th>Núcleo ${helpIcon("Cantidad del núcleo, premezcla o dieta completa incluida por tonelada. En Fase 0 y Fase 1 puede ser 1,000 kg porque se compran terminadas.")}<br><span>kg/ton</span></th>
+          <th>Total kg ${helpIcon("La suma de ingredientes + núcleo debe ser igual a 1,000 kg por tonelada.")}</th>
+          <th>Costo/ton ${helpIcon("Suma del costo aportado por ingredientes y núcleo en una tonelada de alimento.")}</th>
+          <th>Costo/kg ${helpIcon("Costo por tonelada dividido entre 1,000 kg. Este valor alimenta el módulo de costos cuando se usa Formulación propia.")}</th>
+          <th>Estado ${helpIcon("Indica si la dieta suma exactamente 1,000 kg. Si aparece diferencia, revise los kg/ton capturados.")}</th>
         </tr>
       </thead>
       <tbody>
         ${Object.entries(formulation.diets ?? {}).map(([dietKey, diet]) => {
           const result = dietResultMap[dietKey];
+          const completeDiet = ["phase_0", "phase_1"].includes(dietKey);
           return `
-            <tr>
-              <td><strong>${diet.label}</strong></td>
+            <tr class="${completeDiet ? "complete-diet-row" : ""}">
+              <td><strong>${escapeHtml(diet.label)}</strong>${completeDiet ? ` <span class="stage-chip" title="Dieta completa comprada: normalmente no se formula en granja.">Dieta completa</span>` : ""}</td>
               ${ingredientKeys.map((ingredientKey) => `
                 <td>
-                  <input class="inline-input small-input" type="number" step="any" value="${diet.ingredients_kg?.[ingredientKey] ?? 0}" data-formulation-type="diet-ingredient" data-diet-key="${dietKey}" data-ingredient-key="${ingredientKey}" />
+                  <input class="inline-input small-input weight-input" type="number" step="0.1" value="${formatInputValue(diet.ingredients_kg?.[ingredientKey] ?? 0, 1)}" data-formulation-type="diet-ingredient" data-diet-key="${dietKey}" data-ingredient-key="${ingredientKey}" />
                 </td>
               `).join("")}
               <td>
-                <input class="inline-input small-input" type="number" step="any" value="${diet.nucleus_kg}" data-formulation-type="diet-nucleus" data-diet-key="${dietKey}" />
+                <input class="inline-input small-input weight-input" type="number" step="0.1" value="${formatInputValue(diet.nucleus_kg, 1)}" data-formulation-type="diet-nucleus" data-diet-key="${dietKey}" />
               </td>
               <td>${formatNumber(result.totalKg, 1)}</td>
               <td>${formatCurrency(result.costPerTon, 2)}</td>
@@ -500,8 +546,8 @@ function renderIngredientBalanceTable(balance) {
       <tbody>
         ${rows.map((row) => `
           <tr>
-            <td>${row.label}</td>
-            <td>${row.type}</td>
+            <td>${escapeHtml(row.label)}</td>
+            <td>${escapeHtml(row.type)}</td>
             <td>${formatNumber(row.kgMonth, 1)}</td>
             <td>${formatNumber(row.kgMonth / 1000, 2)}</td>
             <td>${formatCurrency(row.costMonth, 2)}</td>

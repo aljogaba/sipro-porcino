@@ -619,3 +619,102 @@ table .total-row td {
 .wide-table {
   margin-bottom: 18px;
 }
+
+.context-help {
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: linear-gradient(180deg, #ffffff, var(--surface-soft));
+  padding: 14px 16px;
+  margin: 0 0 18px;
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+.context-help strong {
+  color: var(--brand);
+}
+
+.context-help ul {
+  margin: 8px 0 0;
+  padding-left: 18px;
+}
+
+.help-icon {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  margin-left: 5px;
+  border-radius: 999px;
+  border: 1px solid #7a9b8f;
+  background: #eef6f1;
+  color: var(--brand);
+  font-size: 0.68rem;
+  font-weight: 900;
+  line-height: 1;
+  cursor: help;
+  vertical-align: middle;
+}
+
+.help-icon::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  z-index: 40;
+  left: 50%;
+  bottom: calc(100% + 8px);
+  transform: translateX(-50%);
+  width: min(280px, 70vw);
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: #0f3d36;
+  color: #fff;
+  box-shadow: 0 12px 30px rgba(12, 44, 37, 0.22);
+  font-size: 0.78rem;
+  line-height: 1.35;
+  text-transform: none;
+  letter-spacing: 0;
+  font-weight: 700;
+  text-align: left;
+  white-space: normal;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.12s ease, transform 0.12s ease;
+}
+
+.help-icon:hover::after,
+.help-icon:focus::after {
+  opacity: 1;
+  transform: translateX(-50%) translateY(-2px);
+}
+
+.stage-chip {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 999px;
+  padding: 3px 8px;
+  margin-left: 6px;
+  background: var(--brand-soft);
+  color: var(--brand);
+  font-size: 0.68rem;
+  font-weight: 900;
+  white-space: nowrap;
+}
+
+.complete-diet-row td {
+  background: #fbfdfb;
+}
+
+.inline-input.money-input,
+.inline-input.weight-input {
+  font-variant-numeric: tabular-nums;
+}
+
+.inline-input.money-input { width: 104px; }
+.inline-input.weight-input { width: 86px; }
+
+.formula-table td,
+.formula-table th {
+  vertical-align: middle;
+}

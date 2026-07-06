@@ -160,3 +160,19 @@ Se integra el primer módulo de formulación alimenticia con enfoque económico,
 ## Ajuste de modo de alimentación `v0.5.1-dev`
 
 El módulo de formulación alimenticia se muestra únicamente cuando el usuario selecciona `Formulación propia`. En modo `Dietas compradas`, la interfaz conserva solo la captura directa del costo por kg de dieta, reduciendo duplicidad visual y evitando que el usuario capture datos de formulación cuando no aplican.
+
+
+## Ajuste v0.5.2-dev: ayudas contextuales y captura de formulación
+
+Se agregaron ayudas contextuales con iconos de información en el módulo de formulación económica para reducir ambigüedad operativa. La interfaz aclara que:
+
+- cada dieta se calcula sobre una base de 1,000 kg;
+- la suma de ingredientes + núcleo debe ser igual a 1,000 kg;
+- Fase 0 y Fase 1 pueden aparecer con 1,000 kg en núcleo porque se tratan como dietas completas compradas;
+- la medicación/suplementación no ponderal queda pendiente para un módulo posterior.
+
+También se normalizó la captura visual:
+
+- valores económicos con dos decimales;
+- inclusiones de peso en kg/ton con un decimal;
+- actualización de fórmulas al confirmar el campo, evitando reconstrucción de la tabla durante la escritura.
