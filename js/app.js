@@ -56,6 +56,8 @@ const chartFeedStage = document.querySelector("#chart-feed-stage");
 const chartIngredientBalance = document.querySelector("#chart-ingredient-balance");
 const chartScenarios = document.querySelector("#chart-scenarios");
 const chartTornado = document.querySelector("#chart-tornado");
+const chartOperationalExpenses = document.querySelector("#chart-operational-expenses");
+const chartBreedingImpact = document.querySelector("#chart-breeding-impact");
 const stickyBalance = document.querySelector("#sticky-balance");
 const resetBtn = document.querySelector("#reset-btn");
 
@@ -1302,6 +1304,11 @@ function chartEmpty(message) {
   return `<div class="chart-empty">${escapeHtml(message)}</div>`;
 }
 
+function chartInsight(message) {
+  if (!message) return "";
+  return `<div class="chart-insight">${escapeHtml(message)}</div>`;
+}
+
 function renderDecisionBarRows(rows, options = {}) {
   const max = options.max ?? Math.max(...rows.map((row) => Math.abs(row.value)), 1);
   const valueFormatter = options.valueFormatter ?? formatShortCurrency;
@@ -1310,14 +1317,17 @@ function renderDecisionBarRows(rows, options = {}) {
   if (!rows.length) return chartEmpty(options.empty ?? "Sin datos para graficar.");
 
   return `
-    <div class="decision-bar-list">
-      ${rows.map((row) => {
+    ${chartInsight(options.insight)}
+    <div class="decision-bar-list ${options.compact ? "compact-bars" : ""}">
+      ${rows.map((row, index) => {
         const width = percentOfMax(row.value, max);
         const cssClass = row.className ?? (row.value < 0 ? "negative" : "positive");
         const secondary = row.secondary ? `<small>${escapeHtml(row.secondary)}</small>` : "";
         const percent = percentFormatter ? `<em>${escapeHtml(percentFormatter(row))}</em>` : "";
+        const title = row.title ?? `${row.label}: ${valueFormatter(row.value)}`;
         return `
-          <div class="decision-bar-row">
+          <div class="decision-bar-row" title="${escapeHtml(title)}">
+            <div class="decision-rank">${String(index + 1).padStart(2, "0")}</div>
             <div class="decision-bar-label">
               <span>${escapeHtml(row.label)}</span>
               ${secondary}
@@ -1330,6 +1340,7 @@ function renderDecisionBarRows(rows, options = {}) {
         `;
       }).join("")}
     </div>
+    ${options.caption ? `<div class="chart-caption">${escapeHtml(options.caption)}</div>` : ""}
   `;
 }
 
@@ -1449,13 +1460,17 @@ function renderExpenseChart(economicResult) {
     .map((row) => ({
       label: row.label,
       value: row.amount,
-      secondary: `${formatPercent(row.percentOfTotalCosts, 1)} de egresos`,
-      className: row.key === "feed" ? "feed" : row.key === "labor" ? "labor" : row.key === "medicine_taxes_misc" ? "sanitary" : "neutral",
-      percentOfTotalCosts: row.percentOfTotalCosts
+      secondary: `${formatPercent(row.percentOfTotalCosts, 1)} de egresos` ,
+      className: row.key === "feed" ? "feed" : row.key === "labor" ? "labor" : row.key === "medicine_taxes_misc" ? "sanitary" : row.key === "breeding_stock" ? "breeding" : "neutral",
+      percentOfTotalCosts: row.percentOfTotalCosts,
+      title: `${row.label}: ${formatCurrency(row.amount, 2)} | ${formatPercent(row.percentOfTotalCosts, 1)} de egresos`
     }));
 
+  const top = rows[0];
   chartExpenses.innerHTML = renderDecisionBarRows(rows, {
-    percentFormatter: (row) => formatPercent(row.percentOfTotalCosts, 1)
+    insight: top ? `Principal egreso: ${top.label} (${formatPercent(top.percentOfTotalCosts, 1)} del total de egresos).` : "",
+    percentFormatter: (row) => formatPercent(row.percentOfTotalCosts, 1),
+    caption: "Lectura: ordena los rubros que más presionan el costo mensual."
   });
 }
 
@@ -1468,11 +1483,15 @@ function renderFeedStageChart(feedResult) {
       label: row.label,
       value: row.costMonth,
       secondary: `${formatNumber(row.kgMonth / 1000, 2)} ton/mes`,
-      className: row.group === "pie_cria" ? "breeding" : row.group === "destete" ? "nursery" : row.group === "iniciadores" ? "starter" : "finishing"
+      className: row.group === "pie_cria" ? "breeding" : row.group === "destete" ? "nursery" : row.group === "iniciadores" ? "starter" : "finishing",
+      title: `${row.label}: ${formatCurrency(row.costMonth, 2)} | ${formatNumber(row.kgMonth / 1000, 2)} ton/mes`
     }));
 
+  const top = rows[0];
   chartFeedStage.innerHTML = renderDecisionBarRows(rows, {
-    empty: "Sin consumo de alimento calculado."
+    empty: "Sin consumo de alimento calculado.",
+    insight: top ? `Mayor costo de alimento: ${top.label}.` : "",
+    caption: "Lectura: combina costo/kg, consumo e inventario por etapa; no solo precio de dieta."
   });
 }
 
@@ -1492,11 +1511,94 @@ function renderIngredientBalanceChart(formulationResult, feedResult) {
       label: row.label,
       value: row.costMonth,
       secondary: `${formatNumber(row.kgMonth / 1000, 2)} ton/mes`,
-      className: row.type === "Núcleo / dieta completa" ? "nucleus" : "ingredient"
+      className: row.type === "Núcleo / dieta completa" ? "nucleus" : "ingredient",
+      title: `${row.label}: ${formatCurrency(row.costMonth, 2)} | ${formatNumber(row.kgMonth / 1000, 2)} ton/mes`
     }));
 
+  const top = rows[0];
   chartIngredientBalance.innerHTML = renderDecisionBarRows(rows, {
-    empty: "No hay insumos calculados para graficar."
+    empty: "No hay insumos calculados para graficar.",
+    insight: top ? `Mayor costo mensual de insumos: ${top.label}.` : "",
+    caption: "Lectura: prioriza compras por impacto económico mensual, no solo por volumen."
+  });
+}
+
+function renderOperationalExpenseChart(operationalExpenseResult) {
+  if (!chartOperationalExpenses) return;
+
+  const rows = [...(operationalExpenseResult?.categoryRows ?? [])]
+    .filter((row) => row.total > 0)
+    .sort((a, b) => b.total - a.total)
+    .map((row) => ({
+      label: row.label,
+      value: row.total,
+      secondary: `${formatPercent(row.percentOfTotal, 1)} del módulo`,
+      className: row.key.includes("honor") ? "labor" : row.key.includes("tax") || row.key.includes("impuesto") ? "neutral" : "sanitary",
+      percentOfTotal: row.percentOfTotal,
+      title: `${row.label}: ${formatCurrency(row.total, 2)} | ${formatPercent(row.percentOfTotal, 1)} del módulo`
+    }));
+
+  const top = rows[0];
+  chartOperationalExpenses.innerHTML = renderDecisionBarRows(rows, {
+    empty: "Sin gastos sanitarios, impuestos o servicios capturados.",
+    insight: top ? `Rubro operativo dominante: ${top.label} (${formatShortCurrency(top.value)}).` : "",
+    percentFormatter: (row) => formatPercent(row.percentOfTotal, 1),
+    caption: "Lectura: permite detectar presión sanitaria, carga de servicios u honorarios dentro de gastos fuera del alimento."
+  });
+}
+
+function renderBreedingImpactChart(breedingStockResult) {
+  if (!chartBreedingImpact) return;
+
+  const femaleExpense = breedingStockResult?.female?.replacementExpenseMonth ?? 0;
+  const boarExpense = breedingStockResult?.boar?.replacementExpenseMonth ?? 0;
+  const cullIncome = breedingStockResult?.totals?.cullIncomeMonth ?? 0;
+  const selfDeduction = breedingStockResult?.female?.selfReplacementMarketIncomeDeduction ?? 0;
+  const netImpact = breedingStockResult?.totals?.netImpactMonth ?? 0;
+
+  const rows = [
+    {
+      label: "Ingreso por desecho",
+      value: cullIncome,
+      secondary: "suma a ingresos",
+      className: "income",
+      title: `Ingreso por hembras de desecho: ${formatCurrency(cullIncome, 2)}`
+    },
+    {
+      label: "Reemplazo hembras",
+      value: femaleExpense,
+      secondary: "egreso pie de cría",
+      className: "breeding",
+      title: `Costo de reemplazo de hembras: ${formatCurrency(femaleExpense, 2)}`
+    },
+    {
+      label: "Compra machos",
+      value: boarExpense,
+      secondary: "opcional mensualizado",
+      className: "neutral",
+      title: `Compra opcional de machos: ${formatCurrency(boarExpense, 2)}`
+    },
+    {
+      label: "Ajuste autorreemplazo",
+      value: selfDeduction,
+      secondary: "no vendido a rastro",
+      className: "negative",
+      title: `Ajuste económico por autorreemplazo: ${formatCurrency(selfDeduction, 2)}`
+    },
+    {
+      label: "Impacto neto",
+      value: netImpact,
+      secondary: netImpact >= 0 ? "favorable" : "presión mensual",
+      className: netImpact >= 0 ? "profit" : "loss",
+      title: `Impacto neto de pie de cría: ${formatCurrency(netImpact, 2)}`
+    }
+  ].filter((row) => Math.abs(row.value) > 0 || row.label === "Impacto neto");
+
+  chartBreedingImpact.innerHTML = renderDecisionBarRows(rows, {
+    empty: "Sin impacto económico de pie de cría calculado.",
+    insight: `Modo activo: ${breedingStockResult?.mode === "external" ? "compra externa" : "autorreemplazo"}.`,
+    valueFormatter: (value) => formatShortCurrency(value),
+    caption: "Lectura: separa ingresos por desecho, egresos de reposición y ajustes económicos del autorreemplazo."
   });
 }
 
@@ -1507,12 +1609,16 @@ function renderScenarioProfitChart(scenarios) {
     label: scenario.shortName ?? scenario.name,
     value: scenario.metrics.profitMonth,
     secondary: scenario.id === "base" ? "base" : `Δ ${formatShortCurrency(scenario.delta.profitMonth)}`,
-    className: scenario.id === "base" ? "base" : scenario.delta.profitMonth >= 0 ? "profit" : "loss"
+    className: scenario.id === "base" ? "base" : scenario.delta.profitMonth >= 0 ? "profit" : "loss",
+    title: `${scenario.name}: ${formatCurrency(scenario.metrics.profitMonth, 2)}${scenario.id !== "base" ? ` | cambio ${formatCurrency(scenario.delta.profitMonth, 2)}` : ""}`
   }));
 
+  const best = [...scenarios].sort((a, b) => b.metrics.profitMonth - a.metrics.profitMonth)[0];
   chartScenarios.innerHTML = renderDecisionBarRows(rows, {
     empty: "Sin escenarios calculados.",
-    valueFormatter: (value) => formatShortCurrency(value)
+    insight: best ? `Mejor resultado proyectado: ${best.shortName ?? best.name}.` : "",
+    valueFormatter: (value) => formatShortCurrency(value),
+    caption: "Lectura: compara utilidad mensual absoluta y cambio contra el escenario actual."
   });
 }
 
@@ -1603,14 +1709,22 @@ function renderTornadoChart(economicResult) {
 
   const rows = buildSensitivityRows(economicResult.profitMonth);
   const max = Math.max(...rows.map((row) => Math.abs(row.value)), 1);
+  const top = rows[0];
 
   chartTornado.innerHTML = `
+    ${chartInsight(top ? `Variable más sensible en esta prueba: ${top.label} (${top.value >= 0 ? "+" : ""}${formatShortCurrency(top.value)}).` : "")}
+    <div class="tornado-axis-head">
+      <span>Reduce utilidad</span>
+      <strong>0</strong>
+      <span>Aumenta utilidad</span>
+    </div>
     <div class="tornado-chart">
-      ${rows.map((row) => {
+      ${rows.map((row, index) => {
         const width = percentOfMax(row.value, max) / 2;
         const directionClass = row.value >= 0 ? "positive" : "negative";
         return `
-          <div class="tornado-row">
+          <div class="tornado-row" title="${escapeHtml(row.label)}: cambio ${formatCurrency(row.value, 2)}; utilidad resultante ${formatCurrency(row.profit, 2)}">
+            <div class="decision-rank">${String(index + 1).padStart(2, "0")}</div>
             <div class="tornado-label">${escapeHtml(row.label)}</div>
             <div class="tornado-scale" aria-hidden="true">
               <span class="tornado-zero"></span>
@@ -1629,6 +1743,8 @@ function renderDecisionCharts(formulationResult, feedResult, operationalExpenseR
   renderWaterfallChart(economicResult);
   renderExpenseChart(economicResult);
   renderFeedStageChart(feedResult);
+  renderOperationalExpenseChart(operationalExpenseResult);
+  renderBreedingImpactChart(breedingStockResult);
   renderIngredientBalanceChart(formulationResult, feedResult);
   renderScenarioProfitChart(scenarios);
   renderTornadoChart(economicResult);

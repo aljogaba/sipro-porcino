@@ -1,6 +1,21 @@
 # Changelog
 
 
+## [1.0.3-dev] - Pulido gráfico integral
+
+### Agregado
+
+- Gráfico de gastos sanitarios y servicios dentro del tablero ejecutivo.
+- Gráfico de impacto mensual de pie de cría, reemplazos y desechos.
+- Lecturas ejecutivas automáticas en gráficos: principal egreso, etapa de mayor costo, insumo dominante, mejor escenario y variable más sensible.
+- Ranking visual en barras de decisión y sensibilidad.
+
+### Cambiado
+
+- Se refinó el diseño de barras ejecutivas con mayor jerarquía, separadores, tooltips e indicadores ordenados.
+- Se mejoró la lectura del gráfico de sensibilidad tipo tornado con eje central explícito y encabezado de interpretación.
+- Se actualizó la versión del modelo a `1.0.3-dev`.
+
 ## [1.0.2-dev] - En desarrollo
 
 ### Agregado
