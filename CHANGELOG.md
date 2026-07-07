@@ -1,6 +1,6 @@
 # Changelog
 
-## [1.2.2-dev] - En desarrollo
+## [1.2.3-dev] - En desarrollo
 
 ### Ajustado
 
@@ -9,7 +9,7 @@
 - Baja ligeramente la escala tipográfica para favorecer lectura en pantallas con mucho contenido.
 - Ajusta responsividad base en laptop, escritorio y móvil sin modificar cálculos.
 
-## [1.2.0-dev] - Publicación, identidad y beta controlada
+## [1.2.3-dev] - Publicación, identidad y beta controlada
 
 ### Agregado
 
@@ -22,7 +22,7 @@
 
 ### Ajustado
 
-- Versión del proyecto actualizada a `1.2.0-dev`.
+- Versión del proyecto actualizada a `1.2.3-dev`.
 - Reporte técnico imprimible ahora incluye autoría y derechos.
 
 

@@ -2114,3 +2114,156 @@ body {
     grid-column: 1 / -1;
   }
 }
+
+/* v1.2.3 — navegación lateral, reporte HTML externo y header estable */
+:root {
+  --sticky-header-expanded: 180px;
+  --sticky-header-compact: 96px;
+}
+
+.site-header {
+  will-change: padding, box-shadow;
+}
+
+.site-header.is-compact {
+  min-height: 72px;
+}
+
+main section[id],
+main article[id] {
+  scroll-margin-top: 110px;
+}
+
+.side-nav {
+  display: none;
+}
+
+@media (min-width: 1180px) {
+  .main-layout {
+    grid-template-columns: 220px minmax(0, 1fr);
+    align-items: start;
+    gap: 18px 24px;
+  }
+
+  .main-layout > :not(.side-nav) {
+    grid-column: 2;
+  }
+
+  .side-nav {
+    grid-column: 1;
+    grid-row: 1 / span 999;
+    display: grid;
+    gap: 6px;
+    position: sticky;
+    top: 102px;
+    align-self: start;
+    padding: 14px;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    background: rgba(255, 255, 255, 0.90);
+    box-shadow: var(--shadow);
+    max-height: calc(100vh - 118px);
+    overflow-y: auto;
+  }
+
+  .side-nav .eyebrow {
+    margin-bottom: 6px;
+  }
+
+  .side-nav a {
+    display: block;
+    padding: 8px 10px;
+    border-radius: 12px;
+    color: var(--muted);
+    text-decoration: none;
+    font-size: 0.82rem;
+    font-weight: 800;
+    line-height: 1.15;
+  }
+
+  .side-nav a:hover,
+  .side-nav a:focus {
+    color: var(--brand);
+    background: var(--surface-soft);
+    outline: none;
+  }
+}
+
+@media (max-width: 1179px) {
+  .side-nav {
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    padding: 10px 2px 4px;
+    scroll-snap-type: x proximity;
+  }
+
+  .side-nav .eyebrow {
+    display: none;
+  }
+
+  .side-nav a {
+    flex: 0 0 auto;
+    scroll-snap-align: start;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    background: rgba(255,255,255,.9);
+    color: var(--brand);
+    padding: 8px 11px;
+    text-decoration: none;
+    font-size: 0.78rem;
+    font-weight: 850;
+  }
+}
+
+.dashboard-layout {
+  grid-template-columns: 1fr !important;
+}
+
+.dashboard-main {
+  max-width: 100%;
+}
+
+.sticky-balance {
+  display: none !important;
+}
+
+.report-launch-panel {
+  border-color: rgba(15, 61, 54, 0.22);
+}
+
+.report-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: flex-end;
+}
+
+.report-launch-card {
+  display: grid;
+  gap: 5px;
+  padding: 16px 18px;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: linear-gradient(180deg, #ffffff, var(--surface-soft));
+  color: var(--muted);
+}
+
+.report-launch-card strong {
+  color: var(--ink);
+  font-size: 1rem;
+}
+
+.report-launch-card span {
+  line-height: 1.45;
+}
+
+@media (max-width: 640px) {
+  .report-actions {
+    width: 100%;
+  }
+
+  .report-actions .secondary-button {
+    width: 100%;
+  }
+}

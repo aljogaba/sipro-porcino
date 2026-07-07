@@ -1,12 +1,12 @@
 {
   "metadata": {
     "project": "SIPRO-Porcino",
-    "version": "1.2.0-dev",
+    "version": "1.2.3-dev",
     "country_context": "México",
     "production_system": "Granja ciclo completo",
     "source": "Mapa técnico inicial derivado del modelo Excel privado",
     "language": "es",
-    "last_module": "reporte_tecnico_salida_profesional",
+    "last_module": "layout_navegacion_reporte_html",
     "author": "Alberto Jorge Galindo-Barboza",
     "author_profile": "https://aljogaba.github.io/",
     "ecosystem": "Laboratorio de Sistemas Porcícolas",

@@ -20,7 +20,7 @@
         <a class="profile-button" href="https://aljogaba.github.io/" target="_blank" rel="noopener">Perfil profesional</a>
         <div class="version-card">
           <span>Versión</span>
-          <strong id="app-version">1.2.2-dev</strong>
+          <strong id="app-version">1.2.3-dev</strong>
         </div>
       </div>
     </div>
@@ -31,7 +31,25 @@
       <strong>Módulo inicial:</strong> inventarios y flujo productivo. Esta versión reproduce la lógica base del Excel fuente para el tablero productivo visible. El módulo de alimento y el resumen económico mensual se integran de forma inicial; medicación detallada y formulación alimenticia completa se integrarán por fases. Esta versión ya incluye una primera capa de análisis de escenarios, balance económico lateral y separación del inventario productivo de cerdos e inventario de hembras reproductivas. El módulo de alimento trabaja con dos modos: dietas compradas o formulación propia. En formulación propia se integra una primera capa de medicación/premezcla como costo no ponderal por tonelada. Esta versión agrega el módulo detallado de gastos sanitarios, impuestos y servicios, además de pie de cría, reemplazos y desechos. La compra de machos se maneja como gasto opcional prorrateado, no como porcentaje de reemplazo. Esta versión agrega una auditoría dinámica del modelo para revisar consistencia de supuestos, integración de ingresos/egresos y puntos pendientes de validación. También incorpora un tablero gráfico de decisión con visualizaciones ejecutivas para interpretar rentabilidad, egresos, alimento, insumos, escenarios y sensibilidad. Esta versión mejora la jerarquía visual con numeración de módulos, ajusta el waterfall económico para una lectura más clara, refina el tablero gráfico con lecturas ejecutivas, gráficos de gastos sanitarios y pie de cría, y agrega una salida de reporte técnico imprimible para revisión profesional.
     </section>
 
-    <section class="panel">
+    <nav class="side-nav" aria-label="Navegación de módulos">
+      <p class="eyebrow">Navegación</p>
+      <a href="#productive-parameters-panel">01 Producción</a>
+      <a href="#stage-duration-panel">02 Etapas</a>
+      <a href="#feed-consumption-panel">03 Consumo</a>
+      <a href="#feed-cost-panel">04 Alimento</a>
+      <a href="#feed-formulation-panel">05 Formulación</a>
+      <a href="#operational-costs-panel">06 Costos operativos</a>
+      <a href="#operational-expense-panel">07 Gastos sanitarios</a>
+      <a href="#breeding-stock-panel">08 Pie de cría</a>
+      <a href="#results-panel">09 Resultados</a>
+      <a href="#economic-summary-panel">10 Economía</a>
+      <a href="#decision-charts-panel">11 Gráficos</a>
+      <a href="#scenario-panel">12 Escenarios</a>
+      <a href="#model-audit-panel">13 Auditoría</a>
+      <a href="#technical-report-panel">14 Reporte</a>
+    </nav>
+
+    <section class="panel" id="productive-parameters-panel">
       <div class="section-heading">
         <div>
           <p class="eyebrow">Entradas editables</p>
@@ -42,7 +60,7 @@
       <div id="productive-inputs" class="input-grid"></div>
     </section>
 
-    <section class="panel">
+    <section class="panel" id="stage-duration-panel">
       <div class="section-heading">
         <div>
           <p class="eyebrow">Configuración técnica</p>
@@ -54,7 +72,7 @@
 
 
 
-    <section class="panel">
+    <section class="panel" id="feed-consumption-panel">
       <div class="section-heading">
         <div>
           <p class="eyebrow">Parámetros de alimento</p>
@@ -64,7 +82,7 @@
       <div id="feed-consumption-inputs" class="input-grid compact"></div>
     </section>
 
-    <section class="panel">
+    <section class="panel" id="feed-cost-panel">
       <div class="section-heading">
         <div>
           <p class="eyebrow">Costos de alimento</p>
@@ -139,7 +157,7 @@
     </section>
 
 
-    <section class="two-column">
+    <section class="two-column" id="operational-costs-panel">
       <article class="panel">
         <div class="section-heading">
           <div>
@@ -219,7 +237,7 @@
       </div>
     </section>
 
-    <section class="dashboard-layout">
+    <section class="dashboard-layout" id="results-panel">
       <div class="dashboard-main">
         <section class="panel">
           <div class="section-heading">
@@ -269,7 +287,7 @@
 
 
 
-    <section class="panel">
+    <section class="panel" id="economic-summary-panel">
       <div class="section-heading">
         <div>
           <p class="eyebrow">Resumen económico</p>
@@ -377,21 +395,26 @@
     </section>
 
 
-    <section class="panel" id="technical-report-panel">
+    <section class="panel report-launch-panel" id="technical-report-panel">
       <div class="section-heading">
         <div>
           <p class="eyebrow">Salida profesional</p>
           <h2>Reporte técnico</h2>
         </div>
-        <button id="print-report-btn" class="secondary-button" type="button">Imprimir / Guardar PDF</button>
+        <div class="report-actions">
+          <button id="open-report-btn" class="secondary-button" type="button">Abrir reporte HTML</button>
+          <button id="download-report-btn" class="secondary-button" type="button">Descargar HTML</button>
+        </div>
       </div>
-      <p class="panel-note">Resumen ejecutivo imprimible con parámetros principales, resultados productivos, resultados económicos, alimentación, pie de cría, auditoría y notas de interpretación. No modifica los cálculos; organiza la información para revisión técnica.</p>
-      <div id="report-kpis" class="kpi-grid compact-kpis"></div>
-      <div id="technical-report-preview" class="report-preview"></div>
+      <p class="panel-note">El reporte se genera como un archivo HTML independiente, responsivo y de un solo archivo. No duplica la información dentro del simulador; organiza los resultados activos para revisión técnica, impresión o envío.</p>
+      <div class="report-launch-card">
+        <strong>Reporte independiente</strong>
+        <span id="report-status">Listo para generarse con los valores actuales del simulador.</span>
+      </div>
     </section>
 
 
-    <section class="panel">
+    <section class="panel" id="scenario-panel">
       <div class="section-heading">
         <div>
           <p class="eyebrow">Escenarios</p>
@@ -420,16 +443,6 @@
           </ul>
         </section>
       </div>
-
-      <aside class="panel sticky-balance" aria-label="Balance económico mensual">
-        <div class="section-heading compact-heading">
-          <div>
-            <p class="eyebrow">Balance</p>
-            <h2>Resultado mensual</h2>
-          </div>
-        </div>
-        <div id="sticky-balance" class="balance-stack"></div>
-      </aside>
     </section>
   </main>
 
@@ -442,7 +455,7 @@
       </div>
       <div class="footer-card">
         <strong>Cita sugerida</strong>
-        <p>Galindo-Barboza, A. J. (2026). <em>SIPRO-Porcino: Simulador Integral de Producción Porcina</em> (v1.2.2-dev). Laboratorio de Sistemas Porcícolas.</p>
+        <p>Galindo-Barboza, A. J. (2026). <em>SIPRO-Porcino: Simulador Integral de Producción Porcina</em> (v1.2.3-dev). Laboratorio de Sistemas Porcícolas.</p>
       </div>
       <div class="footer-card">
         <strong>Licencia y derechos</strong>
@@ -458,11 +471,29 @@
     (() => {
       const header = document.querySelector('.site-header');
       if (!header) return;
+      let compact = false;
+      let ticking = false;
+      const compactAt = 150;
+      const expandAt = 70;
       const updateHeaderState = () => {
-        header.classList.toggle('is-compact', window.scrollY > 80);
+        const y = window.scrollY || document.documentElement.scrollTop || 0;
+        if (!compact && y > compactAt) {
+          compact = true;
+          header.classList.add('is-compact');
+        } else if (compact && y < expandAt) {
+          compact = false;
+          header.classList.remove('is-compact');
+        }
+        ticking = false;
+      };
+      const requestUpdate = () => {
+        if (!ticking) {
+          ticking = true;
+          requestAnimationFrame(updateHeaderState);
+        }
       };
       updateHeaderState();
-      window.addEventListener('scroll', updateHeaderState, { passive: true });
+      window.addEventListener('scroll', requestUpdate, { passive: true });
     })();
   </script>
   <script type="module" src="js/app.js"></script>

@@ -58,10 +58,11 @@ const chartScenarios = document.querySelector("#chart-scenarios");
 const chartTornado = document.querySelector("#chart-tornado");
 const chartOperationalExpenses = document.querySelector("#chart-operational-expenses");
 const chartBreedingImpact = document.querySelector("#chart-breeding-impact");
-const reportKpis = document.querySelector("#report-kpis");
-const technicalReportPreview = document.querySelector("#technical-report-preview");
-const printReportBtn = document.querySelector("#print-report-btn");
+const reportStatus = document.querySelector("#report-status");
+const openReportBtn = document.querySelector("#open-report-btn");
+const downloadReportBtn = document.querySelector("#download-report-btn");
 const stickyBalance = document.querySelector("#sticky-balance");
+let latestReportHtml = "";
 const resetBtn = document.querySelector("#reset-btn");
 
 async function init() {
@@ -70,7 +71,8 @@ async function init() {
   currentParameters = structuredClone(baseParameters);
 
   document.querySelector("#app-version").textContent = baseParameters.metadata?.version ?? "0.6.0-dev";
-  printReportBtn?.addEventListener("click", () => window.print());
+  openReportBtn?.addEventListener("click", openStandaloneReport);
+  downloadReportBtn?.addEventListener("click", downloadStandaloneReport);
 
   renderInputs();
   applyModuleNumbering();
@@ -1786,9 +1788,79 @@ function getTopScenario(scenarios) {
   return [...(scenarios ?? [])].sort((a, b) => b.metrics.profitMonth - a.metrics.profitMonth)[0];
 }
 
-function renderTechnicalReport(formulationResult, feedResult, operationalExpenseResult, breedingStockResult, economicResult, scenarios) {
-  if (!reportKpis || !technicalReportPreview) return;
+function buildStandaloneReportHtml(reportBody, generatedAt) {
+  const version = escapeHtml(baseParameters.metadata?.version ?? "");
+  return `<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>SIPRO-Porcino | Reporte técnico</title>
+  <style>
+    :root { --bg:#f4f7f5; --surface:#fff; --ink:#12211c; --muted:#5d6f67; --brand:#0f3d36; --line:#d9e4de; --ok:#c9f2d0; --blue:#cfe9ff; --radius:18px; }
+    * { box-sizing: border-box; }
+    body { margin:0; font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; color:var(--ink); background:radial-gradient(circle at top left,#fff 0,var(--bg) 48%,#edf3ef 100%); line-height:1.45; font-size:15px; }
+    .report-shell { width:min(1100px, calc(100% - 28px)); margin:0 auto; padding:22px 0 32px; }
+    .report-cover,.report-block,.report-note,.report-kpi { background:rgba(255,255,255,.94); border:1px solid var(--line); border-radius:var(--radius); box-shadow:0 16px 34px rgba(12,44,37,.08); }
+    .report-cover { padding:22px; background:linear-gradient(135deg,#0f3d36,#17604f); color:#fff; display:grid; grid-template-columns:minmax(0,1fr) auto; gap:18px; align-items:end; margin-bottom:18px; }
+    .eyebrow { margin:0 0 7px; color:#b8d7cb; text-transform:uppercase; letter-spacing:.08em; font-size:.72rem; font-weight:900; }
+    h1 { margin:0 0 6px; font-size:clamp(1.9rem,6vw,3.0rem); line-height:.96; letter-spacing:-.05em; }
+    h2 { margin:0 0 10px; font-size:1.05rem; }
+    p { margin:0; }
+    .report-meta { display:grid; gap:6px; justify-items:end; font-size:.82rem; }
+    .report-meta span { border:1px solid rgba(255,255,255,.18); border-radius:999px; padding:6px 10px; background:rgba(255,255,255,.08); }
+    .report-kpis { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:12px; margin-bottom:18px; }
+    .report-kpi { padding:14px; }
+    .report-kpi span { display:block; color:var(--muted); font-weight:800; font-size:.78rem; }
+    .report-kpi strong { display:block; font-size:clamp(1.25rem,3vw,1.75rem); margin-top:6px; letter-spacing:-.04em; }
+    .report-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:14px; }
+    .report-block { padding:16px; overflow:hidden; }
+    .report-block-wide { grid-column:1 / -1; }
+    table { width:100%; border-collapse:collapse; font-size:.9rem; }
+    td { padding:9px 6px; border-bottom:1px solid var(--line); vertical-align:top; }
+    td:nth-child(1) { font-weight:850; width:34%; }
+    td:nth-child(2) { font-weight:900; text-align:right; width:24%; white-space:nowrap; }
+    td:nth-child(3) { color:var(--muted); font-size:.82rem; }
+    .report-note { margin-top:14px; padding:16px; color:var(--muted); }
+    .report-actions { display:flex; gap:10px; justify-content:flex-end; margin:14px 0; }
+    .report-actions button { border:1px solid var(--brand); color:var(--brand); background:#fff; border-radius:999px; padding:10px 14px; font-weight:850; cursor:pointer; }
+    @media (max-width:850px) { body{font-size:14px;} .report-cover,.report-grid,.report-kpis{grid-template-columns:1fr;} .report-meta{justify-items:start;} td{display:block; width:100% !important; text-align:left !important;} td:nth-child(2){padding-top:0;} }
+    @media print { body{background:#fff;} .report-shell{width:100%; padding:0;} .report-actions{display:none;} .report-cover,.report-block,.report-note,.report-kpi{box-shadow:none; break-inside:avoid;} }
+  </style>
+</head>
+<body>
+  <main class="report-shell">
+    <div class="report-actions"><button type="button" onclick="window.print()">Imprimir / Guardar PDF</button></div>
+    ${reportBody}
+    <div class="report-note">Generado con SIPRO-Porcino ${version} el ${escapeHtml(generatedAt)}. Este archivo HTML es independiente y puede abrirse en navegador o imprimirse como PDF.</div>
+  </main>
+</body>
+</html>`;
+}
 
+function openStandaloneReport() {
+  if (!latestReportHtml) return;
+  const blob = new Blob([latestReportHtml], { type: "text/html;charset=utf-8" });
+  const url = URL.createObjectURL(blob);
+  window.open(url, "_blank", "noopener");
+  setTimeout(() => URL.revokeObjectURL(url), 60000);
+}
+
+function downloadStandaloneReport() {
+  if (!latestReportHtml) return;
+  const blob = new Blob([latestReportHtml], { type: "text/html;charset=utf-8" });
+  const url = URL.createObjectURL(blob);
+  const stamp = new Date().toISOString().slice(0, 19).replace(/[:T]/g, "-");
+  const anchor = document.createElement("a");
+  anchor.href = url;
+  anchor.download = `SIPRO-Porcino_reporte_${stamp}.html`;
+  document.body.appendChild(anchor);
+  anchor.click();
+  anchor.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 60000);
+}
+
+function renderTechnicalReport(formulationResult, feedResult, operationalExpenseResult, breedingStockResult, economicResult, scenarios) {
   const inventory = feedResult?.inventory;
   const flow = inventory?.flow ?? {};
   const groups = inventory?.groups ?? {};
@@ -1798,31 +1870,18 @@ function renderTechnicalReport(formulationResult, feedResult, operationalExpense
   const topFeed = getTopFeedStage(feedResult);
   const topScenario = getTopScenario(scenarios);
   const unbalanced = formulationResult?.diets?.filter((diet) => !diet.isBalanced) ?? [];
-  const generatedAt = new Date().toLocaleString("es-MX", {
-    year: "numeric", month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit"
-  });
+  const generatedAt = new Date().toLocaleString("es-MX", { year:"numeric", month:"2-digit", day:"2-digit", hour:"2-digit", minute:"2-digit" });
 
-  reportKpis.innerHTML = `
-    <article class="kpi-card economic">
-      <div class="label">Ingresos mensuales</div>
-      <div><div class="value">${formatCurrency(economicResult.grossIncomeMonth, 2)}</div><div class="unit">venta + desecho</div></div>
-    </article>
-    <article class="kpi-card ${economicResult.profitMonth >= 0 ? "positive" : "warning"}">
-      <div class="label">Utilidad mensual</div>
-      <div><div class="value">${formatCurrency(economicResult.profitMonth, 2)}</div><div class="unit">${formatPercent(economicResult.profitPercentOfIncome, 1)} de margen</div></div>
-    </article>
-    <article class="kpi-card positive">
-      <div class="label">Cerdos vendidos/mes</div>
-      <div><div class="value">${formatNumber(flow.pigsSoldPerMonth, 2)}</div><div class="unit">indicador productivo</div></div>
-    </article>
-    <article class="kpi-card ${unbalanced.length ? "warning" : "positive"}">
-      <div class="label">Auditoría de fórmulas</div>
-      <div><div class="value">${(formulationResult?.diets?.length ?? 0) - unbalanced.length}/${formulationResult?.diets?.length ?? 0}</div><div class="unit">dietas cerradas a 1,000 kg</div></div>
-    </article>
-  `;
+  const reportKpisHtml = `
+    <section class="report-kpis">
+      <article class="report-kpi"><span>Ingresos mensuales</span><strong>${formatCurrency(economicResult.grossIncomeMonth, 2)}</strong></article>
+      <article class="report-kpi"><span>Utilidad mensual</span><strong>${formatCurrency(economicResult.profitMonth, 2)}</strong></article>
+      <article class="report-kpi"><span>Cerdos vendidos/mes</span><strong>${formatNumber(flow.pigsSoldPerMonth, 2)}</strong></article>
+      <article class="report-kpi"><span>Auditoría de fórmulas</span><strong>${(formulationResult?.diets?.length ?? 0) - unbalanced.length}/${formulationResult?.diets?.length ?? 0}</strong></article>
+    </section>`;
 
   const productiveRows = buildReportRows([
-    ["No. de vientres", formatNumber(getParam("productive_parameters", "sows"), 0), "Base reproductiva del modelo."],
+    ["No. de vientres", formatNumber(getParam("productive_parameters", "breeding_sows"), 0), "Base reproductiva del modelo."],
     ["Partos/hembra/año", formatNumber(flow.farrowingsPerSowPerYear, 2), "Calculado con gestación + lactancia + días abiertos."],
     ["Lechones destetados/camada", formatNumber(flow.weanedPerLitter, 2), "Después de mortalidad en maternidad."],
     ["Cerdos vendidos/hembra/año", formatNumber(flow.pigsSoldPerSowPerYear, 2), "Indicador productivo; no se afecta por ajuste económico de autorreemplazo."],
@@ -1830,7 +1889,6 @@ function renderTechnicalReport(formulationResult, feedResult, operationalExpense
     ["Inventario total cerdos", formatNumber(groups.totalInventory, 1), "Inventario productivo, sin duplicar reemplazos."],
     ["Hembras de reemplazo", formatNumber(groups.breedingFemales?.replacement ?? 0, 1), "Población visible; no agrega alimento para evitar doble conteo."]
   ]);
-
   const economicRows = buildReportRows([
     ["Ingresos mensuales", formatCurrency(economicResult.grossIncomeMonth, 2), "Incluye venta a rastro e ingreso por desecho."],
     ["Egresos mensuales", formatCurrency(economicResult.totalCostsMonth, 2), "Suma alimento, mano de obra, gastos operativos y pie de cría."],
@@ -1838,7 +1896,6 @@ function renderTechnicalReport(formulationResult, feedResult, operationalExpense
     ["Margen mensual", formatPercent(economicResult.profitPercentOfIncome, 1), "Utilidad / ingreso mensual."],
     ["Principal egreso", topExpense ? `${topExpense.label} (${formatPercent(topExpense.percentOfTotalCosts, 1)})` : "—", "Rubro con mayor participación en egresos."]
   ]);
-
   const feedRows = buildReportRows([
     ["Modo de alimento", feedMode, "Define si los costos/kg provienen de captura directa o formulación."],
     ["Costo alimento/mes", formatCurrency(feedResult.totals.totalCostMonth, 2), "Incluye consumo por etapa y costo/kg activo."],
@@ -1847,7 +1904,6 @@ function renderTechnicalReport(formulationResult, feedResult, operationalExpense
     ["Etapa con mayor costo", topFeed ? `${topFeed.label} (${formatShortCurrency(topFeed.costMonth)})` : "—", "Lectura ejecutiva del módulo de alimento."],
     ["Fórmulas por revisar", unbalanced.length ? unbalanced.map((diet) => diet.label).join(", ") : "Ninguna", "Solo aplica en formulación propia."]
   ]);
-
   const breedingRows = buildReportRows([
     ["Modo de reposición", breedingMode, "Define costo de hembras de reemplazo."],
     ["Reemplazo anual hembras", formatPercent(getParam("breeding_stock", "female_replacement_rate_annual"), 1), "Base para entradas y desechos mensuales."],
@@ -1856,39 +1912,19 @@ function renderTechnicalReport(formulationResult, feedResult, operationalExpense
     ["Egresos pie de cría", formatCurrency(breedingStockResult?.totals?.expenseMonth ?? 0, 2), "Suma a egresos generales."],
     ["Impacto neto", formatCurrency(breedingStockResult?.totals?.netImpactMonth ?? 0, 2), "Ingreso por desecho menos egresos y ajustes." ]
   ]);
-
   const scenarioRows = buildReportRows([
     ["Mejor escenario", topScenario ? `${topScenario.shortName ?? topScenario.name}: ${formatCurrency(topScenario.metrics.profitMonth, 2)}` : "—", "Comparación predefinida de sensibilidad."],
     ["Escenario actual", scenarios?.[0] ? formatCurrency(scenarios[0].metrics.profitMonth, 2) : "—", "Base capturada por el usuario."],
     ["Fecha/hora reporte", generatedAt, "Generado localmente en navegador." ]
   ]);
 
-  technicalReportPreview.innerHTML = `
-    <div class="report-cover">
-      <div>
-        <p class="eyebrow">SIPRO-Porcino</p>
-        <h3>Reporte técnico de simulación</h3>
-        <p>Herramienta técnico-económica del Laboratorio de Sistemas Porcícolas.</p>
-        <p><strong>Autor:</strong> Alberto Jorge Galindo-Barboza · <strong>Perfil:</strong> aljogaba.github.io</p>
-      </div>
-      <div class="report-meta">
-        <span>Versión ${escapeHtml(baseParameters.metadata?.version ?? "")}</span>
-        <span>${escapeHtml(generatedAt)}</span>
-        <span>${escapeHtml(baseParameters.metadata?.country_context ?? "México")}</span>
-      </div>
-    </div>
-    <div class="report-grid">
-      <article class="report-block"><h4>1. Productivo e inventarios</h4><table>${productiveRows}</table></article>
-      <article class="report-block"><h4>2. Económico mensual</h4><table>${economicRows}</table></article>
-      <article class="report-block"><h4>3. Alimentación</h4><table>${feedRows}</table></article>
-      <article class="report-block"><h4>4. Pie de cría</h4><table>${breedingRows}</table></article>
-      <article class="report-block report-block-wide"><h4>5. Escenarios y trazabilidad</h4><table>${scenarioRows}</table></article>
-    </div>
-    <div class="report-note">
-      <strong>Nota técnica:</strong> este reporte organiza los resultados activos del simulador. Debe interpretarse con base en los supuestos capturados, el modo de alimentación seleccionado, el cierre de fórmulas a 1,000 kg y la separación entre medicación en alimento y gastos sanitarios operativos.<br><br>
-      <strong>Derechos:</strong> © 2026 Alberto Jorge Galindo-Barboza. Todos los derechos reservados.
-    </div>
-  `;
+  const reportBody = `
+    <div class="report-cover"><div><p class="eyebrow">SIPRO-Porcino</p><h1>Reporte técnico de simulación</h1><p>Herramienta técnico-económica del Laboratorio de Sistemas Porcícolas.</p><p><strong>Autor:</strong> Alberto Jorge Galindo-Barboza · <strong>Perfil:</strong> aljogaba.github.io</p></div><div class="report-meta"><span>Versión ${escapeHtml(baseParameters.metadata?.version ?? "")}</span><span>${escapeHtml(generatedAt)}</span><span>${escapeHtml(baseParameters.metadata?.country_context ?? "México")}</span></div></div>
+    ${reportKpisHtml}
+    <div class="report-grid"><article class="report-block"><h2>1. Productivo e inventarios</h2><table>${productiveRows}</table></article><article class="report-block"><h2>2. Económico mensual</h2><table>${economicRows}</table></article><article class="report-block"><h2>3. Alimentación</h2><table>${feedRows}</table></article><article class="report-block"><h2>4. Pie de cría</h2><table>${breedingRows}</table></article><article class="report-block report-block-wide"><h2>5. Escenarios y trazabilidad</h2><table>${scenarioRows}</table></article></div>
+    <div class="report-note"><strong>Nota técnica:</strong> este reporte organiza los resultados activos del simulador. Debe interpretarse con base en los supuestos capturados, el modo de alimentación seleccionado, el cierre de fórmulas a 1,000 kg y la separación entre medicación en alimento y gastos sanitarios operativos.<br><br><strong>Derechos:</strong> © 2026 Alberto Jorge Galindo-Barboza. Todos los derechos reservados.</div>`;
+  latestReportHtml = buildStandaloneReportHtml(reportBody, generatedAt);
+  if (reportStatus) reportStatus.textContent = `Reporte HTML actualizado con los valores actuales · ${generatedAt}`;
 }
 
 function renderStickyBalance(feedResult, economicResult) {
