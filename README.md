@@ -13,11 +13,11 @@ Perfil profesional: https://aljogaba.github.io/
 
 ## Versión
 
-`v1.2.1-dev`
+`v1.2.2-dev`
 
 ## Cita sugerida
 
-Galindo-Barboza, A. J. (2026). *SIPRO-Porcino: Simulador Integral de Producción Porcina* (v1.2.1-dev). Laboratorio de Sistemas Porcícolas.
+Galindo-Barboza, A. J. (2026). *SIPRO-Porcino: Simulador Integral de Producción Porcina* (v1.2.2-dev). Laboratorio de Sistemas Porcícolas.
 
 ## Derechos
 

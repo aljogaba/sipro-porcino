@@ -1941,3 +1941,176 @@ body {
     min-width: 112px;
   }
 }
+
+
+/* v1.2.2 — Header compacto dividido y ajuste de barras ejecutivas */
+.site-header {
+  padding: 12px 0 11px;
+}
+
+.site-header h1 {
+  font-size: clamp(2rem, 3.7vw, 3.25rem);
+}
+
+.site-header.is-compact {
+  padding: 5px 0 5px;
+}
+
+.site-header.is-compact .header-grid {
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 18px;
+}
+
+.site-header.is-compact .brand-block {
+  display: grid;
+  grid-template-columns: minmax(230px, 1fr) minmax(180px, auto);
+  grid-template-areas:
+    "eyebrow title"
+    "subtitle title"
+    "author title";
+  column-gap: clamp(18px, 3vw, 46px);
+  row-gap: 1px;
+  align-items: center;
+  min-width: 0;
+}
+
+.site-header.is-compact .brand-block .eyebrow {
+  grid-area: eyebrow;
+  margin: 0;
+  font-size: 0.62rem;
+  line-height: 1.1;
+}
+
+.site-header.is-compact h1 {
+  grid-area: title;
+  justify-self: center;
+  align-self: center;
+  margin: 0;
+  font-size: clamp(1.35rem, 2vw, 1.95rem);
+  line-height: 0.92;
+  letter-spacing: -0.045em;
+  white-space: nowrap;
+  transition: transform 180ms ease, font-size 180ms ease, opacity 180ms ease;
+}
+
+.site-header.is-compact .subtitle {
+  grid-area: subtitle;
+  margin: 0;
+  font-size: 0.74rem;
+  line-height: 1.1;
+  max-width: 420px;
+}
+
+.site-header.is-compact .author-line {
+  grid-area: author;
+  margin: 1px 0 0;
+  font-size: 0.70rem;
+  line-height: 1.1;
+}
+
+.site-header.is-compact .profile-button {
+  min-height: 32px;
+  padding: 7px 11px;
+  font-size: 0.76rem;
+}
+
+.site-header.is-compact .version-card {
+  padding: 7px 11px;
+  min-width: 104px;
+  border-radius: 14px;
+}
+
+.site-header.is-compact .version-card span {
+  font-size: 0.62rem;
+  margin-bottom: 0;
+}
+
+.site-header.is-compact .version-card strong {
+  font-size: 0.86rem;
+}
+
+.decision-bar-list {
+  gap: 10px;
+}
+
+.decision-bar-row {
+  grid-template-columns: 36px minmax(120px, 1fr) minmax(120px, 0.72fr) minmax(92px, max-content);
+  gap: 10px 12px;
+  align-items: center;
+  padding: 10px 12px;
+  border: 1px solid rgba(217, 228, 222, 0.86);
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.66);
+  overflow: hidden;
+}
+
+.decision-bar-row:last-child {
+  border-bottom: 1px solid rgba(217, 228, 222, 0.86);
+}
+
+.decision-bar-track {
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+  justify-self: stretch;
+  overflow: hidden;
+}
+
+.decision-bar-fill {
+  max-width: 100%;
+}
+
+.decision-bar-label span {
+  line-height: 1.08;
+}
+
+.decision-bar-value {
+  min-width: 0;
+  max-width: 130px;
+  font-size: 0.92rem;
+  justify-self: end;
+}
+
+@media (max-width: 1480px) {
+  .decision-bar-row {
+    grid-template-columns: 36px minmax(0, 1fr) minmax(88px, auto);
+  }
+
+  .decision-bar-track {
+    grid-column: 2 / -1;
+  }
+
+  .decision-bar-value {
+    grid-column: 3;
+    grid-row: 1;
+    text-align: right;
+  }
+}
+
+@media (max-width: 960px) {
+  .site-header.is-compact .brand-block {
+    display: block;
+  }
+
+  .site-header.is-compact h1 {
+    white-space: normal;
+    justify-self: start;
+    margin: 2px 0;
+  }
+
+  .decision-bar-row {
+    grid-template-columns: 34px minmax(0, 1fr);
+  }
+
+  .decision-bar-value {
+    grid-column: 2;
+    grid-row: auto;
+    justify-self: start;
+    text-align: left;
+  }
+
+  .decision-bar-track {
+    grid-column: 1 / -1;
+  }
+}
