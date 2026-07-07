@@ -1,5 +1,14 @@
 # Changelog
 
+## [1.2.1-dev] - En desarrollo
+
+### Ajustado
+
+- Reduce la altura del encabezado y agrega comportamiento compacto al hacer scroll.
+- Mejora márgenes laterales y encuadre general del contenido.
+- Baja ligeramente la escala tipográfica para favorecer lectura en pantallas con mucho contenido.
+- Ajusta responsividad base en laptop, escritorio y móvil sin modificar cálculos.
+
 ## [1.2.0-dev] - Publicación, identidad y beta controlada
 
 ### Agregado

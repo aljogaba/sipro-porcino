@@ -1751,3 +1751,193 @@ table .total-row td {
     box-shadow: none !important;
   }
 }
+
+
+/* Ajuste de layout, header compacto y responsividad v1.2.1 */
+html {
+  font-size: 15px;
+  scroll-behavior: smooth;
+}
+
+body {
+  line-height: 1.42;
+}
+
+.container {
+  width: min(1440px, calc(100% - clamp(34px, 6vw, 104px)));
+}
+
+.main-layout {
+  gap: 20px;
+  padding: 22px 0 44px;
+}
+
+.site-header {
+  padding: 14px 0 13px;
+  transition: padding 180ms ease, box-shadow 180ms ease, background 180ms ease;
+}
+
+.site-header h1 {
+  font-size: clamp(2.15rem, 4.2vw, 3.45rem);
+  transition: font-size 180ms ease, letter-spacing 180ms ease;
+}
+
+.site-header .eyebrow {
+  margin-bottom: 6px;
+}
+
+.site-header .subtitle {
+  font-size: 0.98rem;
+}
+
+.author-line {
+  margin-top: 6px;
+  font-size: 0.86rem;
+}
+
+.profile-button {
+  min-height: 44px;
+  padding: 10px 15px;
+}
+
+.version-card {
+  padding: 13px 18px;
+  min-width: 142px;
+}
+
+.site-header.is-compact {
+  padding: 8px 0 7px;
+  box-shadow: 0 10px 24px rgba(8, 31, 27, 0.22);
+}
+
+.site-header.is-compact h1 {
+  font-size: clamp(1.55rem, 2.5vw, 2.35rem);
+  letter-spacing: -0.045em;
+}
+
+.site-header.is-compact .eyebrow {
+  margin-bottom: 3px;
+  font-size: 0.66rem;
+}
+
+.site-header.is-compact .subtitle {
+  font-size: 0.82rem;
+}
+
+.site-header.is-compact .author-line {
+  margin-top: 3px;
+  font-size: 0.76rem;
+}
+
+.site-header.is-compact .profile-button {
+  min-height: 36px;
+  padding: 8px 13px;
+  font-size: 0.82rem;
+}
+
+.site-header.is-compact .version-card {
+  padding: 9px 14px;
+  min-width: 124px;
+}
+
+.site-header.is-compact .version-card span {
+  font-size: 0.68rem;
+  margin-bottom: 2px;
+}
+
+.site-header.is-compact .version-card strong {
+  font-size: 0.96rem;
+}
+
+.notice {
+  padding: 14px 17px;
+  font-size: 0.91rem;
+  line-height: 1.48;
+}
+
+.panel {
+  padding: 20px;
+}
+
+.section-heading {
+  margin-bottom: 15px;
+}
+
+.input-grid {
+  gap: 12px;
+}
+
+.field label,
+.input-label,
+.kpi-card small,
+.panel-note,
+.table-wrap table,
+.balance-stack,
+.report-preview {
+  font-size: 0.94em;
+}
+
+.kpi-card strong,
+.balance-card strong {
+  letter-spacing: -0.035em;
+}
+
+.sticky-balance {
+  top: calc(var(--header-offset, 116px) + 14px);
+}
+
+@media (min-width: 961px) {
+  .site-header.is-compact + .main-layout,
+  .site-header.is-compact ~ main {
+    --header-offset: 84px;
+  }
+}
+
+@media (max-width: 1200px) {
+  html { font-size: 14.5px; }
+  .container {
+    width: min(100%, calc(100% - 46px));
+  }
+  .input-grid.compact {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 960px) {
+  .site-header {
+    position: sticky;
+    padding: 10px 0;
+  }
+  .header-grid {
+    gap: 12px;
+  }
+  .header-actions {
+    gap: 10px;
+  }
+  .site-header h1 {
+    font-size: clamp(1.7rem, 7vw, 2.45rem);
+  }
+  .site-header .subtitle,
+  .author-line {
+    font-size: 0.82rem;
+  }
+  .container {
+    width: min(100%, calc(100% - 28px));
+  }
+}
+
+@media (max-width: 640px) {
+  html { font-size: 14px; }
+  .container {
+    width: min(100%, calc(100% - 22px));
+  }
+  .panel {
+    padding: 16px;
+  }
+  .notice {
+    padding: 13px 14px;
+  }
+  .version-card {
+    min-width: 112px;
+  }
+}

@@ -1,7 +1,7 @@
 cff-version: 1.2.0
 message: "Si utiliza SIPRO-Porcino, cite este software como se indica."
 title: "SIPRO-Porcino: Simulador Integral de Producción Porcina"
-version: "1.2.0-dev"
+version: "1.2.1-dev"
 date-released: "2026-07-06"
 authors:
   - family-names: "Galindo-Barboza"
