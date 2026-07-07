@@ -1,6 +1,16 @@
 # Changelog
 
-## [1.2.3-dev] - En desarrollo
+## [1.2.4-dev] - En desarrollo
+
+### Cambiado
+
+- Reestructura la navegación lateral en tres grupos: Entradas, Costos operativos y Salidas.
+- Corrige la numeración de módulos para que coincida con la lógica de captura y salida del simulador.
+- Agrega anclas específicas para mano de obra, gastos extras, resultados productivos, flujo, inventarios y alimento.
+- Mantiene cerrados por defecto los rubros de gastos sanitarios, impuestos y servicios.
+- Agrega indicador visual de despliegue en los rubros operativos.
+
+## [1.2.4-dev] - En desarrollo
 
 ### Ajustado
 
@@ -9,7 +19,7 @@
 - Baja ligeramente la escala tipográfica para favorecer lectura en pantallas con mucho contenido.
 - Ajusta responsividad base en laptop, escritorio y móvil sin modificar cálculos.
 
-## [1.2.3-dev] - Publicación, identidad y beta controlada
+## [1.2.4-dev] - Publicación, identidad y beta controlada
 
 ### Agregado
 
@@ -22,7 +32,7 @@
 
 ### Ajustado
 
-- Versión del proyecto actualizada a `1.2.3-dev`.
+- Versión del proyecto actualizada a `1.2.4-dev`.
 - Reporte técnico imprimible ahora incluye autoría y derechos.
 
 

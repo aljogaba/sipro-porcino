@@ -94,17 +94,44 @@ function helpIcon(text) {
 }
 
 function applyModuleNumbering() {
-  const headings = Array.from(document.querySelectorAll("main .panel > .section-heading"))
+  const moduleNumberMap = {
+    "productive-parameters-panel": "01",
+    "stage-duration-panel": "02",
+    "feed-consumption-panel": "03",
+    "feed-cost-panel": "04",
+    "feed-formulation-panel": "05",
+    "labor-cost-panel": "06",
+    "extra-cost-panel": "07",
+    "operational-expense-panel": "08",
+    "breeding-stock-panel": "09",
+    "product-results-panel": "10",
+    "flow-output-panel": "11",
+    "inventory-output-panel": "12",
+    "feed-output-panel": "13",
+    "economic-summary-panel": "14",
+    "decision-charts-panel": "15",
+    "technical-report-panel": "16",
+    "scenario-panel": "17",
+    "model-audit-panel": "18"
+  };
+
+  const headings = Array.from(document.querySelectorAll("main .panel > .section-heading, main article.panel > .section-heading"))
     .filter((heading) => !heading.closest("aside") && !heading.classList.contains("compact-heading"));
 
-  headings.forEach((heading, index) => {
-    if (heading.querySelector(".module-badge")) return;
+  headings.forEach((heading) => {
+    const panel = heading.closest("section[id], article[id]");
+    const number = panel ? moduleNumberMap[panel.id] : null;
+    if (!number) return;
+
+    let badge = heading.querySelector(".module-badge");
     heading.classList.add("module-numbered");
-    const badge = document.createElement("span");
-    badge.className = "module-badge";
-    badge.textContent = String(index + 1).padStart(2, "0");
-    badge.setAttribute("aria-hidden", "true");
-    heading.prepend(badge);
+    if (!badge) {
+      badge = document.createElement("span");
+      badge.className = "module-badge";
+      badge.setAttribute("aria-hidden", "true");
+      heading.prepend(badge);
+    }
+    badge.textContent = number;
   });
 }
 
@@ -875,10 +902,6 @@ function renderOperationalExpenses(operationalExpenseResult) {
       <div><div class="value">${topCategory?.total > 0 ? formatCurrency(topCategory.total, 2) : "$0.00"}</div><div class="unit">${topCategory?.total > 0 ? escapeHtml(topCategory.label) : "sin gasto"}</div></div>
     </article>
   `;
-
-  if (openOperationalCategories.size === 0 && categories[0]) {
-    openOperationalCategories.add(categories[0].key);
-  }
 
   operationalExpenseCategories.innerHTML = categories.map((category) => renderOperationalExpenseCategory(category, openOperationalCategories.has(category.key))).join("");
 

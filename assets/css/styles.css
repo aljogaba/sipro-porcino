@@ -2115,7 +2115,7 @@ body {
   }
 }
 
-/* v1.2.3 — navegación lateral, reporte HTML externo y header estable */
+/* v1.2.4 — navegación lateral, reporte HTML externo y header estable */
 :root {
   --sticky-header-expanded: 180px;
   --sticky-header-compact: 96px;
@@ -2265,5 +2265,111 @@ main article[id] {
 
   .report-actions .secondary-button {
     width: 100%;
+  }
+}
+
+
+/* v1.2.4 — navegación jerárquica, numeración fija y acordeones cerrados */
+.side-nav .nav-group {
+  border-top: 1px solid rgba(217, 228, 222, 0.78);
+  padding-top: 8px;
+  margin-top: 4px;
+}
+
+.side-nav .nav-group:first-of-type {
+  border-top: 0;
+  margin-top: 0;
+  padding-top: 0;
+}
+
+.side-nav .nav-group summary {
+  list-style: none;
+  cursor: pointer;
+  color: var(--brand);
+  font-size: 0.76rem;
+  font-weight: 950;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 8px 8px 6px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.side-nav .nav-group summary::-webkit-details-marker { display: none; }
+
+.side-nav .nav-group summary::after {
+  content: "⌄";
+  font-size: 0.82rem;
+  color: var(--muted);
+  transform: rotate(-90deg);
+  transition: transform 160ms ease;
+}
+
+.side-nav .nav-group[open] summary::after { transform: rotate(0deg); }
+
+.side-nav a span {
+  display: block;
+  font-size: 0.72rem;
+  font-weight: 750;
+  color: #7a8b83;
+  margin-top: 2px;
+}
+
+.expense-category summary {
+  cursor: pointer;
+  position: relative;
+  padding-right: 42px;
+}
+
+.expense-category summary::-webkit-details-marker { display: none; }
+
+.expense-category summary::after {
+  content: "+";
+  position: absolute;
+  right: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 24px;
+  height: 24px;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  background: rgba(255,255,255,0.78);
+  color: var(--brand);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 950;
+  line-height: 1;
+}
+
+.expense-category[open] summary::after { content: "−"; }
+
+@media (max-width: 1179px) {
+  .side-nav {
+    display: flex;
+    align-items: stretch;
+    gap: 10px;
+  }
+
+  .side-nav .nav-group {
+    flex: 0 0 auto;
+    min-width: 220px;
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    background: rgba(255,255,255,.9);
+    padding: 6px;
+    margin: 0;
+  }
+
+  .side-nav .nav-group summary {
+    padding: 8px 10px;
+  }
+
+  .side-nav .nav-group a {
+    border: 0;
+    border-radius: 12px;
+    background: transparent;
+    padding: 8px 10px;
   }
 }
