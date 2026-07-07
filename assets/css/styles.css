@@ -2373,3 +2373,31 @@ main article[id] {
     padding: 8px 10px;
   }
 }
+
+/* ===== FIX: mantener menú lateral sin generar espacio vacío al final ===== */
+
+@media (min-width: 1180px) {
+  .main-layout {
+    row-gap: 0;
+    column-gap: 24px;
+  }
+
+  .main-layout > :not(.side-nav) {
+    grid-column: 2;
+    margin-bottom: 20px;
+  }
+
+  .main-layout > :not(.side-nav):last-child {
+    margin-bottom: 0;
+  }
+
+  .side-nav {
+    grid-column: 1;
+    grid-row: 1 / span 999;
+    position: sticky;
+    top: 102px;
+    align-self: start;
+    max-height: calc(100vh - 118px);
+    overflow-y: auto;
+  }
+}
