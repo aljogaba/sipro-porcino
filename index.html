@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>SIPRO-Porcino | Simulador Integral de Producción Porcina | Alberto Jorge Galindo-Barboza</title>
   <meta name="description" content="Herramienta técnico-económica para modelar producción, alimentación, costos y escenarios en sistemas porcícolas. Desarrollo de Alberto Jorge Galindo-Barboza." />
+  <link rel="stylesheet" href="assets/css/tool-shell.css" />
   <link rel="stylesheet" href="assets/css/styles.css" />
 </head>
 <body>
@@ -481,37 +482,8 @@
       </div>
     </div>
   </footer>
+<script src="js/tool-shell.js"></script>
 
-
-  <script>
-    (() => {
-      const header = document.querySelector('.site-header');
-      if (!header) return;
-      let compact = false;
-      let ticking = false;
-      const compactAt = 150;
-      const expandAt = 70;
-      const updateHeaderState = () => {
-        const y = window.scrollY || document.documentElement.scrollTop || 0;
-        if (!compact && y > compactAt) {
-          compact = true;
-          header.classList.add('is-compact');
-        } else if (compact && y < expandAt) {
-          compact = false;
-          header.classList.remove('is-compact');
-        }
-        ticking = false;
-      };
-      const requestUpdate = () => {
-        if (!ticking) {
-          ticking = true;
-          requestAnimationFrame(updateHeaderState);
-        }
-      };
-      updateHeaderState();
-      window.addEventListener('scroll', requestUpdate, { passive: true });
-    })();
-  </script>
-  <script type="module" src="js/app.js"></script>
+<script type="module" src="js/app.js"></script>
 </body>
 </html>
