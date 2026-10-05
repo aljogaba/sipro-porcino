@@ -1,25 +1,8 @@
 # Changelog
 
-## [1.2.4-dev] - En desarrollo
-
-### Cambiado
-
-- Reestructura la navegación lateral en tres grupos: Entradas, Costos operativos y Salidas.
-- Corrige la numeración de módulos para que coincida con la lógica de captura y salida del simulador.
-- Agrega anclas específicas para mano de obra, gastos extras, resultados productivos, flujo, inventarios y alimento.
-- Mantiene cerrados por defecto los rubros de gastos sanitarios, impuestos y servicios.
-- Agrega indicador visual de despliegue en los rubros operativos.
+Todos los cambios importantes de SIPRO-Porcino serán documentados en este archivo.
 
 ## [1.2.4-dev] - En desarrollo
-
-### Ajustado
-
-- Reduce la altura del encabezado y agrega comportamiento compacto al hacer scroll.
-- Mejora márgenes laterales y encuadre general del contenido.
-- Baja ligeramente la escala tipográfica para favorecer lectura en pantallas con mucho contenido.
-- Ajusta responsividad base en laptop, escritorio y móvil sin modificar cálculos.
-
-## [1.2.4-dev] - Publicación, identidad y beta controlada
 
 ### Agregado
 
@@ -28,14 +11,44 @@
 - Metadatos de autoría, perfil profesional y derechos en `default-parameters.json`.
 - Archivo `CITATION.cff` con cita sugerida del software.
 - Archivo `LICENSE` con reserva de derechos y uso sujeto a autorización.
-- Documento `docs/citation-and-license.md` con guía breve de cita, crédito y licencia.
+- Documento `docs/citation-and-license.md` con guía de cita, crédito y licencia.
+- Shell visual compartido mediante `assets/css/tool-shell.css` y `js/tool-shell.js`.
+- Favicon del proyecto y `theme-color` para navegador/dispositivos.
+
+### Cambiado
+
+- Reestructura la navegación lateral en tres grupos: Entradas, Costos operativos y Salidas.
+- Corrige la numeración de módulos para que coincida con la lógica de captura y salida del simulador.
+- Agrega anclas específicas para mano de obra, gastos extras, resultados productivos, flujo, inventarios y alimento.
+- Mantiene cerrados por defecto los rubros de gastos sanitarios, impuestos y servicios.
+- Agrega indicador visual de despliegue en los rubros operativos.
+- Externaliza el comportamiento del encabezado al shell compartido.
+- La atribución visible se expresa como `Idea inicial: Eduardo Antonio Barrera Mora`.
+- La cita sugerida visible incorpora a Galindo-Barboza, A. J. y Barrera-Mora, E. A.
 
 ### Ajustado
 
+- Reduce la altura del encabezado y agrega comportamiento compacto al hacer scroll.
+- Mejora márgenes laterales y encuadre general del contenido.
+- Baja ligeramente la escala tipográfica para favorecer lectura en pantallas con mucho contenido.
+- Ajusta responsividad base en laptop, escritorio y móvil sin modificar cálculos.
 - Versión del proyecto actualizada a `1.2.4-dev`.
-- Reporte técnico imprimible ahora incluye autoría y derechos.
+- Reporte técnico imprimible incluye autoría y derechos.
 
+### Corregido
 
+- Se mueve el favicon a la raíz del repositorio y se usa `/favicon.png` con versión de caché para favorecer su actualización.
+
+### Documentado
+
+- Se consolida en una sola sección el historial correspondiente a `1.2.4-dev`.
+- `README.md` documenta estado, alcance, funciones, limitaciones, aplicación y enlaces técnicos.
+- `docs/assumptions.md` documenta supuestos productivos, temporales, económicos, de inventario y alimentación, además de diferencias pendientes de validación.
+- `docs/model-description.md` documenta módulos, entradas, cálculos, dependencias, salidas y ecuaciones implementadas.
+- `docs/user-guide.md` documenta el uso práctico de la interfaz, resultados, escenarios, sensibilidad, auditoría y reporte.
+- `docs/validation.md` incorpora un estado actual de validación sin eliminar el historial previo.
+- `CITATION.cff`, `README.md` y `docs/citation-and-license.md` se alinean con la atribución y cita visibles de la aplicación.
+- Mientras la versión permanezca marcada como `-dev`, `CITATION.cff` no declara una fecha de liberación estable.
 
 ## [1.1.0-dev] - Salida profesional y reporte técnico
 
@@ -118,9 +131,6 @@
 
 - Pendiente de validación fina Excel vs SIPRO después de la integración de módulos mayores.
 
-
-Todos los cambios importantes de SIPRO-Porcino serán documentados en este archivo.
-
 ## [0.8.1-dev] - En desarrollo
 
 ### Cambiado
@@ -129,6 +139,24 @@ Todos los cambios importantes de SIPRO-Porcino serán documentados en este archi
 - La compra de machos ahora se captura como **Machos comprados/año** y se prorratea como gasto mensual opcional.
 - El inventario estimado de machos queda como dato informativo basado en la relación 1:20, sin modificar el flujo productivo.
 - Se ajustaron textos de ayuda y tabla de resumen para aclarar que no se modela venta de machos de desecho.
+
+## [0.8.0-dev] - En desarrollo
+
+### Agregado
+
+- Módulo **Pie de cría, reemplazos y desechos**.
+- Selector de modo de reemplazo de hembras: **autorreemplazo** o **compra externa**.
+- Cálculo de hembras reemplazadas/mes y hembras de desecho/mes a partir del porcentaje anual de reemplazo.
+- Inventario visible de hembras de reemplazo, separado del inventario productivo para evitar doble conteo de alimento.
+- Ingreso mensual por venta de hembras de desecho, integrado a ingresos generales.
+- Descuento económico por hembras de autorreemplazo que salen del flujo de venta a rastro, sin modificar los indicadores productivos.
+- Cálculo de costo mensual de reemplazo de hembras y compra opcional de machos.
+- Integración automática de egresos de pie de cría en el resumen económico.
+
+### Corregido
+
+- Se conserva la posición de scroll durante la captura en tablas largas para evitar regresar al inicio de la página.
+- Se conserva el estado abierto/cerrado de rubros en gastos operativos durante la edición.
 
 ## [0.7.0-dev] - En desarrollo
 
@@ -195,7 +223,6 @@ Todos los cambios importantes de SIPRO-Porcino serán documentados en este archi
 - Los campos de kg/ton en formulación se muestran con un decimal.
 - Las entradas de formulación actualizan el cálculo al confirmar el campo, evitando que la tabla se reconstruya en cada tecla y permitiendo capturar cifras completas.
 
-
 ## [0.5.1-dev] - En desarrollo
 
 ### Corregido
@@ -249,7 +276,6 @@ Todos los cambios importantes de SIPRO-Porcino serán documentados en este archi
 
 - Se reorganizó el bloque principal de indicadores para mantener un orden productivo.
 - Se retiraron ingresos, egresos, utilidad y costo de alimento del bloque principal para evitar duplicidad con el resumen económico detallado.
-
 
 ## [0.4.0-dev] - En desarrollo
 
@@ -309,21 +335,3 @@ Todos los cambios importantes de SIPRO-Porcino serán documentados en este archi
 - Definición de identidad del proyecto.
 - Organización modular para inventarios, flujo reproductivo, alimento, costos y resumen económico.
 - Integración conceptual con el Laboratorio de Sistemas Porcícolas.
-
-## [0.8.0-dev] - En desarrollo
-
-### Agregado
-
-- Módulo **Pie de cría, reemplazos y desechos**.
-- Selector de modo de reemplazo de hembras: **autorreemplazo** o **compra externa**.
-- Cálculo de hembras reemplazadas/mes y hembras de desecho/mes a partir del porcentaje anual de reemplazo.
-- Inventario visible de hembras de reemplazo, separado del inventario productivo para evitar doble conteo de alimento.
-- Ingreso mensual por venta de hembras de desecho, integrado a ingresos generales.
-- Descuento económico por hembras de autorreemplazo que salen del flujo de venta a rastro, sin modificar los indicadores productivos.
-- Cálculo de costo mensual de reemplazo de hembras y compra opcional de machos.
-- Integración automática de egresos de pie de cría en el resumen económico.
-
-### Corregido
-
-- Se conserva la posición de scroll durante la captura en tablas largas para evitar regresar al inicio de la página.
-- Se conserva el estado abierto/cerrado de rubros en gastos operativos durante la edición.
