@@ -2,12 +2,14 @@ cff-version: 1.2.0
 message: "Si utiliza SIPRO-Porcino, cite este software como se indica."
 title: "SIPRO-Porcino: Simulador Integral de Producción Porcina"
 version: "1.2.4-dev"
-date-released: "2026-07-06"
 authors:
   - family-names: "Galindo-Barboza"
     given-names: "Alberto Jorge"
-url: "https://aljogaba.github.io/"
-abstract: "Herramienta técnico-económica para modelar producción, alimentación, costos, escenarios y trazabilidad en sistemas porcícolas."
+  - family-names: "Barrera-Mora"
+    given-names: "Eduardo Antonio"
+url: "https://aljogaba.github.io/sipro-porcino/"
+repository-code: "https://github.com/aljogaba/sipro-porcino"
+abstract: "Herramienta técnico-económica para modelar producción, inventarios, alimentación, costos, pie de cría, escenarios y resultados económicos en sistemas porcícolas."
 keywords:
   - porcicultura
   - producción porcina
