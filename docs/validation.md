@@ -1,3 +1,74 @@
+# Validación técnica de SIPRO-Porcino
+
+Versión actual: `v1.2.4-dev`
+
+## Estado actual de validación
+
+### Validado
+
+No se declara todavía ningún módulo de `v1.2.4-dev` como **validado integralmente** contra el Excel fuente. El repositorio conserva evidencia histórica de auditorías parciales y valores de referencia, descritos en el historial de este documento.
+
+Sí están trazadas en código y documentación las fórmulas actualmente implementadas, sus dependencias y los valores base usados por el simulador.
+
+### Parcialmente validado
+
+- Flujo productivo e inventarios: existe un caso base histórico de comparación contra el Excel fuente y se documentaron valores esperados.
+- Ciclo reproductivo: la fórmula de gestación + lactancia + días abiertos está identificada y auditada históricamente; el cambio de 114 a 115 días de gestación explica diferencias frente al tablero original.
+- Alimentación: están documentadas las ecuaciones de consumo y costo y la conversión temporal de 4.3 semanas/mes.
+- Formulación económica: está implementado y trazado el cierre de 1,000 kg, con medicación/premezclas como costo no ponderal.
+- Medicación/premezclas: existen valores base auditados desde el Excel para las dietas incluidas.
+- Gastos sanitarios, impuestos y servicios: el total base de ejemplo de 24,514.95 MXN/mes conserva el valor agregado previamente usado en el tablero, pero falta validación fina por rubro.
+- Pie de cría: están implementadas las reglas de reemplazo, desecho, autorreemplazo, compra externa y compra opcional de machos; permanecen decisiones metodológicas abiertas.
+- Escenarios y visualizaciones: están implementados y son funcionalmente trazables, pero no constituyen por sí mismos validación del modelo productivo-económico subyacente.
+
+### Pendiente de validación
+
+- comparación fina de `v1.2.4-dev` contra el Excel fuente con casos de prueba reproducibles;
+- tolerancias de aceptación por indicador;
+- papel definitivo del porcentaje de fertilidad en el flujo productivo;
+- diferencia entre supervivencia secuencial por etapa y el indicador anual basado en suma de mortalidades;
+- tratamiento de hembras abiertas en el grupo alimenticio de gestación;
+- costos formulados y consumo mensual contra hojas auxiliares del Excel;
+- rubros definitivos de gastos sanitarios, impuestos y servicios;
+- criterio de costo de producción/kg para autorreemplazo;
+- criterio de meses promedio para el inventario visible de reemplazos;
+- integración y resultados económicos completos, incluidos desechos y autorreemplazo;
+- escenarios predefinidos y pruebas rápidas de sensibilidad como herramientas de interpretación;
+- validación funcional integral del reporte HTML y su impresión/guardado como PDF;
+- pruebas funcionales y de integración sistemáticas para los módulos conectados.
+
+### Diferencias conocidas
+
+1. **Gestación:** el Excel fuente original utilizaba 114 días en el caso de referencia; SIPRO usa 115 días desde `v0.1.2-dev`.
+2. **Fertilidad:** se conserva como entrada, pero actualmente no interviene directamente en las fórmulas productivas.
+3. **Supervivencia:** el flujo semanal aplica supervivencia secuencial; `cerdos vendidos/hembra/año` conserva una fórmula auditada que usa la suma de mortalidades para obtener una supervivencia global.
+4. **Hembras gestantes:** el inventario reproductivo visible resta lactantes y abiertas; el módulo de alimento de gestación usa `vientres - hembras lactantes` y suma machos de referencia. Debe revisarse si las hembras abiertas deben separarse en alimentación.
+5. **Ingresos por desecho:** una observación histórica temprana señalaba que aún no estaban integrados. En la implementación actual sí se incorporan al resumen económico y el autorreemplazo genera además un ajuste económico por animales no vendidos a rastro. La nota histórica se conserva abajo por trazabilidad.
+6. **Campos agregados heredados:** cuando están habilitados los módulos detallados, gastos operativos y pie de cría sustituyen valores agregados heredados del Excel.
+
+### Fuente de comparación
+
+La fuente de comparación es un **modelo Excel privado** que no forma parte del repositorio público. `data/default-parameters.json` conserva referencias a celdas del archivo fuente cuando fueron documentadas.
+
+El caso base histórico registrado en este documento incluye los siguientes valores esperados del tablero original:
+
+| Indicador | Valor esperado en Excel fuente original |
+|---|---:|
+| Cerdos vendidos/mes | 492.79 |
+| Días a mercado | 163 |
+| Partos/hembra/año | 2.15 |
+| Lechones destetados/camada | 9.82 |
+| Lechones destetados/hembra/año | 21.11 |
+| Cerdos vendidos/hembra/año | 19.62 |
+| Inventario total | 2869.9 |
+| Inventario promedio/hembra | 9.57 |
+| Factor de eficiencia | 1.64 |
+
+Estos valores son una referencia histórica y no deben presentarse como certificación de equivalencia numérica de la versión actual.
+
+---
+
+## Historial de validación
 
 ## v0.9.0-dev — Auditoría dinámica del modelo
 
@@ -158,7 +229,7 @@ Se integra el primer módulo de formulación alimenticia con enfoque económico,
 - Cálculo automático de total kg, costo/ton y costo/kg por dieta.
 - Advertencia visual cuando una dieta no suma 1000 kg.
 - Balance mensual de insumos ligado al consumo mensual estimado por dieta.
-- Transferencia automática de costos formulados al modo “Formulación propia”.
+- Transferencia automática al modo “Formulación propia”.
 
 ### Exclusiones técnicas de esta versión
 
@@ -176,9 +247,9 @@ El módulo de formulación alimenticia se muestra únicamente cuando el usuario 
 
 Se agregaron ayudas contextuales con iconos de información en el módulo de formulación económica para reducir ambigüedad operativa. La interfaz aclara que:
 
-- cada dieta se calcula sobre una base de 1,000 kg;
-- la suma de ingredientes + núcleo debe ser igual a 1,000 kg;
-- Fase 0 y Fase 1 pueden aparecer con 1,000 kg en núcleo porque se tratan como dietas completas compradas;
+- cada dieta se calcula sobre una base de `1,000 kg`;
+- la suma de ingredientes + núcleo debe ser igual a `1,000 kg`;
+- Fase 0 y Fase 1 pueden aparecer con `1,000 kg` en núcleo porque se tratan como dietas completas compradas;
 - la medicación/suplementación no ponderal queda pendiente para un módulo posterior.
 
 También se normalizó la captura visual:
