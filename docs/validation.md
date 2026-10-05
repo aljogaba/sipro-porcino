@@ -229,7 +229,7 @@ Se integra el primer módulo de formulación alimenticia con enfoque económico,
 - Cálculo automático de total kg, costo/ton y costo/kg por dieta.
 - Advertencia visual cuando una dieta no suma 1000 kg.
 - Balance mensual de insumos ligado al consumo mensual estimado por dieta.
-- Transferencia automática al modo “Formulación propia”.
+- Transferencia automática de costos formulados al modo “Formulación propia”.
 
 ### Exclusiones técnicas de esta versión
 
@@ -247,9 +247,9 @@ El módulo de formulación alimenticia se muestra únicamente cuando el usuario 
 
 Se agregaron ayudas contextuales con iconos de información en el módulo de formulación económica para reducir ambigüedad operativa. La interfaz aclara que:
 
-- cada dieta se calcula sobre una base de `1,000 kg`;
-- la suma de ingredientes + núcleo debe ser igual a `1,000 kg`;
-- Fase 0 y Fase 1 pueden aparecer con `1,000 kg` en núcleo porque se tratan como dietas completas compradas;
+- cada dieta se calcula sobre una base de 1,000 kg;
+- la suma de ingredientes + núcleo debe ser igual a 1,000 kg;
+- Fase 0 y Fase 1 pueden aparecer con 1,000 kg en núcleo porque se tratan como dietas completas compradas;
 - la medicación/suplementación no ponderal queda pendiente para un módulo posterior.
 
 También se normalizó la captura visual:
